@@ -1,8 +1,8 @@
 讓Adobe Brackets跳行至unity提示位置
- "$(File)" =$(Line)
+....目前無解
 
 讓sublime跳行至unity提示位置
- "$(File)" :$(Line)
+ "$(File)":$(Line)
 
 
 關於unity版本控制
