@@ -1,0 +1,10 @@
+讓Adobe Brackets跳行至unity提示位置
+ "$(File)" =$(Line)
+
+讓sublime跳行至unity提示位置
+ "$(File)" :$(Line)
+
+
+關於unity版本控制
+http://blog.csdn.net/chenluwolf/article/details/17913261
+-至於兩個人同時修改 “場景檔" 所造成的衝突，如果你是非Pro的版本那 “無解"。Unity在3.5版本之後可以將場景格式改為 Text Mode，設定的地方跟 Meta file 一樣 Editor -> Project Setting -> Editor，將 Asset Serialization 改為 Force Text 就可以了。這樣 SNV 就可以幫你 Merge 同一場景不同的修正。
