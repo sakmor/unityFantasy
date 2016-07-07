@@ -34,7 +34,7 @@ function contorlMangers() {
     //滑鼠點擊取得做標點
     var mouseHitPlane: RaycastHit;
     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    if (Physics.Raycast(ray, mouseHitPlane)) {
+    if (Physics.Raycast(ray, mouseHitPlane) && mouseHitPlane.transform.tag == "ground") {
         if (Input.GetMouseButtonDown(0)) {
             apple.transform.position = mouseHitPlane.point;
         }
