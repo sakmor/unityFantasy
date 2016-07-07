@@ -5,12 +5,14 @@ var apple: GameObject;
 
 //轉向目標使用
 var speed: float;
+var moveSpeed: float;
 
 function Start() {
     player = GameObject.Find("Cha_Knight");
     Plane = GameObject.Find("Plane");
     apple = GameObject.Find("Sphere");
-    speed = 5;
+    speed = 8;
+    moveSpeed = 0.02;
 
 }
 
@@ -39,21 +41,26 @@ function contorlMangers() {
     }
 
 
-    //轉向目標
-
+    //將生物轉向目標
     var targetDir = apple.transform.position - player.transform.position;
     var step = speed * Time.deltaTime;
     var newDir = Vector3.RotateTowards(player.transform.forward, targetDir, step, 0.0);
     player.transform.rotation = Quaternion.LookRotation(newDir);
 
+    //將生物移動向目標
+    player.transform.position = Vector3.MoveTowards(player.transform.position, apple.transform.position, moveSpeed);
+    if (Vector3.Distance(player.transform.position, apple.transform.position) > 1) {
+        player.GetComponent. < Animation > ().Play("Walk");
+    }
 
+    //使用WASD與上下左右鍵移動角色
     var keydown = "";
     if (Input.anyKey) {
 
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) {
 
             player.transform.Translate(0, 0, 1 * Time.deltaTime);
-            player.GetComponent. < Animation > ().Play("Walk");
+
             keydown = "User typing W / UpArrow";
         }
         if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) {
@@ -69,6 +76,7 @@ function contorlMangers() {
             keydown = "User typing D / RightArrow";
         }
         if (Input.GetKey(KeyCode.Space)) {
+            apple.transform.position = player.transform.position;
             print("space");
             player.GetComponent. < Animation > ().Play("Attack");
             //            player.GetComponent. < Animation > ().PlayQueued("wait");
