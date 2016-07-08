@@ -26,11 +26,7 @@ function Update() {
     this._input();
     this._movment();
     this._animations();
-
-}
-
-function _putCube() {
-    this.transform.position = Cube.transForm.postion;
+    _put();
 
 }
 
@@ -41,18 +37,19 @@ function _input() {
     }
     if (Input.GetKey(KeyCode.F)) {
         Sphere.transform.position = this.transform.position;
-        this.bioAction = "Damage";
+        _put();
     }
 }
 
 function _Attack() {
-    print('Attack');
 
 }
 
-function _Damage() {
-
-
+function _put() {
+    Cube.transform.position.x = this.transform.position.x + transform.forward.x;
+    Cube.transform.position.z = this.transform.position.z + transform.forward.z;
+    Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
+    Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
 }
 
 function _animations() {
@@ -69,7 +66,6 @@ function _animations() {
             anim.CrossFade("Dead");
             anim.CrossFadeQueued("Wait");
             this.bioAction = "Wait";
-            _Damage();
             break;
         case "Walk":
             anim.CrossFade("Walk");
