@@ -1,6 +1,7 @@
 // # pragma strict
 var Plane: GameObject;
 var Sphere: GameObject;
+var Cube: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
@@ -9,6 +10,7 @@ function Start() {
     PlayerLight = GameObject.Find("PlayerLight");
     Plane = GameObject.Find("Plane");
     Sphere = GameObject.Find("Sphere");
+    Cube = GameObject.Find("Cube");
     Player = GameObject.Find("Cha_Knight");
     PlayerCamera = GameObject.Find("PlayerCamera");
     Sphere.transform.position = Player.transform.position;
@@ -28,7 +30,9 @@ function Update() {
 }
 //========================================================
 
-
+function OnMouseDrag() {
+    print("drag");
+}
 
 
 function fellowPlayerCameraMove() {
@@ -55,12 +59,23 @@ function fellowPlayerLight() {
 }
 
 function getMousehitGroupPos() {
+    Cube.layer = 2;
+    Sphere.layer = 2;
+    Player.layer = 2;
     //滑鼠點擊取得做標點
     var mouseHitPlane: RaycastHit;
     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     if (Physics.Raycast(ray, mouseHitPlane) && mouseHitPlane.transform.tag == "ground") {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButton(0)) {
+            print("mouse");
             Sphere.transform.position = mouseHitPlane.point;
+        } else {
+            Sphere.transform.position = Player.transform.position;
+
         }
     }
+
+    Cube.layer = 0;
+    Sphere.layer = 0;
+    Player.layer = 0;
 }

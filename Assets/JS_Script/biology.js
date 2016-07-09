@@ -1,5 +1,4 @@
 // #pragma strict
-private
 var moveSpeed: float;
 
 var moveSpeedMax: float;
@@ -19,8 +18,8 @@ var WalkSteptweek: float;
 
 function Start() {
     _backward = false;
-    WalkSteptweek = WalkSteptweek || 50;
-    moveSpeed = moveSpeed || 0.07;
+    WalkSteptweek = WalkSteptweek || 100;
+    moveSpeed = moveSpeed || 0.05;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
     Cube = GameObject.Find("Cube");
@@ -32,35 +31,35 @@ function Update() {
     this._input();
     this._movment();
     this._animations();
-    _put();
+    _pick();
 
 }
 
 function _input() {
-    _backward = false;
-    if (Input.GetKey(KeyCode.Space)) {
-        Sphere.transform.position = this.transform.position;
-        this.bioAction = "Attack";
-
-    }
-    if (Input.GetKey(KeyCode.F)) {
-        Sphere.transform.position = this.transform.position;
-
-    }
-    if (Input.GetKey(KeyCode.A)) {
-        transform.Rotate(0, -3, 0);
-    }
-    if (Input.GetKey(KeyCode.D)) {
-        transform.Rotate(0, 3, 0);
-    }
-    if (Input.GetKey(KeyCode.W)) {
-        Sphere.transform.position.x = this.transform.position.x + transform.forward.x;
-        Sphere.transform.position.z = this.transform.position.z + transform.forward.z;
-    }
-    if (Input.GetKey(KeyCode.S)) {
-        _backward = true;
-        Sphere.transform.position.x = this.transform.position.x - transform.forward.x;
-        Sphere.transform.position.z = this.transform.position.z - transform.forward.z;
+    if (Input.anyKey) {
+        _backward = false;
+        if (Input.GetKey(KeyCode.Space)) {
+            Sphere.transform.position = this.transform.position;
+            this.bioAction = "Attack";
+        }
+        if (Input.GetKey(KeyCode.F)) {
+            this.bioAction = "Damage";
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            transform.Rotate(0, -3, 0);
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            transform.Rotate(0, 3, 0);
+        }
+        if (Input.GetKey(KeyCode.W)) {
+            Sphere.transform.position.x = this.transform.position.x + transform.forward.x * 3.5;
+            Sphere.transform.position.z = this.transform.position.z + transform.forward.z * 3.5;
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            _backward = true;
+            Sphere.transform.position.x = this.transform.position.x - transform.forward.x;
+            Sphere.transform.position.z = this.transform.position.z - transform.forward.z;
+        }
     }
 }
 
@@ -68,9 +67,11 @@ function _Attack() {
 
 }
 
-function _put() {
+function _pick() {
+    //將座標放在角色正前方
     Cube.transform.position.x = this.transform.position.x + transform.forward.x;
     Cube.transform.position.z = this.transform.position.z + transform.forward.z;
+    //正規化座標位置
     Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
     Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
 
@@ -83,14 +84,11 @@ function _animations() {
         case "Attack":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
-            this.bioAction = "Wait";
-            Instantiate(Cube);
             _Attack();
+            Instantiate(Cube);
             break;
         case "Damage":
-            anim.CrossFade("Dead");
-            anim.CrossFadeQueued("Wait");
-            this.bioAction = "Wait";
+            print("a");
             break;
         case "Walk":
             anim.CrossFade("Walk");
@@ -98,11 +96,16 @@ function _animations() {
         case "picking":
             break;
         case "Wait":
+            Sphere.transform.position.x = this.transform.position.x;
+            Sphere.transform.position.z = this.transform.position.z;
             anim.CrossFade("Wait");
             break;
         }
-
         this._bioAction = this.bioAction;
+    }
+    //若生物不是撥特定動作時，恢復Wait狀態
+    if (!anim.IsPlaying("Attack")) {
+        this.bioAction = "Wait";
     }
 }
 
@@ -113,8 +116,11 @@ function _movment() {
         moveSpeed = moveSpeedMax;
         this.bioAction = "Walk";
         //依照目標距離調整移動速度
-        if (Vector3.Distance(this.transform.position, Sphere.transform.position) < 1.5) {
-            moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere.transform.position) / 1.5);
+        if (Vector3.Distance(this.transform.position, Sphere.transform.position) < 5) {
+            moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere.transform.position) / 5);
+            if (moveSpeed < 0.02) {
+                moveSpeed = 0;
+            }
         }
     } else {
         if (this.bioAction != "Attack" && this.bioAction != "Damage") {
