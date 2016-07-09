@@ -508,11 +508,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400012, guid: ac1d9b0420ad1b146b5d57d7729b647e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 400012, guid: ac1d9b0420ad1b146b5d57d7729b647e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 400012, guid: ac1d9b0420ad1b146b5d57d7729b647e, type: 3}
       propertyPath: m_LocalRotation.x
@@ -769,7 +769,7 @@ MeshRenderer:
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
+  m_ReflectionProbeUsage: 0
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 1
@@ -1305,7 +1305,7 @@ SkinnedMeshRenderer:
     type: 3}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1479815478}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:

@@ -1,11 +1,16 @@
 // #pragma strict
 private
 var moveSpeed: float;
+
 var moveSpeedMax: float;
 var rotateSpeed: float;
 var bioAction: String;
+
 private
 var _bioAction: String;
+private
+var _backward: boolean;
+
 var Sphere: GameObject;
 var Cube: GameObject;
 var anim: Animation;
@@ -13,6 +18,7 @@ var WalkSteptweek: float;
 
 
 function Start() {
+    _backward = false;
     WalkSteptweek = WalkSteptweek || 50;
     moveSpeed = moveSpeed || 0.07;
     moveSpeedMax = moveSpeed;
@@ -31,13 +37,30 @@ function Update() {
 }
 
 function _input() {
+    _backward = false;
     if (Input.GetKey(KeyCode.Space)) {
         Sphere.transform.position = this.transform.position;
         this.bioAction = "Attack";
+
     }
     if (Input.GetKey(KeyCode.F)) {
         Sphere.transform.position = this.transform.position;
-        _put();
+
+    }
+    if (Input.GetKey(KeyCode.A)) {
+        transform.Rotate(0, -3, 0);
+    }
+    if (Input.GetKey(KeyCode.D)) {
+        transform.Rotate(0, 3, 0);
+    }
+    if (Input.GetKey(KeyCode.W)) {
+        Sphere.transform.position.x = this.transform.position.x + transform.forward.x;
+        Sphere.transform.position.z = this.transform.position.z + transform.forward.z;
+    }
+    if (Input.GetKey(KeyCode.S)) {
+        _backward = true;
+        Sphere.transform.position.x = this.transform.position.x - transform.forward.x;
+        Sphere.transform.position.z = this.transform.position.z - transform.forward.z;
     }
 }
 
@@ -50,6 +73,7 @@ function _put() {
     Cube.transform.position.z = this.transform.position.z + transform.forward.z;
     Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
     Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
+
 }
 
 function _animations() {
@@ -60,6 +84,7 @@ function _animations() {
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
             this.bioAction = "Wait";
+            Instantiate(Cube);
             _Attack();
             break;
         case "Damage":
@@ -104,9 +129,10 @@ function _movment() {
     anim["Walk"].speed = WalkSteptweek * moveSpeed;
 
     //將生物轉向目標
-    var targetDir = Sphere.transform.position - this.transform.position;
-    var step = rotateSpeed * Time.deltaTime;
-    var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
-    this.transform.rotation = Quaternion.LookRotation(newDir);
-
+    if (!_backward) {
+        var targetDir = Sphere.transform.position - this.transform.position;
+        var step = rotateSpeed * Time.deltaTime;
+        var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
+        this.transform.rotation = Quaternion.LookRotation(newDir);
+    }
 }

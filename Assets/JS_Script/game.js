@@ -38,12 +38,12 @@ function fellowPlayerCameraMove() {
 }
 
 function fellowPlayerCameraContorl() {
+    //滑鼠滾輪縮放攝影機
     if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
     {
         if (Camera.main.orthographicSize > 1)
             Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize - 1, 10);
     }
-
     if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
     {
         Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 10);
