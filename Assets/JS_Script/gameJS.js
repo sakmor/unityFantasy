@@ -5,8 +5,21 @@ var Cube: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
+var array3d: Array;
+var gameAeraSize: int;
 
 function Start() {
+    gameAeraSize = gameAeraSize || 100;
+    //建立一個三維陣列
+    array3d = new Array(gameAeraSize);
+    for (i = 0; i < gameAeraSize; i++) {
+        array3d[i] = new Array(gameAeraSize);
+        for (j = 0; j < gameAeraSize; j++) {
+            array3d[i][j] = new Array(gameAeraSize);
+        }
+    }
+
+    //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
     Plane = GameObject.Find("Plane");
     Sphere = GameObject.Find("Sphere");
@@ -17,8 +30,10 @@ function Start() {
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
 
+}
 
-
+function setArray(a: Vector3, b: boolean) {
+    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = b;
 }
 
 function Update() {
@@ -26,13 +41,9 @@ function Update() {
     fellowPlayerLight();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
-
 }
+
 //========================================================
-
-function OnMouseDrag() {
-    print("drag");
-}
 
 
 function fellowPlayerCameraMove() {
@@ -59,7 +70,7 @@ function fellowPlayerLight() {
 }
 
 function getMousehitGroupPos() {
-    Cube.layer = 2;
+    //    Cube.layer = 2;
     Sphere.layer = 2;
     Player.layer = 2;
     //滑鼠點擊取得做標點
@@ -67,7 +78,6 @@ function getMousehitGroupPos() {
     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     if (Physics.Raycast(ray, mouseHitPlane) && mouseHitPlane.transform.tag == "ground") {
         if (Input.GetMouseButton(0)) {
-            print("mouse");
             Sphere.transform.position = mouseHitPlane.point;
         } else {
             Sphere.transform.position = Player.transform.position;
@@ -75,7 +85,7 @@ function getMousehitGroupPos() {
         }
     }
 
-    Cube.layer = 0;
+    //    Cube.layer = 0;
     Sphere.layer = 0;
     Player.layer = 0;
 }

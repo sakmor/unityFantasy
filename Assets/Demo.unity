@@ -581,19 +581,19 @@ Light:
   m_GameObject: {fileID: 558854442}
   m_Enabled: 1
   serializedVersion: 6
-  m_Type: 2
+  m_Type: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.82
+  m_Intensity: 3.16
   m_Range: 10
-  m_SpotAngle: 30
+  m_SpotAngle: 78
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
-    m_Resolution: -1
+    m_Type: 2
+    m_Resolution: 0
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.2
+    m_NearPlane: 0.37
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -602,7 +602,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_Lightmapping: 4
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
@@ -612,10 +612,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 558854442}
-  m_LocalRotation: {x: 0.40821794, y: -0.23456973, z: 0.109381676, w: 0.87542605}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071067}
+  m_LocalPosition: {x: 0, y: 7.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 1450696462}
   m_RootOrder: 0
@@ -659,7 +659,7 @@ GameObject:
   - 33: {fileID: 696181286}
   - 65: {fileID: 696181285}
   - 23: {fileID: 696181284}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube
   m_TagString: Cube
   m_Icon: {fileID: 0}
@@ -673,7 +673,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 696181282}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.53, z: 4.68}
+  m_LocalPosition: {x: 0, y: 0.5, z: 1.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -1312,8 +1312,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 1538086129}
   - 33: {fileID: 1538086132}
-  - 135: {fileID: 1538086131}
   - 23: {fileID: 1538086130}
+  - 65: {fileID: 1538086131}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -1340,7 +1340,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1538086128}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
@@ -1360,17 +1360,17 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!135 &1538086131
-SphereCollider:
+--- !u!65 &1538086131
+BoxCollider:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1538086128}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
+  m_IsTrigger: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1538086132
 MeshFilter:
@@ -1465,7 +1465,7 @@ GameObject:
   - 4: {fileID: 1653811513}
   - 114: {fileID: 1653811512}
   m_Layer: 0
-  m_Name: MyScript
+  m_Name: mainGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1510,6 +1510,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1751745767}
   - 111: {fileID: 1710883636}
+  - 65: {fileID: 1710883637}
   m_Layer: 0
   m_Name: Cha_Knight
   m_TagString: Untagged
@@ -1537,6 +1538,18 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 1
+--- !u!65 &1710883637
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1710883635}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1726203881
 GameObject:
   m_ObjectHideFlags: 0

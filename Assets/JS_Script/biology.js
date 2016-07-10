@@ -14,9 +14,14 @@ var Sphere: GameObject;
 var Cube: GameObject;
 var anim: Animation;
 var WalkSteptweek: float;
-
+var mainGame: GameObject;
+var mainGamejs: gameJS;
 
 function Start() {
+
+    mainGame = GameObject.Find("mainGame");
+    mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
+
     _backward = false;
     WalkSteptweek = WalkSteptweek || 100;
     moveSpeed = moveSpeed || 0.05;
@@ -33,6 +38,11 @@ function Update() {
     this._animations();
     _pick();
 
+}
+
+function OnTriggerEnter(other: Collider) {
+    print("Trigger " + Collider);
+    //    Destroy(other.gameObject);
 }
 
 function _input() {
@@ -52,28 +62,45 @@ function _input() {
             transform.Rotate(0, 3, 0);
         }
         if (Input.GetKey(KeyCode.W)) {
-            Sphere.transform.position.x = this.transform.position.x + transform.forward.x * 3.5;
-            Sphere.transform.position.z = this.transform.position.z + transform.forward.z * 3.5;
+            Sphere.transform.position.x = this.transform.position.x + transform.forward.x * 2.5;
+            Sphere.transform.position.z = this.transform.position.z + transform.forward.z * 2.5;
         }
         if (Input.GetKey(KeyCode.S)) {
             _backward = true;
-            Sphere.transform.position.x = this.transform.position.x - transform.forward.x;
-            Sphere.transform.position.z = this.transform.position.z - transform.forward.z;
+            Sphere.transform.position.x = this.transform.position.x - transform.forward.x * 2.5;
+            Sphere.transform.position.z = this.transform.position.z - transform.forward.z * 2.5;
         }
     }
 }
 
-function _Attack() {
-
+function _crateCube() {
+    var temp = Instantiate(Cube);
+    var tempPOS: Vector3 = temp.transform.position;
+    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.y += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
+    mainGamejs.setArray(tempPOS, true);
 }
 
 function _pick() {
+    //TODO:效能可以調整
     //將座標放在角色正前方
     Cube.transform.position.x = this.transform.position.x + transform.forward.x;
     Cube.transform.position.z = this.transform.position.z + transform.forward.z;
     //正規化座標位置
     Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
     Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
+    //    Cube.transform.position.y = Mathf.Floor(Cube.transform.position.y / 1);
+    var tempPOS: Vector3 = Cube.transform.position;
+    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.y += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
+    //todo 座標被提上後又提下...造成閃逤
+    if (mainGamejs.array3d[parseInt(tempPOS.x)][parseInt(tempPOS.y)][parseInt(tempPOS.z)]) {
+        Cube.transform.position.y += 1;
+    } else {
+        Cube.transform.position.y = 0.5;
+    }
 
 }
 
@@ -84,11 +111,9 @@ function _animations() {
         case "Attack":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
-            _Attack();
-            Instantiate(Cube);
+            _crateCube();
             break;
         case "Damage":
-            print("a");
             break;
         case "Walk":
             anim.CrossFade("Walk");
