@@ -24,7 +24,7 @@ function Start() {
 
     _backward = false;
     WalkSteptweek = WalkSteptweek || 100;
-    moveSpeed = moveSpeed || 0.05;
+    moveSpeed = moveSpeed || 0.08;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
     Cube = GameObject.Find("Cube");
@@ -38,11 +38,6 @@ function Update() {
     this._animations();
     _pick();
 
-}
-
-function OnTriggerEnter(other: Collider) {
-    print("Trigger " + Collider);
-    //    Destroy(other.gameObject);
 }
 
 function _input() {
@@ -87,21 +82,23 @@ function _pick() {
     //將座標放在角色正前方
     Cube.transform.position.x = this.transform.position.x + transform.forward.x;
     Cube.transform.position.z = this.transform.position.z + transform.forward.z;
+
     //正規化座標位置
     Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
     Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
-    //    Cube.transform.position.y = Mathf.Floor(Cube.transform.position.y / 1);
-    var tempPOS: Vector3 = Cube.transform.position;
-    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
-    tempPOS.y += mainGamejs.gameAeraSize * 0.5;
-    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
-    //todo 座標被提上後又提下...造成閃逤
-    if (mainGamejs.array3d[parseInt(tempPOS.x)][parseInt(tempPOS.y)][parseInt(tempPOS.z)]) {
-        Cube.transform.position.y += 1;
-    } else {
-        Cube.transform.position.y = 0.5;
-    }
 
+    //檢查下方是否有方塊
+    var tempPOS: Vector3 = Cube.transform.position;
+    var tempHight: int = 0;
+    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.y = mainGamejs.gameAeraSize * 0.5;
+    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
+    for (var i: int = 0; i < 5; i++) {
+        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
+            tempHight++;
+        }
+    }
+    Cube.transform.position.y = tempHight + 0.5;
 }
 
 function _animations() {

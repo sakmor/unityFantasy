@@ -9,7 +9,10 @@ var array3d: Array;
 var gameAeraSize: int;
 
 function Start() {
+    //定義三矩陣範圍
+    //ex:100，表示矩陣從0~100，3D座標從-50~50
     gameAeraSize = gameAeraSize || 100;
+
     //建立一個三維陣列
     array3d = new Array(gameAeraSize);
     for (i = 0; i < gameAeraSize; i++) {
@@ -34,6 +37,10 @@ function Start() {
 
 function setArray(a: Vector3, b: boolean) {
     array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = b;
+}
+
+function checkArray(a: Vector3) {
+    return (array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
 }
 
 function Update() {
