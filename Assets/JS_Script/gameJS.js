@@ -33,6 +33,9 @@ function Start() {
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
 
+    //攝影機盯著玩家
+    PlayerCamera.transform.LookAt(Player.transform);
+
 }
 
 function setArray(a: Vector3, b: boolean) {
@@ -44,6 +47,8 @@ function checkArray(a: Vector3) {
 }
 
 function Update() {
+
+
     getMousehitGroupPos();
     fellowPlayerLight();
     fellowPlayerCameraMove();

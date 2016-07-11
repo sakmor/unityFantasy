@@ -74,7 +74,17 @@ function _crateCube() {
     tempPOS.x += mainGamejs.gameAeraSize * 0.5;
     tempPOS.y += mainGamejs.gameAeraSize * 0.5;
     tempPOS.z += mainGamejs.gameAeraSize * 0.5;
+    temp.name = "cube" + tempPOS.x + '.' + (tempPOS.y - 0.5) + tempPOS.z;
     mainGamejs.setArray(tempPOS, true);
+}
+
+function _destroyCube() {
+    var temp = Instantiate(Cube);
+    var tempPOS: Vector3 = temp.transform.position;
+    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.y += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
+    mainGamejs.setArray(tempPOS, temp.name);
 }
 
 function _pick() {
@@ -93,7 +103,7 @@ function _pick() {
     tempPOS.x += mainGamejs.gameAeraSize * 0.5;
     tempPOS.y = mainGamejs.gameAeraSize * 0.5;
     tempPOS.z += mainGamejs.gameAeraSize * 0.5;
-    for (var i: int = 0; i < 5; i++) {
+    for (var i: int = 0; i < 50; i++) {
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
             tempHight++;
         }
