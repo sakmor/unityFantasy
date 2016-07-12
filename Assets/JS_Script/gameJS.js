@@ -44,10 +44,10 @@ function setArray(a: Vector3) {
 
 function checkArray(a: Vector3) {
     a.x += gameAeraSize * 0.5;
-    a.y += gameAeraSize * 0.5-0.5;
+    a.y += gameAeraSize * 0.5 - 0.5;
     a.z += gameAeraSize * 0.5;
-	//print(a);
-	//print(array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
+    //print(a);
+    //print(array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
     return (array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
 }
 

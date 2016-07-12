@@ -16,6 +16,7 @@ var anim: Animation;
 var WalkSteptweek: float;
 var mainGame: GameObject;
 var mainGamejs: gameJS;
+var TextMesh: TextMesh;
 
 function Start() {
 
@@ -30,12 +31,15 @@ function Start() {
     Cube = GameObject.Find("Cube");
     anim = this.GetComponent. < Animation > ();
 
+
 }
 
 function Update() {
     this._input();
     this._movment();
     this._animations();
+
+
     _pick();
 
 }
@@ -70,8 +74,18 @@ function _input() {
 
 function _crateCube() {
     var temp = Instantiate(Cube);
-    var tempPOS: Vector3 = temp.transform.position;
-    mainGamejs.setArray(tempPOS);
+    temp.AddComponent(BoxCollider);
+    temp.name = temp.transform.position.ToString("F0");
+    mainGamejs.setArray(temp.transform.position);
+}
+
+function _removeCube() {
+    //檢查下方是否有方塊
+    var tempPOS: Vector3 = Cube.transform.position;
+    var tempHight: int = 0;
+    if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
+        Destroy(GameObject.Find(tempPOS.ToString("F0")));
+    }
 }
 
 function _pick() {
@@ -86,7 +100,7 @@ function _pick() {
 
     //檢查下方是否有方塊
     var tempPOS: Vector3 = Cube.transform.position;
-	tempPOS.y=0;
+    tempPOS.y = 0;
     var tempHight: int = 0;
     for (var i: int = 0; i < 5; i++) {
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
@@ -106,6 +120,7 @@ function _animations() {
             _crateCube();
             break;
         case "Damage":
+            _removeCube();
             break;
         case "Walk":
             anim.CrossFade("Walk");
