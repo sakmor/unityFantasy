@@ -49,7 +49,6 @@ function _input() {
         }
         if (Input.GetKey(KeyCode.F)) {
             this.bioAction = "Damage";
-            _destroyCube();
         }
         if (Input.GetKey(KeyCode.A)) {
             transform.Rotate(0, -3, 0);
@@ -72,20 +71,10 @@ function _input() {
 function _crateCube() {
     var temp = Instantiate(Cube);
     var tempPOS: Vector3 = temp.transform.position;
-    tempPOS.y -= 0.5;
-    temp.name = tempPOS.ToString("F1");
+    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.y += mainGamejs.gameAeraSize * 0.5;
+    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
     mainGamejs.setArray(tempPOS, true);
-}
-
-function _destroyCube() {
-
-    var tempPOS: Vector3 = Cube.transform.position;
-    if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
-        print("destory");
-        var tempObject: GameObject = GameObject.Find(tempPOS.ToString("F1"));
-        Destroy(tempObject);
-
-    }
 }
 
 function _pick() {
@@ -104,7 +93,7 @@ function _pick() {
     tempPOS.x += mainGamejs.gameAeraSize * 0.5;
     tempPOS.y = mainGamejs.gameAeraSize * 0.5;
     tempPOS.z += mainGamejs.gameAeraSize * 0.5;
-    for (var i: int = 0; i < 50; i++) {
+    for (var i: int = 0; i < 5; i++) {
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
             tempHight++;
         }
