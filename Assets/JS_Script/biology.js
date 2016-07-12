@@ -71,10 +71,7 @@ function _input() {
 function _crateCube() {
     var temp = Instantiate(Cube);
     var tempPOS: Vector3 = temp.transform.position;
-    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
-    tempPOS.y += mainGamejs.gameAeraSize * 0.5;
-    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
-    mainGamejs.setArray(tempPOS, true);
+    mainGamejs.setArray(tempPOS);
 }
 
 function _pick() {
@@ -89,10 +86,8 @@ function _pick() {
 
     //檢查下方是否有方塊
     var tempPOS: Vector3 = Cube.transform.position;
+	tempPOS.y=0;
     var tempHight: int = 0;
-    tempPOS.x += mainGamejs.gameAeraSize * 0.5;
-    tempPOS.y = mainGamejs.gameAeraSize * 0.5;
-    tempPOS.z += mainGamejs.gameAeraSize * 0.5;
     for (var i: int = 0; i < 5; i++) {
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
             tempHight++;

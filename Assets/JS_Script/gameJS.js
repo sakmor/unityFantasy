@@ -35,11 +35,19 @@ function Start() {
 
 }
 
-function setArray(a: Vector3, b: boolean) {
-    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = b;
+function setArray(a: Vector3) {
+    a.x += gameAeraSize * 0.5;
+    a.y += gameAeraSize * 0.5;
+    a.z += gameAeraSize * 0.5;
+    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = true;
 }
 
 function checkArray(a: Vector3) {
+    a.x += gameAeraSize * 0.5;
+    a.y += gameAeraSize * 0.5-0.5;
+    a.z += gameAeraSize * 0.5;
+	//print(a);
+	//print(array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
     return (array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
 }
 
