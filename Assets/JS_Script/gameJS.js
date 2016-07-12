@@ -38,25 +38,29 @@ function Start() {
 
 }
 
-function setArray(a: Vector3, b: boolean) {
-    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = b;
-}
 
-function checkArray(a: Vector3) {
-    return (array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
-}
 
 function Update() {
-
-
     getMousehitGroupPos();
     fellowPlayerLight();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
 }
 
-//========================================================
 
+function setArray(a: Vector3, b: boolean) {
+    a.x += gameAeraSize * 0.5;
+    a.y += gameAeraSize * 0.5;
+    a.z += gameAeraSize * 0.5;
+    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = b;
+}
+
+function checkArray(a: Vector3) {
+    a.x += gameAeraSize * 0.5;
+    a.y += gameAeraSize * 0.5;
+    a.z += gameAeraSize * 0.5;
+    return (array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
+}
 
 function fellowPlayerCameraMove() {
     PlayerCamera.transform.position.x = Player.transform.position.x + -12;
