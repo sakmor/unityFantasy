@@ -77,6 +77,8 @@ function _crateCube() {
     temp.AddComponent(BoxCollider);
     temp.name = temp.transform.position.ToString("F0");
     mainGamejs.setArray(temp.transform.position);
+
+
 }
 
 function _removeCube() {
@@ -120,6 +122,8 @@ function _animations() {
             _crateCube();
             break;
         case "Damage":
+            //jump
+            this.GetComponent. < Rigidbody > ().velocity.y = 5;
             _removeCube();
             break;
         case "Walk":
