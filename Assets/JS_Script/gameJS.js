@@ -7,6 +7,7 @@ var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
 var array3d: Array;
 var gameAeraSize: int;
+var myButton: GameObject;
 
 function Start() {
     //定義三矩陣範圍
@@ -28,11 +29,20 @@ function Start() {
     Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
     Player = GameObject.Find("Cha_Knight");
+    myButton = GameObject.Find("Button");
+    myButton.GetComponent(UI.Button).onClick.AddListener(modeButton);
     PlayerCamera = GameObject.Find("PlayerCamera");
     Sphere.transform.position = Player.transform.position;
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
+}
 
+function modeButton() {
+    if (myButton.GetComponentInChildren(UI.Text).text == "Create Mode") {
+        myButton.GetComponentInChildren(UI.Text).text = "Remove Mode";
+    } else {
+        myButton.GetComponentInChildren(UI.Text).text = "Create Mode";
+    }
 }
 
 function setArray(a: Vector3) {
@@ -56,10 +66,10 @@ function Update() {
     fellowPlayerLight();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
+
 }
 
 //========================================================
-
 
 function fellowPlayerCameraMove() {
     PlayerCamera.transform.position.x = Player.transform.position.x + -12;
@@ -81,10 +91,11 @@ function fellowPlayerCameraContorl() {
 }
 
 function fellowPlayerLight() {
-    PlayerLight.transform.position = Vector3(Player.transform.position.x, PlayerLight.transform.position.y, Player.transform.position.z);
+    PlayerLight.transform.position = Vector3(Player.transform.position.x, Player.transform.position.y + 8, Player.transform.position.z);
 }
 
 function getMousehitGroupPos() {
+
     //    Cube.layer = 2;
     Sphere.layer = 2;
     Player.layer = 2;
@@ -99,8 +110,8 @@ function getMousehitGroupPos() {
 
         }
     }
-
     //    Cube.layer = 0;
     Sphere.layer = 0;
     Player.layer = 0;
+
 }
