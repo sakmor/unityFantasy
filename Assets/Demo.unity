@@ -275,21 +275,21 @@ AudioListener:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 125124729}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!124 &125124731
 Behaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 125124729}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!92 &125124732
 Behaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 125124729}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!20 &125124733
 Camera:
   m_ObjectHideFlags: 0
@@ -1822,6 +1822,7 @@ MonoBehaviour:
   PlayerCamera: {fileID: 0}
   gameAeraSize: 50
   myButton: {fileID: 0}
+  playerStatue: Create
 --- !u!4 &1653811513
 Transform:
   m_ObjectHideFlags: 0

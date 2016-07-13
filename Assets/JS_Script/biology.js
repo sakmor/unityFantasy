@@ -14,7 +14,9 @@ var Sphere: GameObject;
 var Cube: GameObject;
 var anim: Animation;
 var WalkSteptweek: float;
+private
 var mainGame: GameObject;
+private
 var mainGamejs: gameJS;
 var TextMesh: TextMesh;
 
@@ -38,8 +40,6 @@ function Update() {
     this._input();
     this._movment();
     this._animations();
-
-
     _pick();
 
 }
@@ -91,6 +91,7 @@ function _removeCube() {
 }
 
 function _pick() {
+
     //TODO:效能可以調整
     //將座標放在角色正前方
     Cube.transform.position.x = this.transform.position.x + transform.forward.x;
@@ -104,12 +105,22 @@ function _pick() {
     var tempPOS: Vector3 = Cube.transform.position;
     tempPOS.y = 0;
     var tempHight: int = 0;
-    for (var i: int = 0; i < 5; i++) {
-        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
-            tempHight++;
+    if (mainGamejs.playerStatue == 'Create') {
+        for (var i: int = 0; i < 5; i++) {
+            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
+                tempHight++;
+            }
         }
+        Cube.transform.position.y = tempHight + 0.5;
+    } else {
+        //        for (var j: int = 0; j < 5; j++) {
+        ////            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + j, tempPOS.z)) == null) {
+        ////                tempHight++;
+        ////            }
+        ////        }
+        ////        Cube.transform.position.y = tempHight + 0.5;
     }
-    Cube.transform.position.y = tempHight + 0.5;
+
 }
 
 function _animations() {
@@ -119,7 +130,12 @@ function _animations() {
         case "Attack":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
-            _crateCube();
+            if (mainGamejs.playerStatue == 'Create') {
+                _crateCube();
+            } else {
+                _removeCube();
+            }
+
             break;
         case "Damage":
             //jump

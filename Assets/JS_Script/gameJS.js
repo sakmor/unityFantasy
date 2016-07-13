@@ -1,4 +1,6 @@
 // # pragma strict
+import UnityEngine;
+import UnityEngine.EventSystems;
 var Plane: GameObject;
 var Sphere: GameObject;
 var Cube: GameObject;
@@ -8,6 +10,7 @@ var PlayerCamera: GameObject;
 var array3d: Array;
 var gameAeraSize: int;
 var myButton: GameObject;
+var playerStatue: String = "Create";
 
 function Start() {
     //定義三矩陣範圍
@@ -40,8 +43,10 @@ function Start() {
 function modeButton() {
     if (myButton.GetComponentInChildren(UI.Text).text == "Create Mode") {
         myButton.GetComponentInChildren(UI.Text).text = "Remove Mode";
+        playerStatue = 'Remove';
     } else {
         myButton.GetComponentInChildren(UI.Text).text = "Create Mode";
+        playerStatue = 'Create';
     }
 }
 
@@ -74,6 +79,7 @@ function Update() {
 function fellowPlayerCameraMove() {
     PlayerCamera.transform.position.x = Player.transform.position.x + -12;
     PlayerCamera.transform.position.z = Player.transform.position.z + -12;
+    PlayerCamera.transform.position.y = Player.transform.position.y + 9;
 
 }
 
@@ -102,7 +108,7 @@ function getMousehitGroupPos() {
     //滑鼠點擊取得做標點
     var mouseHitPlane: RaycastHit;
     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    if (Physics.Raycast(ray, mouseHitPlane) && mouseHitPlane.transform.tag == "ground") {
+    if (Physics.Raycast(ray, mouseHitPlane) && mouseHitPlane.transform.tag == "ground" && !EventSystem.current.IsPointerOverGameObject()) {
         if (Input.GetMouseButton(0)) {
             Sphere.transform.position = mouseHitPlane.point;
         } else {
