@@ -1,5 +1,4 @@
 // # pragma strict
-import UnityEngine;
 import UnityEngine.EventSystems;
 var Plane: GameObject;
 var Sphere: GameObject;

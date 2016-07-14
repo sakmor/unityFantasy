@@ -37,6 +37,7 @@ function Start() {
 }
 
 function Update() {
+    this.transform.position.y = 0;
     this._input();
     this._movment();
     this._animations();
@@ -96,22 +97,21 @@ function _pick() {
     //將座標放在角色正前方
     Cube.transform.position.x = this.transform.position.x + transform.forward.x;
     Cube.transform.position.z = this.transform.position.z + transform.forward.z;
+    Cube.transform.position.y = this.transform.position.y + transform.forward.y;
 
     //正規化座標位置
     Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
     Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
+    Cube.transform.position.y = Mathf.Floor(Cube.transform.position.y / 1) + 1.5;
 
-    //檢查下方是否有方塊
-    var tempPOS: Vector3 = Cube.transform.position;
-    tempPOS.y = 0;
+
     var tempHight: int = 0;
     if (mainGamejs.playerStatue == 'Create') {
-        for (var i: int = 0; i < 5; i++) {
-            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + i, tempPOS.z)) == true) {
-                tempHight++;
-            }
-        }
-        Cube.transform.position.y = tempHight + 0.5;
+        //        for (var j: int = 0; j < 5; j++) {
+        ////            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + j, tempPOS.z)) == null) {
+        ////                tempHight++;
+        ////            }
+        ////        }
     } else {
         //        for (var j: int = 0; j < 5; j++) {
         ////            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + j, tempPOS.z)) == null) {
@@ -140,7 +140,6 @@ function _animations() {
         case "Damage":
             //jump
             this.GetComponent. < Rigidbody > ().velocity.y = 5;
-            _removeCube();
             break;
         case "Walk":
             anim.CrossFade("Walk");
