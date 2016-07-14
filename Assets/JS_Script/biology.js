@@ -37,7 +37,6 @@ function Start() {
 }
 
 function Update() {
-    this.transform.position.y = 0;
     this._input();
     this._movment();
     this._animations();
@@ -97,12 +96,12 @@ function _pick() {
     //將座標放在角色正前方
     Cube.transform.position.x = this.transform.position.x + transform.forward.x;
     Cube.transform.position.z = this.transform.position.z + transform.forward.z;
-    Cube.transform.position.y = this.transform.position.y + transform.forward.y;
+    Cube.transform.position.y = this.transform.position.y + transform.forward.y + 0.5;
 
     //正規化座標位置
     Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
     Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
-    Cube.transform.position.y = Mathf.Floor(Cube.transform.position.y / 1) + 1.5;
+    Cube.transform.position.y = Mathf.Floor(Cube.transform.position.y / 1) + 0.5;
 
 
     var tempHight: int = 0;
@@ -180,6 +179,7 @@ function _movment() {
     }
 
     //移動生物到目標點
+    Sphere.transform.position.y = this.transform.position.y;
     this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere.transform.position, moveSpeed);
 
     //調整步伐
