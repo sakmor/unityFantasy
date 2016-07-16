@@ -11,6 +11,7 @@ private
 var _backward: boolean;
 
 var Sphere: GameObject;
+var Pick: GameObject;
 var Cube: GameObject;
 var anim: Animation;
 var WalkSteptweek: float;
@@ -30,7 +31,9 @@ function Start() {
     moveSpeed = moveSpeed || 0.08;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
+    Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
+    Cube.GetComponent. < Renderer > ().enabled = false;
     anim = this.GetComponent. < Animation > ();
 
 
@@ -72,8 +75,10 @@ function _input() {
     }
 }
 
-function _crateCube() {
+function _createCube() {
+    Cube.transform.position = Pick.transform.position;
     var temp = Instantiate(Cube);
+    temp.GetComponent. < Renderer > ().enabled = true;
     temp.AddComponent(BoxCollider);
     temp.name = temp.transform.position.ToString("F0");
     mainGamejs.setArray(temp.transform.position);
@@ -83,7 +88,7 @@ function _crateCube() {
 
 function _removeCube() {
     //檢查下方是否有方塊
-    var tempPOS: Vector3 = Cube.transform.position;
+    var tempPOS: Vector3 = Pick.transform.position;
     var tempHight: int = 0;
     if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
         Destroy(GameObject.Find(tempPOS.ToString("F0")));
@@ -94,14 +99,14 @@ function _pick() {
 
     //TODO:效能可以調整
     //將座標放在角色正前方
-    Cube.transform.position.x = this.transform.position.x + transform.forward.x;
-    Cube.transform.position.z = this.transform.position.z + transform.forward.z;
-    Cube.transform.position.y = this.transform.position.y + transform.forward.y + 0.5;
+    Pick.transform.position.x = this.transform.position.x + transform.forward.x;
+    Pick.transform.position.z = this.transform.position.z + transform.forward.z;
+    Pick.transform.position.y = this.transform.position.y + transform.forward.y + 0.5;
 
     //正規化座標位置
-    Cube.transform.position.x = Mathf.Floor(Cube.transform.position.x / 1);
-    Cube.transform.position.z = Mathf.Floor(Cube.transform.position.z / 1);
-    Cube.transform.position.y = Mathf.Floor(Cube.transform.position.y / 1) + 0.5;
+    Pick.transform.position.x = Mathf.Floor(Pick.transform.position.x / 1);
+    Pick.transform.position.z = Mathf.Floor(Pick.transform.position.z / 1);
+    Pick.transform.position.y = Mathf.Floor(Pick.transform.position.y / 1) + 0.5;
 
 
     var tempHight: int = 0;
@@ -117,7 +122,7 @@ function _pick() {
         ////                tempHight++;
         ////            }
         ////        }
-        ////        Cube.transform.position.y = tempHight + 0.5;
+        ////        Pick.transform.position.y = tempHight + 0.5;
     }
 
 }
@@ -130,7 +135,7 @@ function _animations() {
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
             if (mainGamejs.playerStatue == 'Create') {
-                _crateCube();
+                _createCube();
             } else {
                 _removeCube();
             }

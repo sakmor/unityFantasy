@@ -102,6 +102,7 @@ function fellowPlayerLight() {
 function getMousehitGroupPos() {
 
     //    Cube.layer = 2;
+    Plane.transform.position.y = Player.transform.position.y - 1;
     Sphere.layer = 2;
     Player.layer = 2;
     //滑鼠點擊取得做標點
