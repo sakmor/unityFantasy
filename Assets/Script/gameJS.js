@@ -9,7 +9,6 @@ var PlayerCamera: GameObject;
 var array3d: Array;
 var gameAeraSize: int;
 var myButton: GameObject;
-var playerStatue: String = "Create";
 
 function Start() {
     //定義三矩陣範圍
@@ -31,29 +30,26 @@ function Start() {
     Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
     Player = GameObject.Find("Cha_Knight");
-    myButton = GameObject.Find("Button");
-    myButton.GetComponent(UI.Button).onClick.AddListener(modeButton);
     PlayerCamera = GameObject.Find("PlayerCamera");
     Sphere.transform.position = Player.transform.position;
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
 }
 
-function modeButton() {
-    if (myButton.GetComponentInChildren(UI.Text).text == "Create Mode") {
-        myButton.GetComponentInChildren(UI.Text).text = "Remove Mode";
-        playerStatue = 'Remove';
-    } else {
-        myButton.GetComponentInChildren(UI.Text).text = "Create Mode";
-        playerStatue = 'Create';
-    }
-}
+
 
 function setArray(a: Vector3) {
     a.x += gameAeraSize * 0.5;
     a.y += gameAeraSize * 0.5;
     a.z += gameAeraSize * 0.5;
     array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = true;
+}
+
+function removeArray(a: Vector3) {
+    a.x += gameAeraSize * 0.5;
+    a.y += gameAeraSize * 0.5;
+    a.z += gameAeraSize * 0.5;
+    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = null;
 }
 
 function checkArray(a: Vector3) {
@@ -102,13 +98,13 @@ function fellowPlayerLight() {
 function getMousehitGroupPos() {
 
     //    Cube.layer = 2;
-    Plane.transform.position.y = Player.transform.position.y - 1;
+    //    Plane.transform.position.y = Player.transform.position.y - 1;
     Sphere.layer = 2;
     Player.layer = 2;
     //滑鼠點擊取得做標點
     var mouseHitPlane: RaycastHit;
     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    if (Physics.Raycast(ray, mouseHitPlane) && mouseHitPlane.transform.tag == "ground" && !EventSystem.current.IsPointerOverGameObject()) {
+    if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
         if (Input.GetMouseButton(0)) {
             Sphere.transform.position = mouseHitPlane.point;
         } else {

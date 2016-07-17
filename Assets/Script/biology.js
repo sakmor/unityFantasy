@@ -55,7 +55,8 @@ function _input() {
             this.bioAction = "Attack";
         }
         if (Input.GetKey(KeyCode.F)) {
-            this.bioAction = "Damage";
+            this.bioAction = "Jump";
+
         }
         if (Input.GetKey(KeyCode.A)) {
             transform.Rotate(0, -3, 0);
@@ -75,25 +76,33 @@ function _input() {
     }
 }
 
-function _createCube() {
-    Cube.transform.position = Pick.transform.position;
-    var temp = Instantiate(Cube);
-    temp.GetComponent. < Renderer > ().enabled = true;
-    temp.AddComponent(BoxCollider);
-    temp.name = temp.transform.position.ToString("F0");
-    mainGamejs.setArray(temp.transform.position);
-
-
+function jumpBlock() {
+    this.GetComponent. < Rigidbody > ().velocity.y = 5;
 }
 
-function _removeCube() {
-    //檢查下方是否有方塊
+function _createCube() {
+
     var tempPOS: Vector3 = Pick.transform.position;
     var tempHight: int = 0;
     if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
+        mainGamejs.removeArray(tempPOS);
         Destroy(GameObject.Find(tempPOS.ToString("F0")));
+    } else {
+        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 0.5, tempPOS.z)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1.5, tempPOS.z)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x - 0.5, tempPOS.y, tempPOS.z)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x + 1.5, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 0.5)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1.5)) == true || Pick.transform.position.y == 0.5) {
+            Cube.transform.position = Pick.transform.position;
+            var temp = Instantiate(Cube);
+            temp.GetComponent. < Renderer > ().enabled = true;
+            temp.AddComponent(BoxCollider);
+            temp.name = temp.transform.position.ToString("F0");
+            mainGamejs.setArray(temp.transform.position);
+        }
     }
 }
+
 
 function _pick() {
 
@@ -108,21 +117,14 @@ function _pick() {
     Pick.transform.position.z = Mathf.Floor(Pick.transform.position.z / 1);
     Pick.transform.position.y = Mathf.Floor(Pick.transform.position.y / 1) + 0.5;
 
-
-    var tempHight: int = 0;
-    if (mainGamejs.playerStatue == 'Create') {
-        //        for (var j: int = 0; j < 5; j++) {
-        ////            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + j, tempPOS.z)) == null) {
-        ////                tempHight++;
-        ////            }
-        ////        }
-    } else {
-        //        for (var j: int = 0; j < 5; j++) {
-        ////            if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + j, tempPOS.z)) == null) {
-        ////                tempHight++;
-        ////            }
-        ////        }
-        ////        Pick.transform.position.y = tempHight + 0.5;
+    //如果生物腳下有方塊，且pick底下正好為空時
+    var temp: Vector3;
+    temp.x = Mathf.Floor(this.transform.position.x / 1);
+    temp.z = Mathf.Floor(this.transform.position.z / 1);
+    temp.y = Mathf.Floor((this.transform.position.y - 0.5) / 1) + 0.5;
+    if (mainGamejs.checkArray(temp) &&
+        !mainGamejs.checkArray(Vector3(Pick.transform.position.x, Pick.transform.position.y - 1, Pick.transform.position.z))) {
+        Pick.transform.position.y -= 1;
     }
 
 }
@@ -131,19 +133,16 @@ function _animations() {
     //對應生物所處狀態，播放對應動作
     if (this.bioAction != this._bioAction) {
         switch (this.bioAction) {
+
         case "Attack":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
-            if (mainGamejs.playerStatue == 'Create') {
-                _createCube();
-            } else {
-                _removeCube();
-            }
-
+            _createCube();
+            //            Invoke("jumpBlock", 2);
             break;
         case "Damage":
             //jump
-            this.GetComponent. < Rigidbody > ().velocity.y = 5;
+            this.bioAction = 'Jump';
             break;
         case "Walk":
             anim.CrossFade("Walk");
@@ -154,6 +153,12 @@ function _animations() {
             Sphere.transform.position.x = this.transform.position.x;
             Sphere.transform.position.z = this.transform.position.z;
             anim.CrossFade("Wait");
+            break;
+        case "Jump":
+            //            Sphere.transform.position.x = this.transform.position.x;
+            //            Sphere.transform.position.z = this.transform.position.z;
+            this.GetComponent. < Rigidbody > ().velocity.y = 5;
+            //            anim.CrossFade("Jump");
             break;
         }
         this._bioAction = this.bioAction;
@@ -169,7 +174,7 @@ function _movment() {
     //將生物移動向目標
     if (Vector3.Distance(this.transform.position, Sphere.transform.position) > 0.5) {
         moveSpeed = moveSpeedMax;
-        this.bioAction = "Walk";
+        if (this.bioAction != 'Jump') this.bioAction = "Walk";
         //依照目標距離調整移動速度
         if (Vector3.Distance(this.transform.position, Sphere.transform.position) < 5) {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere.transform.position) / 5);
@@ -178,7 +183,7 @@ function _movment() {
             }
         }
     } else {
-        if (this.bioAction != "Attack" && this.bioAction != "Damage") {
+        if (this.bioAction != "Attack" && this.bioAction != "Damage" && this.bioAction != "Jump") {
             this.bioAction = "Wait";
         }
     }
