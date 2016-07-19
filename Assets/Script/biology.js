@@ -88,11 +88,11 @@ function _createCube() {
         mainGamejs.removeArray(tempPOS);
         Destroy(GameObject.Find(tempPOS.ToString("F0")));
     } else {
-        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 0.5, tempPOS.z)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1.5, tempPOS.z)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x - 0.5, tempPOS.y, tempPOS.z)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x + 1.5, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 0.5)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1.5)) == true || Pick.transform.position.y == 0.5) {
+        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
+            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true || Pick.transform.position.y == 0.5) {
             Cube.transform.position = Pick.transform.position;
             var temp = Instantiate(Cube);
             temp.GetComponent. < Renderer > ().enabled = true;

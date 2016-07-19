@@ -1681,7 +1681,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1538086128}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_Materials:
@@ -1817,7 +1817,6 @@ MonoBehaviour:
   Player: {fileID: 0}
   PlayerLight: {fileID: 0}
   PlayerCamera: {fileID: 0}
-  gameAeraSize: 50
   myButton: {fileID: 0}
 --- !u!4 &1653811513
 Transform:

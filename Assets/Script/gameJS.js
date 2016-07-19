@@ -1,28 +1,17 @@
 // # pragma strict
 import UnityEngine.EventSystems;
+import System.Collections.Generic;
 var Plane: GameObject;
 var Sphere: GameObject;
 var Cube: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
-var array3d: Array;
-var gameAeraSize: int;
+var array3d: Dictionary. < Vector3, boolean > = new Dictionary. < Vector3,
+    boolean > ();
 var myButton: GameObject;
 
 function Start() {
-    //定義三矩陣範圍
-    //ex:100，表示矩陣從0~100，3D座標從-50~50
-    gameAeraSize = gameAeraSize || 100;
-
-    //建立一個三維陣列
-    array3d = new Array(gameAeraSize);
-    for (i = 0; i < gameAeraSize; i++) {
-        array3d[i] = new Array(gameAeraSize);
-        for (j = 0; j < gameAeraSize; j++) {
-            array3d[i][j] = new Array(gameAeraSize);
-        }
-    }
 
     //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
@@ -39,26 +28,20 @@ function Start() {
 
 
 function setArray(a: Vector3) {
-    a.x += gameAeraSize * 0.5;
-    a.y += gameAeraSize * 0.5;
-    a.z += gameAeraSize * 0.5;
-    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = true;
+    array3d[a] = true;
 }
 
 function removeArray(a: Vector3) {
-    a.x += gameAeraSize * 0.5;
-    a.y += gameAeraSize * 0.5;
-    a.z += gameAeraSize * 0.5;
-    array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)] = null;
+    array3d[a] = false;
 }
 
 function checkArray(a: Vector3) {
-    a.x += gameAeraSize * 0.5;
-    a.y += gameAeraSize * 0.5 - 0.5;
-    a.z += gameAeraSize * 0.5;
-    //print(a);
-    //print(array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
-    return (array3d[parseInt(a.x)][parseInt(a.y)][parseInt(a.z)]);
+    if (array3d.ContainsKey(a)) {
+        print('check');
+        if (array3d[a]) {
+            return true;
+        }
+    }
 }
 
 function Update() {
