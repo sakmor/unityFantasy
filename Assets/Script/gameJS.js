@@ -10,6 +10,7 @@ var PlayerCamera: GameObject;
 var array3d: Dictionary. < Vector3, boolean > = new Dictionary. < Vector3,
     boolean > ();
 var myButton: GameObject;
+var biologyJS: biology;
 
 function Start() {
 
@@ -23,9 +24,15 @@ function Start() {
     Sphere.transform.position = Player.transform.position;
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
+    biologyJS = Player.GetComponent(biology);
+
+    myButton = GameObject.Find("Button_Space");
+    myButton.GetComponent(UI.Button).onClick.AddListener(modeButton);
 }
 
-
+function modeButton() {
+    biologyJS.bioAction = "Attack";
+}
 
 function setArray(a: Vector3) {
     array3d[a] = true;
