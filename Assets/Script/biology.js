@@ -74,6 +74,8 @@ function _input() {
             Sphere.transform.position.z = this.transform.position.z - transform.forward.z * 2.5;
         }
     }
+
+
 }
 
 function jumpBlock() {

@@ -10,6 +10,12 @@ var PlayerCamera: GameObject;
 var array3d: Dictionary. < Vector3, boolean > = new Dictionary. < Vector3,
     boolean > ();
 var myButton: GameObject;
+var myButtonJump: GameObject;
+var myButtonForward: GameObject;
+var myButtonBackward: GameObject;
+var myButtonLeft: GameObject;
+var myButtonRight: GameObject;
+
 var biologyJS: biology;
 
 function Start() {
@@ -27,11 +33,43 @@ function Start() {
     biologyJS = Player.GetComponent(biology);
 
     myButton = GameObject.Find("Button_Space");
-    myButton.GetComponent(UI.Button).onClick.AddListener(modeButton);
+    myButton.GetComponent(UI.Button).onClick.AddListener(Button_Space);
+    myButtonJump = GameObject.Find("Button_jump");
+    myButtonJump.GetComponent(UI.Button).onClick.AddListener(Button_jump);
+    myButtonForward = GameObject.Find("Button_up");
+    myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_up);
+    myButtonBackward = GameObject.Find("Button_down");
+    myButtonBackward.GetComponent(UI.Button).onClick.AddListener(Button_down);
+    myButtonLeft = GameObject.Find("Button_left");
+    myButtonLeft.GetComponent(UI.Button).onClick.AddListener(Button_left);
+    myButtonRight = GameObject.Find("Button_right");
+    myButtonRight.GetComponent(UI.Button).onClick.AddListener(Button_right);
 }
 
-function modeButton() {
+function Button_Space() {
     biologyJS.bioAction = "Attack";
+}
+
+function Button_jump() {
+    biologyJS.bioAction = "Jump";
+}
+
+function Button_up() {
+    Sphere.transform.position.x = biologyJS.transform.position.x + biologyJS.transform.forward.x * 2.5;
+    Sphere.transform.position.z = biologyJS.transform.position.z + transform.forward.z * 2.5;
+}
+
+function Button_down() {
+    Sphere.transform.position.x = biologyJS.transform.position.x - biologyJS.transform.forward.x * 2.5;
+    Sphere.transform.position.z = biologyJS.transform.position.z - biologyJS.transform.forward.z * 2.5;
+}
+
+function Button_left() {
+    biologyJS.transform.Rotate(0, -3, 0);
+}
+
+function Button_right() {
+    biologyJS.transform.Rotate(0, 3, 0);
 }
 
 function setArray(a: Vector3) {
@@ -91,17 +129,31 @@ function getMousehitGroupPos() {
     //    Plane.transform.position.y = Player.transform.position.y - 1;
     Sphere.layer = 2;
     Player.layer = 2;
+
     //滑鼠點擊取得做標點
     var mouseHitPlane: RaycastHit;
     var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
-        if (Input.GetMouseButton(0)) {
-            Sphere.transform.position = mouseHitPlane.point;
-        } else {
-            Sphere.transform.position = Player.transform.position;
-
+    if (Input.touches.length > 0) {
+        for (var touch: Touch in Input.touches) {
+            var id = touch.fingerId;
+            if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject(id)) {
+                if (Input.GetMouseButton(0)) {
+                    Sphere.transform.position = mouseHitPlane.point;
+                } else {
+                    Sphere.transform.position = Player.transform.position;
+                }
+            }
+        }
+    } else {
+        if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
+            if (Input.GetMouseButton(0)) {
+                Sphere.transform.position = mouseHitPlane.point;
+            } else {
+                Sphere.transform.position = Player.transform.position;
+            }
         }
     }
+
     //    Cube.layer = 0;
     Sphere.layer = 0;
     Player.layer = 0;
