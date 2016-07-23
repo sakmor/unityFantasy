@@ -82,7 +82,6 @@ function removeArray(a: Vector3) {
 
 function checkArray(a: Vector3) {
     if (array3d.ContainsKey(a)) {
-        print('check');
         if (array3d[a]) {
             return true;
         }
@@ -149,6 +148,9 @@ function getMousehitGroupPos() {
             if (Input.GetMouseButton(0)) {
                 Sphere.transform.position = mouseHitPlane.point;
             } else {
+//                Sphere.transform.position.x = Player.transform.position.x + Player.transform.forward.x;
+//                Sphere.transform.position.z = Player.transform.position.z + Player.transform.forward.z;
+//                Sphere.transform.position.y = Player.transform.position.y;
                 Sphere.transform.position = Player.transform.position;
             }
         }
