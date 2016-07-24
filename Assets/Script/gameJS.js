@@ -16,6 +16,7 @@ var myButtonBackward: GameObject;
 var myButtonLeft: GameObject;
 var myButtonRight: GameObject;
 
+
 var biologyJS: biology;
 
 function Start() {
@@ -148,9 +149,9 @@ function getMousehitGroupPos() {
             if (Input.GetMouseButton(0)) {
                 Sphere.transform.position = mouseHitPlane.point;
             } else {
-//                Sphere.transform.position.x = Player.transform.position.x + Player.transform.forward.x;
-//                Sphere.transform.position.z = Player.transform.position.z + Player.transform.forward.z;
-//                Sphere.transform.position.y = Player.transform.position.y;
+                //                Sphere.transform.position.x = Player.transform.position.x + Player.transform.forward.x;
+                //                Sphere.transform.position.z = Player.transform.position.z + Player.transform.forward.z;
+                //                Sphere.transform.position.y = Player.transform.position.y;
                 Sphere.transform.position = Player.transform.position;
             }
         }

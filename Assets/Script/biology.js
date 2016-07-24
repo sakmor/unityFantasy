@@ -20,9 +20,10 @@ var mainGame: GameObject;
 private
 var mainGamejs: gameJS;
 var TextMesh: TextMesh;
+var pickPlayer: GameObject;
 
 function Start() {
-
+    pickPlayer = GameObject.Find("pickPlayer");
     mainGame = GameObject.Find("mainGame");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
 
@@ -52,18 +53,12 @@ function _autoJump() {
     if (this.bioAction == "Walk") {
 
         var tempPOS: Vector3;
-        tempPOS.x = this.transform.position.x + transform.forward.x;
-        tempPOS.z = this.transform.position.z + transform.forward.z;
+        tempPOS.x = Pick.transform.position.x;
+        //        tempPOS.y = Pick.transform.position.y;
         tempPOS.y = 0.5;
-
-        //正規化座標位置
-        tempPOS.x = Mathf.Floor(tempPOS.x / 1);
-        tempPOS.z = Mathf.Floor(tempPOS.z / 1);
-        tempPOS.y = Mathf.Floor(tempPOS.y / 1) + 0.5;
+        tempPOS.z = Pick.transform.position.z;
 
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
-            //            this.GetComponent. < Rigidbody > ().velocity.y = 3;
-            print('i am jump');
             this.transform.position.y += 0.05;
         }
     }
@@ -125,16 +120,50 @@ function _createCube() {
 
 function _pick() {
 
-    //TODO:效能可以調整
-    //將座標放在角色正前方
-    Pick.transform.position.x = this.transform.position.x + this.transform.forward.x;
-    Pick.transform.position.z = this.transform.position.z + this.transform.forward.z;
-    Pick.transform.position.y = this.transform.position.y + this.transform.forward.y + 0.5;;
+    //正規化生物座標
+    pickPlayer.transform.position.x = Mathf.Floor(this.transform.position.x + 0.5 / 1);
+    pickPlayer.transform.position.z = Mathf.Floor(this.transform.position.z + 0.5 / 1);
+    pickPlayer.transform.position.y = Mathf.Floor(this.transform.position.y + 0.5 / 1) + 0.5;
 
-    //正規化座標位置
-    Pick.transform.position.x = Mathf.Floor(Pick.transform.position.x / 1);
-    Pick.transform.position.z = Mathf.Floor(Pick.transform.position.z / 1);
-    Pick.transform.position.y = Mathf.Floor(Pick.transform.position.y / 1) + 0.5;
+    //TODO:效能可以調整
+    //將依據生物面相角度，將Pick放在角色正前方
+    var tempInt = Mathf.Floor(this.transform.eulerAngles.y / 45);
+    Pick.transform.position.y = pickPlayer.transform.position.y;
+    switch (tempInt) {
+    case 0:
+        Pick.transform.position.x = pickPlayer.transform.position.x + 0;
+        Pick.transform.position.z = pickPlayer.transform.position.z + 1;
+        break;
+    case 1:
+        Pick.transform.position.x = pickPlayer.transform.position.x + 1;
+        Pick.transform.position.z = pickPlayer.transform.position.z + 1;
+        break;
+    case 2:
+        Pick.transform.position.x = pickPlayer.transform.position.x + 1;
+        Pick.transform.position.z = pickPlayer.transform.position.z + 0;
+        break;
+    case 3:
+        Pick.transform.position.x = pickPlayer.transform.position.x + 1;
+        Pick.transform.position.z = pickPlayer.transform.position.z + -1;
+        break;
+    case 4:
+        Pick.transform.position.x = pickPlayer.transform.position.x + 0;
+        Pick.transform.position.z = pickPlayer.transform.position.z + -1;
+        break;
+    case 5:
+        Pick.transform.position.x = pickPlayer.transform.position.x + -1;
+        Pick.transform.position.z = pickPlayer.transform.position.z + -1;
+        break;
+    case 6:
+        Pick.transform.position.x = pickPlayer.transform.position.x + -1;
+        Pick.transform.position.z = pickPlayer.transform.position.z + 0;
+        break;
+    case 7:
+        Pick.transform.position.x = pickPlayer.transform.position.x + -1;
+        Pick.transform.position.z = pickPlayer.transform.position.z + 1;
+        break;
+    }
+
 
     //如果生物腳下有方塊，且pick底下正好為空時
     var temp: Vector3;
@@ -218,6 +247,5 @@ function _movment() {
         var step = rotateSpeed * Time.deltaTime;
         var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
         this.transform.rotation = Quaternion.LookRotation(newDir);
-        print(this.transform.rotation);
     }
 }
