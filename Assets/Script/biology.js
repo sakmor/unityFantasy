@@ -50,7 +50,7 @@ function Update() {
 }
 
 function _autoJump() {
-    if (this.bioAction == "Walk") {
+    if (this.bioAction == "Walk" && moveSpeed > 0.04) {
 
         var tempPOS: Vector3;
         tempPOS = Pick.transform.position;
