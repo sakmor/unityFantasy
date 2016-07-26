@@ -53,11 +53,16 @@ function _autoJump() {
     if (this.bioAction == "Walk") {
 
         var tempPOS: Vector3;
-        tempPOS.x = Pick.transform.position.x;
+        tempPOS = Pick.transform.position;
         //        tempPOS.y = Pick.transform.position.y;
-        tempPOS.y = 0.5;
-        tempPOS.z = Pick.transform.position.z;
+        //        tempPOS.y = this.transform.position.y;
+        //        tempPOS.z = Pick.transform.position.z;
 
+        if ((Pick.transform.position.y - this.transform.position.y) > 0.6) {
+            print(Pick.transform.position.y - this.transform.position.y);
+
+            this.transform.position.y += 0.05;
+        }
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
             this.transform.position.y += 0.05;
         }
@@ -242,7 +247,7 @@ function _movment() {
 
 
     //將生物轉向目標
-    if (!_backward || this.bioAction != "Jump") {
+    if (this.bioAction == "Walk") {
         var targetDir = Sphere.transform.position - this.transform.position;
         var step = rotateSpeed * Time.deltaTime;
         var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
