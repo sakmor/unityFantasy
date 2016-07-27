@@ -21,8 +21,10 @@ private
 var mainGamejs: gameJS;
 var TextMesh: TextMesh;
 var pickPlayer: GameObject;
+var Plane_touch: GameObject;
 
 function Start() {
+    Plane_touch = GameObject.Find("Plane_touch");
     pickPlayer = GameObject.Find("pickPlayer");
     mainGame = GameObject.Find("mainGame");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
@@ -46,7 +48,7 @@ function Update() {
     this._animations();
     this._autoJump();
     _pick();
-
+    Plane_touch.transform.position.y = this.transform.position.y;
 }
 
 function _autoJump() {
@@ -172,9 +174,8 @@ function _pick() {
 
     //如果生物腳下有方塊，且pick底下正好為空時
     var temp: Vector3;
-    temp.x = Mathf.Floor(this.transform.position.x / 1);
-    temp.z = Mathf.Floor(this.transform.position.z / 1);
-    temp.y = Mathf.Floor((this.transform.position.y - 0.5) / 1) + 0.5;
+    temp = pickPlayer.transform.position;
+    temp.y -= 1;
     if (mainGamejs.checkArray(temp) &&
         !mainGamejs.checkArray(Vector3(Pick.transform.position.x, Pick.transform.position.y - 1, Pick.transform.position.z))) {
         Pick.transform.position.y -= 1;

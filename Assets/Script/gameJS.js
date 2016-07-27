@@ -2,6 +2,7 @@
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
 var Plane: GameObject;
+
 var Sphere: GameObject;
 var Cube: GameObject;
 var Player: GameObject;
@@ -24,6 +25,7 @@ function Start() {
     //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
     Plane = GameObject.Find("Plane");
+
     Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
     Player = GameObject.Find("Cha_Knight");
