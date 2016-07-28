@@ -21,6 +21,7 @@ private
 var mainGamejs: gameJS;
 var TextMesh: TextMesh;
 var pickPlayer: GameObject;
+
 var Plane_touch: GameObject;
 
 function Start() {
@@ -48,7 +49,7 @@ function Update() {
     this._animations();
     this._autoJump();
     _pick();
-    Plane_touch.transform.position.y = this.transform.position.y;
+    Plane_touch.transform.position.y = this.transform.position.y - 0.2;
 }
 
 function _autoJump() {
@@ -120,6 +121,7 @@ function _createCube() {
             temp.AddComponent(BoxCollider);
             temp.name = temp.transform.position.ToString("F0");
             mainGamejs.setArray(temp.transform.position);
+            print(JsonUtility.ToJson(this));
         }
     }
 }

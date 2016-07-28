@@ -16,7 +16,7 @@ var myButtonForward: GameObject;
 var myButtonBackward: GameObject;
 var myButtonLeft: GameObject;
 var myButtonRight: GameObject;
-
+var pickTouch: GameObject;
 
 var biologyJS: biology;
 
@@ -25,7 +25,7 @@ function Start() {
     //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
     Plane = GameObject.Find("Plane");
-
+    pickTouch = GameObject.Find("pickTouch");
     Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
     Player = GameObject.Find("Cha_Knight");
@@ -150,11 +150,16 @@ function getMousehitGroupPos() {
         if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
             if (Input.GetMouseButton(0)) {
                 Sphere.transform.position = mouseHitPlane.point;
+                pickTouch.transform.position = Sphere.transform.position;
+                pickTouch.transform.position.x = Mathf.Floor(pickTouch.transform.position.x + 0.5 / 1);
+                pickTouch.transform.position.y = Mathf.Floor(pickTouch.transform.position.y + 0.5 / 1) + 0.5;
+                pickTouch.transform.position.z = Mathf.Floor(pickTouch.transform.position.z + 0.5 / 1);
             } else {
                 //                Sphere.transform.position.x = Player.transform.position.x + Player.transform.forward.x;
                 //                Sphere.transform.position.z = Player.transform.position.z + Player.transform.forward.z;
                 //                Sphere.transform.position.y = Player.transform.position.y;
                 Sphere.transform.position = Player.transform.position;
+
             }
         }
     }
