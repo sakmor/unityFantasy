@@ -1,3 +1,9 @@
+TODO:
+攝影機操控
+更換貼圖    https://docs.unity3d.com/ScriptReference/Mesh-uv.html
+設定存檔    https://docs.unity3d.com/ScriptReference/JsonUtility.ToJson.html
+
+
 讓Adobe Brackets跳行至unity提示位置
 ....目前無解
 
