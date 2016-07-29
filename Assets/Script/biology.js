@@ -23,13 +23,14 @@ var TextMesh: TextMesh;
 var pickPlayer: GameObject;
 
 var Plane_touch: GameObject;
+var pickTouch: GameObject;
 
 function Start() {
     Plane_touch = GameObject.Find("Plane_touch");
     pickPlayer = GameObject.Find("pickPlayer");
     mainGame = GameObject.Find("mainGame");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
-
+    pickTouch = GameObject.Find("pickTouch");
     _backward = false;
     WalkSteptweek = WalkSteptweek || 100;
     moveSpeed = moveSpeed || 0.08;
@@ -105,7 +106,7 @@ function _input() {
 
 function _createCube() {
 
-    var tempPOS: Vector3 = Pick.transform.position;
+    var tempPOS: Vector3 = pickTouch.transform.position;
     if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
         mainGamejs.removeArray(tempPOS);
         Destroy(GameObject.Find(tempPOS.ToString("F0")));
@@ -114,14 +115,13 @@ function _createCube() {
             mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
             mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
             mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true || Pick.transform.position.y == 0.5) {
-            Cube.transform.position = Pick.transform.position;
+            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true || tempPOS.y == 0.5) {
+            Cube.transform.position = tempPOS;
             var temp = Instantiate(Cube);
             temp.GetComponent. < Renderer > ().enabled = true;
             temp.AddComponent(BoxCollider);
             temp.name = temp.transform.position.ToString("F0");
             mainGamejs.setArray(temp.transform.position);
-            print(JsonUtility.ToJson(this));
         }
     }
 }
