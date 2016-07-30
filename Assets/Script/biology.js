@@ -21,16 +21,25 @@ private
 var mainGamejs: gameJS;
 var TextMesh: TextMesh;
 var pickPlayer: GameObject;
-
 var Plane_touch: GameObject;
 var pickTouch: GameObject;
+var pickTouchSide: GameObject;
+
+
+//Pick           --在玩家面前的選取框
+//PickPlayer     --玩家所在的位置
+//PickTouch      --滑鼠點選地面位置,或是點擊的Cube選取框
+//PickTouchSide  --滑鼠點擊Cube的某一面
+
 
 function Start() {
-    Plane_touch = GameObject.Find("Plane_touch");
-    pickPlayer = GameObject.Find("pickPlayer");
+
     mainGame = GameObject.Find("mainGame");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
-    pickTouch = GameObject.Find("pickTouch");
+    pickTouch = mainGamejs.pickTouch;
+    pickTouchSide = mainGamejs.pickTouchSide;
+    Plane_touch = GameObject.Find("Plane_touch");
+    pickPlayer = GameObject.Find("pickPlayer");
     _backward = false;
     WalkSteptweek = WalkSteptweek || 100;
     moveSpeed = moveSpeed || 0.08;
@@ -40,17 +49,15 @@ function Start() {
     Cube = GameObject.Find("Cube");
     Cube.GetComponent. < Renderer > ().enabled = false;
     anim = this.GetComponent. < Animation > ();
-
-
 }
 
 function Update() {
     this._input();
     this._movment();
-    this._animations();
+    this._bioStatus();
     this._autoJump();
     _pick();
-    Plane_touch.transform.position.y = this.transform.position.y - 0.2;
+    //    Plane_touch.transform.position.y = this.transform.position.y - 0.2;
 }
 
 function _autoJump() {
@@ -78,7 +85,7 @@ function _input() {
         _backward = false;
         if (Input.GetKey(KeyCode.Space)) {
             Sphere.transform.position = this.transform.position;
-            this.bioAction = "Attack";
+            this.bioAction = "Action";
         }
         if (Input.GetKey(KeyCode.F)) {
             this.bioAction = "Jump";
@@ -106,26 +113,31 @@ function _input() {
 
 function _createCube() {
 
-    var tempPOS: Vector3 = pickTouch.transform.position;
-    if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
-        mainGamejs.removeArray(tempPOS);
-        Destroy(GameObject.Find(tempPOS.ToString("F0")));
-    } else {
-        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
-            mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true || tempPOS.y == 0.5) {
-            Cube.transform.position = tempPOS;
-            var temp = Instantiate(Cube);
-            temp.GetComponent. < Renderer > ().enabled = true;
-            temp.AddComponent(BoxCollider);
-            temp.name = temp.transform.position.ToString("F0");
-            mainGamejs.setArray(temp.transform.position);
-        }
+    var tempPOS: Vector3 = pickTouchSide.transform.position;
+
+    if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
+        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
+        mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
+        mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
+        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true ||
+        tempPOS.y == 0.5) {
+        Cube.transform.position = tempPOS;
+        var temp = Instantiate(Cube);
+        temp.GetComponent. < Renderer > ().enabled = true;
+        temp.AddComponent(BoxCollider);
+        temp.name = temp.transform.position.ToString("F0");
+        mainGamejs.setArray(temp.transform.position);
     }
+
 }
 
+function _removeCube() {
+
+    var tempPOS: Vector3 = pickTouch.transform.position;
+    mainGamejs.removeArray(tempPOS);
+    Destroy(GameObject.Find(tempPOS.ToString("F0")));
+
+}
 
 function _pick() {
 
@@ -185,11 +197,16 @@ function _pick() {
 
 }
 
-function _animations() {
+function _bioStatus() {
     //對應生物所處狀態，播放對應動作
     if (!anim.IsPlaying("Attack")) {
         switch (this.bioAction) {
-        case "Attack":
+        case "Action":
+            anim.CrossFade("Attack");
+            anim.CrossFadeQueued("Wait");
+            _removeCube();
+            break;
+        case "Create":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
             _createCube();
@@ -212,8 +229,7 @@ function _animations() {
             break;
         }
     }
-    if (anim.IsPlaying("Wait") &&
-        this.bioAction == "Attack") {
+    if (anim.IsPlaying("Wait")) {
         this.bioAction = "Wait";
     }
 }

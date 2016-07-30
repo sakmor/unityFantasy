@@ -17,7 +17,7 @@ var myButtonBackward: GameObject;
 var myButtonLeft: GameObject;
 var myButtonRight: GameObject;
 var pickTouch: GameObject;
-
+var pickTouchSide: GameObject;
 var biologyJS: biology;
 
 function Start() {
@@ -33,14 +33,15 @@ function Start() {
     Sphere.transform.position = Player.transform.position;
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
+    pickTouchSide = GameObject.Find("pickTouchSide");
     biologyJS = Player.GetComponent(biology);
 
-    myButton = GameObject.Find("Button_Space");
-    myButton.GetComponent(UI.Button).onClick.AddListener(Button_Space);
+    myButton = GameObject.Find("Button_LEFT");
+    myButton.GetComponent(UI.Button).onClick.AddListener(Button_LEFT);
     myButtonJump = GameObject.Find("Button_jump");
     myButtonJump.GetComponent(UI.Button).onClick.AddListener(Button_jump);
-    myButtonForward = GameObject.Find("Button_up");
-    myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_up);
+    myButtonForward = GameObject.Find("Button_RIGHT");
+    myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_RIGHT);
     myButtonBackward = GameObject.Find("Button_down");
     myButtonBackward.GetComponent(UI.Button).onClick.AddListener(Button_down);
     myButtonLeft = GameObject.Find("Button_left");
@@ -49,17 +50,17 @@ function Start() {
     myButtonRight.GetComponent(UI.Button).onClick.AddListener(Button_right);
 }
 
-function Button_Space() {
-    biologyJS.bioAction = "Attack";
+function Button_LEFT() {
+    biologyJS.bioAction = "Create";
+    print("ButtonLeft");
 }
 
 function Button_jump() {
     biologyJS.bioAction = "Jump";
 }
 
-function Button_up() {
-    Sphere.transform.position.x = biologyJS.transform.position.x + biologyJS.transform.forward.x * 2.5;
-    Sphere.transform.position.z = biologyJS.transform.position.z + transform.forward.z * 2.5;
+function Button_RIGHT() {
+    biologyJS.bioAction = "Action";
 }
 
 function Button_down() {
@@ -150,14 +151,55 @@ function getMousehitGroupPos() {
         if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
             if (Input.GetMouseButton(0)) {
                 Sphere.transform.position = mouseHitPlane.point;
-                pickTouch.transform.position = Sphere.transform.position;
-                pickTouch.transform.position.x = Mathf.Floor(pickTouch.transform.position.x + 0.5 / 1);
-                pickTouch.transform.position.y = Mathf.Floor(pickTouch.transform.position.y + 0.5 / 1) + 0.5;
-                pickTouch.transform.position.z = Mathf.Floor(pickTouch.transform.position.z + 0.5 / 1);
+
+                pickTouchSide.transform.position.x = Mathf.Floor(Sphere.transform.position.x + 0.5 / 1);
+                pickTouchSide.transform.position.y = Mathf.Floor(Sphere.transform.position.y + 0.5 / 1) + 0.5;
+                pickTouchSide.transform.position.z = Mathf.Floor(Sphere.transform.position.z + 0.5 / 1);
+//                pickTouchSide.transform.position = pickTouch.transform.position;
+
+                if (mouseHitPlane.transform.tag == "Cube") {
+                    pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+                    pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+                    var tempVector: Vector3 = mouseHitPlane.transform.position - Sphere.transform.position;
+                    if (Sphere.transform.position.x - mouseHitPlane.transform.position.x >= 0.5 &&
+                        Sphere.transform.position.y - mouseHitPlane.transform.position.y <= 0.5 &&
+                        Sphere.transform.position.z - mouseHitPlane.transform.position.z <= 0.5) {
+                        pickTouchSide.transform.position.x += 1.0;
+                    } else
+                    if (mouseHitPlane.transform.position.x - Sphere.transform.position.x >= 0.5 &&
+                        mouseHitPlane.transform.position.y - Sphere.transform.position.y <= 0.5 &&
+                        mouseHitPlane.transform.position.z - Sphere.transform.position.z <= 0.5) {
+                        pickTouchSide.transform.position.x -= 1.0;
+                    } else
+                    if (Sphere.transform.position.x - mouseHitPlane.transform.position.x <= 0.5 &&
+                        Sphere.transform.position.y - mouseHitPlane.transform.position.y <= 0.5 &&
+                        Sphere.transform.position.z - mouseHitPlane.transform.position.z >= 0.5) {
+                        pickTouchSide.transform.position.z += 1.0;
+                    } else
+                    if (mouseHitPlane.transform.position.x - Sphere.transform.position.x <= 0.5 &&
+                        mouseHitPlane.transform.position.y - Sphere.transform.position.y <= 0.5 &&
+                        mouseHitPlane.transform.position.z - Sphere.transform.position.z >= 0.5) {
+                        pickTouchSide.transform.position.z -= 1.0;
+                    } else
+                    if (Sphere.transform.position.x - mouseHitPlane.transform.position.x <= 0.5 &&
+                        Sphere.transform.position.y - mouseHitPlane.transform.position.y >= 0.5 &&
+                        Sphere.transform.position.z - mouseHitPlane.transform.position.z <= 0.5) {
+                        pickTouchSide.transform.position.y += 1.0;
+                    } else
+                    if (mouseHitPlane.transform.position.x - Sphere.transform.position.x <= 0.5 &&
+                        mouseHitPlane.transform.position.y - Sphere.transform.position.y >= 0.5 &&
+                        mouseHitPlane.transform.position.z - Sphere.transform.position.z <= 0.5) {
+                        pickTouchSide.transform.position.y -= 1.0;
+                    }
+                    //                    print(tempVector);
+
+                    //                    print("Pick: " + pickTouchSide.transform.position);
+                    //                    print("mouse: " + mouseHitPlane.point);
+                } else {
+                    //                    pickTouchSide.transform.position = pickTouch.transform.position;
+
+                }
             } else {
-                //                Sphere.transform.position.x = Player.transform.position.x + Player.transform.forward.x;
-                //                Sphere.transform.position.z = Player.transform.position.z + Player.transform.forward.z;
-                //                Sphere.transform.position.y = Player.transform.position.y;
                 Sphere.transform.position = Player.transform.position;
 
             }
