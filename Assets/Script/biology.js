@@ -42,7 +42,7 @@ function Start() {
     pickPlayer = GameObject.Find("pickPlayer");
     _backward = false;
     WalkSteptweek = WalkSteptweek || 100;
-    moveSpeed = moveSpeed || 0.08;
+    moveSpeed = moveSpeed || 0.05;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
@@ -245,7 +245,7 @@ function _movment() {
         //依照目標距離調整移動速度
         if (Vector3.Distance(this.transform.position, Sphere.transform.position) < 5) {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere.transform.position) / 5);
-            if (moveSpeed < 0.02) {
+            if (moveSpeed < 0.04) {
                 moveSpeed = 0;
             }
         }
