@@ -20,7 +20,15 @@ var pickTouch: GameObject;
 var pickTouchSide: GameObject;
 var biologyJS: biology;
 
+//紀錄滑鼠首次點擊座標
+var mouseStartPOS: Vector3;
+var clickStart = false;
+var mouseDragVector: Vector3;
+var mouseDragDist: float;
+var cameraAngle: float;
+
 function Start() {
+    cameraAngle = cameraAngle || 45.0;
 
     //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
@@ -148,61 +156,71 @@ function getMousehitGroupPos() {
             }
         }
     } else {
-        if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
-            if (Input.GetMouseButton(0)) {
-                Sphere.transform.position = mouseHitPlane.point;
 
-                pickTouchSide.transform.position.x = Mathf.Floor(Sphere.transform.position.x + 0.5 / 1);
-                pickTouchSide.transform.position.y = Mathf.Floor(Sphere.transform.position.y + 0.5 / 1) + 0.5;
-                pickTouchSide.transform.position.z = Mathf.Floor(Sphere.transform.position.z + 0.5 / 1);
-//                pickTouchSide.transform.position = pickTouch.transform.position;
+        //預設滑鼠未點擊時，操控球sphere要在角色底下
+        //todo:寫在這裡太難擴充了 之後要改
+        Sphere.transform.position = Player.transform.position;
 
-                if (mouseHitPlane.transform.tag == "Cube") {
-                    pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-                    pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-                    var tempVector: Vector3 = mouseHitPlane.transform.position - Sphere.transform.position;
-                    if (Sphere.transform.position.x - mouseHitPlane.transform.position.x >= 0.5 &&
-                        Sphere.transform.position.y - mouseHitPlane.transform.position.y <= 0.5 &&
-                        Sphere.transform.position.z - mouseHitPlane.transform.position.z <= 0.5) {
-                        pickTouchSide.transform.position.x += 1.0;
-                    } else
-                    if (mouseHitPlane.transform.position.x - Sphere.transform.position.x >= 0.5 &&
-                        mouseHitPlane.transform.position.y - Sphere.transform.position.y <= 0.5 &&
-                        mouseHitPlane.transform.position.z - Sphere.transform.position.z <= 0.5) {
-                        pickTouchSide.transform.position.x -= 1.0;
-                    } else
-                    if (Sphere.transform.position.x - mouseHitPlane.transform.position.x <= 0.5 &&
-                        Sphere.transform.position.y - mouseHitPlane.transform.position.y <= 0.5 &&
-                        Sphere.transform.position.z - mouseHitPlane.transform.position.z >= 0.5) {
-                        pickTouchSide.transform.position.z += 1.0;
-                    } else
-                    if (mouseHitPlane.transform.position.x - Sphere.transform.position.x <= 0.5 &&
-                        mouseHitPlane.transform.position.y - Sphere.transform.position.y <= 0.5 &&
-                        mouseHitPlane.transform.position.z - Sphere.transform.position.z >= 0.5) {
-                        pickTouchSide.transform.position.z -= 1.0;
-                    } else
-                    if (Sphere.transform.position.x - mouseHitPlane.transform.position.x <= 0.5 &&
-                        Sphere.transform.position.y - mouseHitPlane.transform.position.y >= 0.5 &&
-                        Sphere.transform.position.z - mouseHitPlane.transform.position.z <= 0.5) {
-                        pickTouchSide.transform.position.y += 1.0;
-                    } else
-                    if (mouseHitPlane.transform.position.x - Sphere.transform.position.x <= 0.5 &&
-                        mouseHitPlane.transform.position.y - Sphere.transform.position.y >= 0.5 &&
-                        mouseHitPlane.transform.position.z - Sphere.transform.position.z <= 0.5) {
-                        pickTouchSide.transform.position.y -= 1.0;
-                    }
-                    //                    print(tempVector);
+        //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI
+        if (Input.GetMouseButton(0) && Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
+            pickTouchSide.transform.position = mouseHitPlane.point;
 
-                    //                    print("Pick: " + pickTouchSide.transform.position);
-                    //                    print("mouse: " + mouseHitPlane.point);
-                } else {
-                    //                    pickTouchSide.transform.position = pickTouch.transform.position;
+            pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);
+            pickTouchSide.transform.position.y = Mathf.Floor(pickTouchSide.transform.position.y + 0.5 / 1) + 0.5;
+            pickTouchSide.transform.position.z = Mathf.Floor(pickTouchSide.transform.position.z + 0.5 / 1);
+            //                pickTouchSide.transform.position = pickTouch.transform.position;
 
+            if (mouseHitPlane.transform.tag == "Cube") {
+                pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+                pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+                var tempVector: Vector3 = mouseHitPlane.transform.position - mouseHitPlane.point;
+                if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
+                    mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
+                    mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
+                    pickTouchSide.transform.position.x += 1.0;
+                } else
+                if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x >= 0.5 &&
+                    mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
+                    mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
+                    pickTouchSide.transform.position.x -= 1.0;
+                } else
+                if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
+                    mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
+                    mouseHitPlane.point.z - mouseHitPlane.transform.position.z >= 0.5) {
+                    pickTouchSide.transform.position.z += 1.0;
+                } else
+                if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
+                    mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
+                    mouseHitPlane.transform.position.z - mouseHitPlane.point.z >= 0.5) {
+                    pickTouchSide.transform.position.z -= 1.0;
+                } else
+                if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
+                    mouseHitPlane.point.y - mouseHitPlane.transform.position.y >= 0.5 &&
+                    mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
+                    pickTouchSide.transform.position.y += 1.0;
+                } else
+                if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
+                    mouseHitPlane.transform.position.y - mouseHitPlane.point.y >= 0.5 &&
+                    mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
+                    pickTouchSide.transform.position.y -= 1.0;
                 }
-            } else {
-                Sphere.transform.position = Player.transform.position;
-
             }
+        }
+        //如果滑鼠右鍵按下，並點擊到plane，並沒有點擊到任何UI
+        //clickStart:如果是false狀態，則將現在點擊的座標視為原點，並將狀態改為true
+        //所以clickStart=true時，表示現在是滑鼠拖拉狀態
+        if (Input.GetMouseButton(1) && !EventSystem.current.IsPointerOverGameObject()) {
+            if (!clickStart) {
+                clickStart = true;
+                mouseStartPOS = Input.mousePosition;
+            }
+            mouseDragVector.x = (Input.mousePosition.x - mouseStartPOS.x);
+            mouseDragVector.z = (Input.mousePosition.y - mouseStartPOS.y);
+            mouseDragDist = Vector3.Distance(Input.mousePosition, mouseStartPOS);
+            print(mouseDragDist);
+        } else {
+            clickStart = false;
+            //            mouseDragDist = 0;
         }
     }
 

@@ -11,6 +11,7 @@ private
 var _backward: boolean;
 
 var Sphere: GameObject;
+var Sphere2: GameObject;
 var Pick: GameObject;
 var Cube: GameObject;
 var anim: Animation;
@@ -35,6 +36,7 @@ var pickTouchSide: GameObject;
 function Start() {
 
     mainGame = GameObject.Find("mainGame");
+    Sphere2 = GameObject.Find("Sphere2");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
     pickTouch = mainGamejs.pickTouch;
     pickTouchSide = mainGamejs.pickTouchSide;
@@ -236,6 +238,19 @@ function _bioStatus() {
 
 function _movment() {
 
+    //轉換sphere座標，轉換成螢幕座標
+    if (mainGamejs.clickStart) {
+        Sphere.transform.position.x = mainGamejs.mouseDragVector.x * 0.01 + this.transform.position.x;
+        Sphere.transform.position.z = mainGamejs.mouseDragVector.z * 0.01 + this.transform.position.z;
+        //        var tempAngel = mainGamejs.cameraAngle;
+        var tempAngel = mainGamejs.PlayerCamera.transform.rotation.y;
+        tempAngel = -(tempAngel * 2);
+        Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel);
+        Sphere2.transform.position.z = Sphere.transform.position.x * Mathf.Sin(tempAngel) + Sphere.transform.position.z * Mathf.Cos(tempAngel);
+
+        print(mainGamejs.mouseDragDist);
+    }
+
     //將生物移動向目標
     if (Vector3.Distance(this.transform.position, Sphere.transform.position) > 0.5) {
 
@@ -245,13 +260,14 @@ function _movment() {
         //依照目標距離調整移動速度
         if (Vector3.Distance(this.transform.position, Sphere.transform.position) < 5) {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere.transform.position) / 5);
-            if (moveSpeed < 0.04) {
-                moveSpeed = 0;
-            }
+            //            if (moveSpeed < 0.04) {
+            //                moveSpeed = 0;
+            //            }
         }
 
         //移動生物到目標點
         Sphere.transform.position.y = this.transform.position.y;
+        Sphere2.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere.transform.position, moveSpeed);
 
         //調整步伐
