@@ -152,6 +152,7 @@ function getMousehitGroupPos() {
                     Sphere.transform.position = mouseHitPlane.point;
                 } else {
                     Sphere.transform.position = Player.transform.position;
+                    Sphere.transform.position = Player.transform.position;
                 }
             }
         }
@@ -209,7 +210,7 @@ function getMousehitGroupPos() {
         //如果滑鼠右鍵按下，並點擊到plane，並沒有點擊到任何UI
         //clickStart:如果是false狀態，則將現在點擊的座標視為原點，並將狀態改為true
         //所以clickStart=true時，表示現在是滑鼠拖拉狀態
-        if (Input.GetMouseButton(1) && !EventSystem.current.IsPointerOverGameObject()) {
+        if (Input.GetMouseButton(1)) {
             if (!clickStart) {
                 clickStart = true;
                 mouseStartPOS = Input.mousePosition;
