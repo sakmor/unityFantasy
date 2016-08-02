@@ -111,9 +111,10 @@ function Update() {
 //========================================================
 
 function fellowPlayerCameraMove() {
-    PlayerCamera.transform.position.x = Player.transform.position.x + -12;
-    PlayerCamera.transform.position.z = Player.transform.position.z + -12;
-    PlayerCamera.transform.position.y = Player.transform.position.y + 9;
+    //    PlayerCamera.transform.position.x = Player.transform.position.x + -12;
+    //    PlayerCamera.transform.position.z = Player.transform.position.z + -12;
+    //    PlayerCamera.transform.position.y = Player.transform.position.y + 9;
+    PlayerCamera.transform.LookAt(Player.transform.position);
 
 }
 
