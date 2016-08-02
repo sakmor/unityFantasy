@@ -58,6 +58,8 @@ function Start() {
     myButtonRight.GetComponent(UI.Button).onClick.AddListener(Button_right);
 }
 
+
+
 function Button_LEFT() {
     biologyJS.bioAction = "Create";
     print("ButtonLeft");
@@ -105,15 +107,47 @@ function Update() {
     fellowPlayerLight();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
+    _input();
 
 }
 
+function _input() {
+    if (Input.anyKey) {
+        if (Input.GetKey(KeyCode.Space)) {
+            //            Sphere.transform.position = this.transform.position;
+            //            this.bioAction = "Action";
+
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, 200 * Time.deltaTime);
+        }
+        if (Input.GetKey(KeyCode.F)) {
+            //            this.bioAction = "Jump";
+
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            transform.Rotate(0, -3, 0);
+        }
+        if (Input.GetKey(KeyCode.D)) {
+            transform.Rotate(0, 3, 0);
+        }
+        if (Input.GetKey(KeyCode.W)) {
+            PlayerCamera.transform.position.x += 1;
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            Sphere.transform.position.x = this.transform.position.x - transform.forward.x * 2.5;
+            Sphere.transform.position.z = this.transform.position.z - transform.forward.z * 2.5;
+        }
+    }
+
+
+}
 //========================================================
 
 function fellowPlayerCameraMove() {
-    //    PlayerCamera.transform.position.x = Player.transform.position.x + -12;
-    //    PlayerCamera.transform.position.z = Player.transform.position.z + -12;
-    //    PlayerCamera.transform.position.y = Player.transform.position.y + 9;
+//    print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
+//    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 20) {
+//        PlayerCamera.transform.position += PlayerCamera.transform.forward;
+//        print('forward');
+//    }
     PlayerCamera.transform.LookAt(Player.transform.position);
 
 }

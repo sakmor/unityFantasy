@@ -54,7 +54,7 @@ function Start() {
 }
 
 function Update() {
-    this._input();
+
     this._movment();
     this._bioStatus();
     this._autoJump();
@@ -82,36 +82,7 @@ function _autoJump() {
     }
 }
 
-function _input() {
-    if (Input.anyKey) {
-        _backward = false;
-        if (Input.GetKey(KeyCode.Space)) {
-            Sphere.transform.position = this.transform.position;
-            this.bioAction = "Action";
-        }
-        if (Input.GetKey(KeyCode.F)) {
-            this.bioAction = "Jump";
 
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            transform.Rotate(0, -3, 0);
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            transform.Rotate(0, 3, 0);
-        }
-        if (Input.GetKey(KeyCode.W)) {
-            Sphere.transform.position.x = this.transform.position.x + transform.forward.x * 2.5;
-            Sphere.transform.position.z = this.transform.position.z + transform.forward.z * 2.5;
-        }
-        if (Input.GetKey(KeyCode.S)) {
-            _backward = true;
-            Sphere.transform.position.x = this.transform.position.x - transform.forward.x * 2.5;
-            Sphere.transform.position.z = this.transform.position.z - transform.forward.z * 2.5;
-        }
-    }
-
-
-}
 
 function _createCube() {
 
