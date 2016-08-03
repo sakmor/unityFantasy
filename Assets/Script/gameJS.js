@@ -144,12 +144,14 @@ function _input() {
 
 function fellowPlayerCameraMove() {
     print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
-    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 20) {
-        PlayerCamera.transform.position += PlayerCamera.transform.forward;
+    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 25) {
+        PlayerCamera.transform.position -= (PlayerCamera.transform.position - Player.transform.position) * 0.01;
+        PlayerCamera.transform.position.y = 10;
         print('forward');
     }
-    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) < 20) {
-        PlayerCamera.transform.position -= PlayerCamera.transform.forward;
+    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) < 5) {
+        PlayerCamera.transform.position += (PlayerCamera.transform.position - Player.transform.position) * 0.01;
+        PlayerCamera.transform.position.y = 10;
         print('Backward');
     }
     PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 1.0, Player.transform.position.z));
