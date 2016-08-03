@@ -220,7 +220,6 @@ function _movment() {
         Sphere2.transform.position.z = Sphere.transform.position.x * Mathf.Sin(tempAngel) + Sphere.transform.position.z * Mathf.Cos(tempAngel) + this.transform.position.z;
 
 
-        print(mainGamejs.mouseDragDist);
     }
 
     //將生物移動向目標

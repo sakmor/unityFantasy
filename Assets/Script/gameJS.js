@@ -143,12 +143,16 @@ function _input() {
 //========================================================
 
 function fellowPlayerCameraMove() {
-//    print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
-//    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 20) {
-//        PlayerCamera.transform.position += PlayerCamera.transform.forward;
-//        print('forward');
-//    }
-    PlayerCamera.transform.LookAt(Player.transform.position);
+    print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
+    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 20) {
+        PlayerCamera.transform.position += PlayerCamera.transform.forward;
+        print('forward');
+    }
+    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) < 20) {
+        PlayerCamera.transform.position -= PlayerCamera.transform.forward;
+        print('Backward');
+    }
+    PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 1.0, Player.transform.position.z));
 
 }
 
@@ -253,7 +257,6 @@ function getMousehitGroupPos() {
             mouseDragVector.x = (Input.mousePosition.x - mouseStartPOS.x);
             mouseDragVector.z = (Input.mousePosition.y - mouseStartPOS.y);
             mouseDragDist = Vector3.Distance(Input.mousePosition, mouseStartPOS);
-            print(mouseDragDist);
         } else {
             clickStart = false;
             //            mouseDragDist = 0;
