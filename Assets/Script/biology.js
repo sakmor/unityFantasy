@@ -211,16 +211,15 @@ function _movment() {
 
     //轉換sphere座標，轉換成螢幕座標
     if (mainGamejs.clickStart) {
-        Sphere.transform.position.x = this.transform.position.x + mainGamejs.mouseDragVector.x * 0.02;
-        Sphere.transform.position.z = this.transform.position.z + mainGamejs.mouseDragVector.z * 0.02;
+        Sphere.transform.position.x = mainGamejs.mouseDragVector.x * 0.02;
+        Sphere.transform.position.z = mainGamejs.mouseDragVector.z * 0.02;
 
         //        var tempAngel = mainGamejs.cameraAngle;
         var tempAngel = Vector3.Angle(mainGamejs.PlayerCamera.transform.forward, (Sphere.transform.position - this.transform.position));
-        print(tempAngel);
-
-        tempAngel = 60;
-        // x′=xcosθ−ysinθ,
-        // y′=xsin⁡θ+ycos⁡θ
+        print(mainGamejs.PlayerCamera.transform.eulerAngles.y);
+        tempAngel = -mainGamejs.PlayerCamera.transform.eulerAngles.y * Mathf.PI / 180;
+        // x′=xcosθ+ysinθ,
+        // y′=-xsin⁡θ+ycos⁡θ
         Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel) + this.transform.position.x;
         Sphere2.transform.position.z = Sphere.transform.position.x * Mathf.Sin(tempAngel) + Sphere.transform.position.z * Mathf.Cos(tempAngel) + this.transform.position.z;
 
@@ -243,7 +242,7 @@ function _movment() {
         //移動生物到目標點
         Sphere.transform.position.y = this.transform.position.y;
         Sphere2.transform.position.y = this.transform.position.y;
-        //        this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
+        this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
 
         //調整步伐
         anim["Walk"].speed = WalkSteptweek * moveSpeed;
