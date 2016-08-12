@@ -124,10 +124,10 @@ function _input() {
 
         }
         if (Input.GetKey(KeyCode.A)) {
-            transform.Rotate(0, -3, 0);
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, 200 * Time.deltaTime);
         }
         if (Input.GetKey(KeyCode.D)) {
-            transform.Rotate(0, 3, 0);
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, -200 * Time.deltaTime);
         }
         if (Input.GetKey(KeyCode.W)) {
             PlayerCamera.transform.position.x += 1;
