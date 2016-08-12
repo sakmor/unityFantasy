@@ -217,9 +217,11 @@ function _movment() {
         //        var tempAngel = mainGamejs.cameraAngle;
         var tempAngel = Vector3.Angle(mainGamejs.PlayerCamera.transform.forward, (Sphere.transform.position - this.transform.position));
         print(mainGamejs.PlayerCamera.transform.eulerAngles.y);
+        //角度轉徑度
+        //弳度=角度*pi/180
         tempAngel = -mainGamejs.PlayerCamera.transform.eulerAngles.y * Mathf.PI / 180;
-        // x′=xcosθ+ysinθ,
-        // y′=-xsin⁡θ+ycos⁡θ
+        // x′=xcosθ-ysinθ,
+        //y′=xsin⁡θ+ycos⁡θ....
         Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel) + this.transform.position.x;
         Sphere2.transform.position.z = Sphere.transform.position.x * Mathf.Sin(tempAngel) + Sphere.transform.position.z * Mathf.Cos(tempAngel) + this.transform.position.z;
 
