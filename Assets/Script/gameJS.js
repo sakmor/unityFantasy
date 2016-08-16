@@ -79,11 +79,11 @@ function Button_down() {
 }
 
 function Button_left() {
-    biologyJS.transform.Rotate(0, -3, 0);
+    PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, 800 * Time.deltaTime);
 }
 
 function Button_right() {
-    biologyJS.transform.Rotate(0, 3, 0);
+    PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, -800 * Time.deltaTime);
 }
 
 function setArray(a: Vector3) {
@@ -162,12 +162,12 @@ function fellowPlayerCameraContorl() {
     //滑鼠滾輪縮放攝影機
     if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
     {
-        if (Camera.main.orthographicSize > 1)
-            Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize - 1, 10);
+        if (Camera.main.fieldOfView > 1)
+            Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView - 1, 60);
     }
     if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
     {
-        Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 10);
+        Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
     }
 }
 
