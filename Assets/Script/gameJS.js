@@ -144,14 +144,14 @@ function _input() {
 
 function fellowPlayerCameraMove() {
     //    print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
-    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 20) {
+    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 15) {
         PlayerCamera.transform.position -= (PlayerCamera.transform.position - Player.transform.position) * 0.01;
-        PlayerCamera.transform.position.y = 10;
+        PlayerCamera.transform.position.y = 5;
         print('forward');
     }
-    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) < 18) {
+    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) < 10) {
         PlayerCamera.transform.position += (PlayerCamera.transform.position - Player.transform.position) * 0.01;
-        PlayerCamera.transform.position.y = 10;
+        PlayerCamera.transform.position.y = 5;
         print('Backward');
     }
     PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 1.0, Player.transform.position.z));
@@ -169,6 +169,10 @@ function fellowPlayerCameraContorl() {
     {
         Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
     }
+}
+
+function _pickAuto() {
+    //新增pickAuto，讓選取框會自動往下格動
 }
 
 function fellowPlayerLight() {
