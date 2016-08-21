@@ -208,13 +208,16 @@ function _bioStatus() {
 }
 
 function _movment() {
+    if (!Input.GetMouseButton(1)) {
+        Sphere2.transform.position = this.transform.position;
+    }
 
     //轉換sphere座標，轉換成螢幕座標
     if (mainGamejs.clickStart) {
         Sphere.transform.position.x = mainGamejs.mouseDragVector.x * 0.02;
         Sphere.transform.position.z = mainGamejs.mouseDragVector.z * 0.02;
 
-        //        var tempAngel = mainGamejs.cameraAngle;
+        //var tempAngel = mainGamejs.cameraAngle;
         var tempAngel = Vector3.Angle(mainGamejs.PlayerCamera.transform.forward, (Sphere.transform.position - this.transform.position));
         print(mainGamejs.PlayerCamera.transform.eulerAngles.y);
         //角度轉徑度
@@ -228,13 +231,13 @@ function _movment() {
     }
 
     //將生物移動向目標
-    if (Vector3.Distance(this.transform.position, Sphere.transform.position) > 0.5) {
+    if (Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
 
         moveSpeed = moveSpeedMax;
         this.bioAction = "Walk";
 
         //依照目標距離調整移動速度
-        if (Vector3.Distance(this.transform.position, Sphere.transform.position) < 5) {
+        if (Vector3.Distance(this.transform.position, Sphere2.transform.position) < 5) {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 5);
             if (moveSpeed < 0.01) {
                 moveSpeed = 0;
