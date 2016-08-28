@@ -18,6 +18,8 @@ var myButtonLeft: GameObject;
 var myButtonRight: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
+var cammeraPlate: GameObject;
+var mousePlate: GameObject;
 var biologyJS: biology;
 
 //紀錄滑鼠首次點擊座標
@@ -26,6 +28,9 @@ var clickStart = false;
 var mouseDragVector: Vector3;
 var mouseDragDist: float;
 var cameraAngle: float;
+
+//目前點擊的UI名稱
+var nowButton: String;
 
 function Start() {
     cameraAngle = cameraAngle || 45.0;
@@ -56,7 +61,13 @@ function Start() {
     myButtonLeft.GetComponent(UI.Button).onClick.AddListener(Button_left);
     myButtonRight = GameObject.Find("Button_right");
     myButtonRight.GetComponent(UI.Button).onClick.AddListener(Button_right);
+
+    cammeraPlate = GameObject.Find("cammeraPlate");
+
+    mousePlate = GameObject.Find("mousePlate");
 }
+
+
 
 
 
@@ -108,8 +119,40 @@ function Update() {
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     _input();
+    buttonDetect();
+
 
 }
+
+
+
+function getSpritePixel() {
+
+
+}
+
+function buttonDetect() {
+    if (Input.GetMouseButton(0)) {
+        if (EventSystem.current.IsPointerOverGameObject()) {
+            print(EventSystem.current.currentSelectedGameObject.name);
+            nowButton = EventSystem.current.currentSelectedGameObject.name;
+            switch (nowButton) {
+            case "cammeraPlate":
+                mousePlate.transform.position = Input.mousePosition;
+                break;
+            }
+        } else {
+            print("out");
+        }
+
+
+    } else {
+
+        nowButton = "";
+    }
+
+}
+
 
 function _input() {
     if (Input.anyKey) {
