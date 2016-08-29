@@ -132,22 +132,20 @@ function getSpritePixel() {
 }
 
 function buttonDetect() {
-    if (Input.GetMouseButton(0)) {
-        if (EventSystem.current.IsPointerOverGameObject()) {
-            print(EventSystem.current.currentSelectedGameObject.name);
-            nowButton = EventSystem.current.currentSelectedGameObject.name;
-            switch (nowButton) {
-            case "cammeraPlate":
-                mousePlate.transform.position = Input.mousePosition;
-                break;
-            }
-        } else {
-            print("out");
+    if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject()) {
+
+
+
+        //            print(EventSystem.current.currentSelectedGameObject.name);
+        nowButton = EventSystem.current.currentSelectedGameObject.name;
+        print(cammeraPlate.GetComponent. < UI.RawImage > ().texture);
+        //        print(cammeraPlate.RawImage.texture.texture2D.GetPixel(0, 0));
+        switch (nowButton) {
+        case "cammeraPlate":
+            mousePlate.transform.position = Input.mousePosition;
+            break;
         }
-
-
     } else {
-
         nowButton = "";
     }
 
