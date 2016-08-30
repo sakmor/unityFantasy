@@ -137,11 +137,20 @@ function buttonDetect() {
 
 
         //        Input.mousePosition.x -
+        var _sprite = cammeraPlate.GetComponent. < UI.Image > ().sprite;
+        print(_sprite.texture.GetPixel(220, 0));
+        print("sizeDelta" + cammeraPlate.GetComponent. < RectTransform > ().rect.width * cammeraPlate.GetComponent. < RectTransform > ().localScale.x * 0.5);
+        var temp: Vector2;
+        temp.x = Input.mousePosition.x -
+            cammeraPlate.transform.position.x + cammeraPlate.GetComponent. < RectTransform > ().rect.width * cammeraPlate.GetComponent. < RectTransform > ().localScale.x * 0.5;
+        temp.y = Input.mousePosition.y -
+            cammeraPlate.transform.position.y + cammeraPlate.GetComponent. < RectTransform > ().rect.height * cammeraPlate.GetComponent. < RectTransform > ().localScale.y * 0.5;
+        //        print(temp);
+        print("RGB" + _sprite.texture.GetPixel(temp.x, temp.y));
         //        print(cammeraPlate.GetComponent. < RectTransform > ().pivot.x * cammeraPlate.GetComponent. < RectTransform > ().rect.width);
         //            print(EventSystem.current.currentSelectedGameObject.name);
         nowButton = EventSystem.current.currentSelectedGameObject.name;
-        var _sprite = cammeraPlate.GetComponent. < UI.Image > ().sprite;
-        print(_sprite.texture.GetPixel(220, 0));
+
         //        print(cammeraPlate.RawImage.texture.texture2D.GetPixel(0, 0));
         switch (nowButton) {
         case "cammeraPlate":
