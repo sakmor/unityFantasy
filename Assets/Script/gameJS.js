@@ -132,13 +132,16 @@ function getSpritePixel() {
 }
 
 function buttonDetect() {
+    //當滑鼠按壓，並點選到UI時
     if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject()) {
 
 
-
+        //        Input.mousePosition.x -
+        //        print(cammeraPlate.GetComponent. < RectTransform > ().pivot.x * cammeraPlate.GetComponent. < RectTransform > ().rect.width);
         //            print(EventSystem.current.currentSelectedGameObject.name);
         nowButton = EventSystem.current.currentSelectedGameObject.name;
-        print(cammeraPlate.GetComponent. < UI.RawImage > ().texture);
+        var _sprite = cammeraPlate.GetComponent. < UI.Image > ().sprite;
+        print(_sprite.texture.GetPixel(220, 0));
         //        print(cammeraPlate.RawImage.texture.texture2D.GetPixel(0, 0));
         switch (nowButton) {
         case "cammeraPlate":
