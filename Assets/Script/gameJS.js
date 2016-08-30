@@ -138,15 +138,20 @@ function buttonDetect() {
 
         //        Input.mousePosition.x -
         var _sprite = cammeraPlate.GetComponent. < UI.Image > ().sprite;
-        print(_sprite.texture.GetPixel(220, 0));
-        print("sizeDelta" + cammeraPlate.GetComponent. < RectTransform > ().rect.width * cammeraPlate.GetComponent. < RectTransform > ().localScale.x * 0.5);
+        var _rect = cammeraPlate.GetComponent. < RectTransform > ().rect;
+
         var temp: Vector2;
         temp.x = Input.mousePosition.x -
-            cammeraPlate.transform.position.x + cammeraPlate.GetComponent. < RectTransform > ().rect.width * cammeraPlate.GetComponent. < RectTransform > ().localScale.x * 0.5;
+            cammeraPlate.transform.position.x + _rect.width * 0.5;
         temp.y = Input.mousePosition.y -
-            cammeraPlate.transform.position.y + cammeraPlate.GetComponent. < RectTransform > ().rect.height * cammeraPlate.GetComponent. < RectTransform > ().localScale.y * 0.5;
+            cammeraPlate.transform.position.y + _rect.height * 0.5;
         //        print(temp);
-        print("RGB" + _sprite.texture.GetPixel(temp.x, temp.y));
+        var imageScale: Vector2 = cammeraPlate.GetComponent. < RectTransform > ().localScale;
+        //        print("RGB" + _sprite.texture.GetPixel(Mathf.Floor(temp.x / imageScale.x), Mathf.Floor(temp.y / imageScale.y)));
+        print(imageScale);
+
+        print("RGB_11" + _sprite.texture.GetPixel(Mathf.Floor(temp.x * _sprite.texture.width / _rect.width / imageScale.x), Mathf.Floor(temp.y * _sprite.texture.height / _rect.height / imageScale.y)));
+        print(temp);
         //        print(cammeraPlate.GetComponent. < RectTransform > ().pivot.x * cammeraPlate.GetComponent. < RectTransform > ().rect.width);
         //            print(EventSystem.current.currentSelectedGameObject.name);
         nowButton = EventSystem.current.currentSelectedGameObject.name;
