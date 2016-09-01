@@ -120,7 +120,7 @@ function Update() {
     fellowPlayerCameraContorl();
     _input();
     buttonDetect();
-
+    print(EventSystem.current.currentSelectedGameObject);
 
 }
 
@@ -135,28 +135,20 @@ function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
     if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject()) {
 
-
-        //        Input.mousePosition.x -
-        var _sprite = cammeraPlate.GetComponent. < UI.Image > ().sprite;
-        var _rect = cammeraPlate.GetComponent. < RectTransform > ().rect;
+        print("a");
+        var hitUIObject: GameObject = EventSystem.current.currentSelectedGameObject;
+        var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+        var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
 
         var temp: Vector2;
-        temp.x = Input.mousePosition.x -
-            cammeraPlate.transform.position.x + _rect.width * 0.5;
-        temp.y = Input.mousePosition.y -
-            cammeraPlate.transform.position.y + _rect.height * 0.5;
-
-        var imageScale: Vector2 = cammeraPlate.GetComponent. < RectTransform > ().localScale;
-
-        //        print("RGB" + _sprite.texture.GetPixel(Mathf.Floor(temp.x / imageScale.x), Mathf.Floor(temp.y / imageScale.y)));
-
-        print(">>>>" + _rect.width * imageScale.x);
-        print("RGB_11" + _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y))));
-
-        //        print(cammeraPlate.GetComponent. < RectTransform > ().pivot.x * cammeraPlate.GetComponent. < RectTransform > ().rect.width);
-        //            print(EventSystem.current.currentSelectedGameObject.name);
-        nowButton = EventSystem.current.currentSelectedGameObject.name;
-
+        var UIObjectRGB: Color;
+        var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
+        temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+        temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+        UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+        if (UIObjectRGB.a == 0) {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
         //        print(cammeraPlate.RawImage.texture.texture2D.GetPixel(0, 0));
         switch (nowButton) {
         case "cammeraPlate":
