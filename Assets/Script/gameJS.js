@@ -19,7 +19,6 @@ var myButtonRight: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
 var cammeraPlate: GameObject;
-var mousePlate: GameObject;
 var biologyJS: biology;
 
 //紀錄滑鼠首次點擊座標
@@ -29,10 +28,19 @@ var mouseDragVector: Vector3;
 var mouseDragDist: float;
 var cameraAngle: float;
 
+
+//紀錄滑鼠首次按壓的UI
+var hitUIObject: GameObject;
+var hitUIObjectName: String = "";
+
 //目前點擊的UI名稱
 var nowButton: String;
+var cammeraPlateMouse: GameObject;
+var movePlatemouse: GameObject;
 
 function Start() {
+    cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
+    movePlateMouse = GameObject.Find("movePlateMouse");
     cameraAngle = cameraAngle || 45.0;
 
     //宣告各個變數代表的gameObject
@@ -56,15 +64,10 @@ function Start() {
     myButtonForward = GameObject.Find("Button_RIGHT");
     myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_RIGHT);
     myButtonBackward = GameObject.Find("Button_down");
-    myButtonBackward.GetComponent(UI.Button).onClick.AddListener(Button_down);
-    myButtonLeft = GameObject.Find("Button_left");
-    myButtonLeft.GetComponent(UI.Button).onClick.AddListener(Button_left);
-    myButtonRight = GameObject.Find("Button_right");
-    myButtonRight.GetComponent(UI.Button).onClick.AddListener(Button_right);
+
 
     cammeraPlate = GameObject.Find("cammeraPlate");
 
-    mousePlate = GameObject.Find("mousePlate");
 }
 
 
@@ -84,18 +87,6 @@ function Button_RIGHT() {
     biologyJS.bioAction = "Action";
 }
 
-function Button_down() {
-    Sphere.transform.position.x = biologyJS.transform.position.x - biologyJS.transform.forward.x * 2.5;
-    Sphere.transform.position.z = biologyJS.transform.position.z - biologyJS.transform.forward.z * 2.5;
-}
-
-function Button_left() {
-    PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, 800 * Time.deltaTime);
-}
-
-function Button_right() {
-    PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, -800 * Time.deltaTime);
-}
 
 function setArray(a: Vector3) {
     array3d[a] = true;
@@ -121,45 +112,161 @@ function Update() {
     _input();
     buttonDetect();
 
-    print(EventSystem.current.currentSelectedGameObject);
 }
 
 
 
-function getSpritePixel() {
+
+function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float, cy: float, cz: float) {
+    var a = [ax, ay];
+    var b = [bx, by];
+    var c = [cx, cy, cz];
+    // Calculate the euclidean distance between a & b
+    var eDistAtoB = Mathf.Sqrt(Mathf.Pow(b[0] - a[0], 2) + Mathf.Pow(b[1] - a[1], 2));
 
 
+    // compute the direction vector d from a to b
+    var d = [(b[0] - a[0]) / eDistAtoB, (b[1] - a[1]) / eDistAtoB];
+
+
+    // Now the line equation is x = dx*t + ax, y = dy*t + ay with 0 <= t <= 1.
+
+    // compute the value t of the closest point to the circle center (cx, cy)
+    var t = (d[0] * (c[0] - a[0])) + (d[1] * (c[1] - a[1]));
+
+
+    // compute the coordinates of the point e on line and closest to c
+    var ecoords0 = (t * d[0]) + a[0];
+    var ecoords1 = (t * d[1]) + a[1];
+
+    // Calculate the euclidean distance between c & e
+    var eDistCtoE = Mathf.Sqrt(Mathf.Pow(ecoords0 - c[0], 2) + Mathf.Pow(ecoords1 - c[1], 2));
+
+    // test if the line intersects the circle
+    if (eDistCtoE < c[2]) {
+        // compute distance from t to circle intersection point
+        var dt = Mathf.Sqrt(Mathf.Pow(c[2], 2) - Mathf.Pow(eDistCtoE, 2));
+
+        // compute first intersection point
+        var fcoords0 = ((t - dt) * d[0]) + a[0];
+        var fcoords1 = ((t - dt) * d[1]) + a[1];
+        // check if f lies on the line
+        //        f.onLine = is_on(a, b, f.coords);
+
+        // compute second intersection point
+        //        var g = {
+        //            coords: [],
+        //            onLine: false
+        //        };
+        var gcoords0 = ((t + dt) * d[0]) + a[0];
+        var gcoords1 = ((t + dt) * d[1]) + a[1];
+        var finalAnswer: Vector2 = Vector2(fcoords0, fcoords1);
+        // check if g lies on the line
+        //        g.onLine = is_on(a, b, g.coords);
+        return (finalAnswer);
+        //        return {
+        //            points: {
+        //                intersection1: f,
+        //                intersection2: g
+        //            }
+        //        };
+
+    } else if (parseInt(eDistCtoE) == parseInt(c[2])) {
+        // console.log("Only one intersection");
+        return {
+            //            points: false,
+            //            pointOnLine: e
+        };
+    } else {
+        // console.log("No intersection");
+        return {
+            //            points: false,
+            //            pointOnLine: e
+        };
+    }
+    /**/
 }
 
 function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
 
-    if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject()) {
+    if (Input.GetMouseButton(0)) {
 
 
-        var hitUIObject: GameObject = EventSystem.current.currentSelectedGameObject;
-        print(hitUIObject.name);
+        //取得按壓的物件名稱
+        if (EventSystem.current.IsPointerOverGameObject()) {
+            hitUIObject = EventSystem.current.currentSelectedGameObject;
+            hitUIObjectName = hitUIObject.name;
+        }
 
-
-        if (hitUIObject.name == 'cammeraPlate' || hitUIObject.name == 'mousePlate') {
+        //如果點選到了搖桿
+        if (hitUIObjectName == 'cammeraPlate') {
             var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
             var temp: Vector2;
             var UIObjectRGB: Color;
             var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
 
+            //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
             temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
             temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
             UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
-            print(UIObjectRGB.a);
-            if (UIObjectRGB.a != 0) {
-                mousePlate.transform.position = Input.mousePosition;
+
+            if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
+                cammeraPlateMouse.transform.position = Input.mousePosition;
+            } else {
+                //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                var a: Vector2 = Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                var b: Vector2 = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                var c: Vector3 = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
+                var x: Vector2 = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                cammeraPlateMouse.transform.position.x = x.x;
+                cammeraPlateMouse.transform.position.y = x.y;
             }
+
+            //控制攝影機
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (cammeraPlateMouse.transform.position.x - hitUIObject.transform.position.x) * Time.deltaTime);
+
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.left, (cammeraPlateMouse.transform.position.y - hitUIObject.transform.position.y) * Time.deltaTime);
         }
+        /*else
+               if (hitUIObjectName == 'movePlate') {
+                   var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+                   var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+                   var temp: Vector2;
+                   var UIObjectRGB: Color;
+                   var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+                   //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                   temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+                   temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+                   UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                   if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
+                       movePlateMouse.transform.position = Input.mousePosition;
+                   } else {
+                       //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                       var a: Vector2 = Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                       var b: Vector2 = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                       var c: Vector3 = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
+                       var x: Vector2 = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                       movePlateMouse.transform.position.x = x.x;
+                       movePlateMouse.transform.position.y = x.y;
+                   }
+
+                   //控制生物移動
+                   PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (cammeraPlateMouse.transform.position.x - hitUIObject.transform.position.x) * Time.deltaTime);
+
+                   PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.left, (cammeraPlateMouse.transform.position.y - hitUIObject.transform.position.y) * Time.deltaTime);
+               }
+               */
 
 
     } else {
-        mousePlate.transform.position = cammeraPlate.transform.position;
+        cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
+        movePlateMouse.transform.position = cammeraPlate.transform.position;
+        hitUIObject = null;
+        hitUIObjectName = "";
     }
 
 }
@@ -261,8 +368,11 @@ function getMousehitGroupPos() {
         //todo:寫在這裡太難擴充了 之後要改
         Sphere.transform.position = Player.transform.position;
 
-        //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI
-        if (Input.GetMouseButton(0) && Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject()) {
+        //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
+        if (Input.GetMouseButton(0) &&
+            Physics.Raycast(ray, mouseHitPlane) &&
+            !EventSystem.current.IsPointerOverGameObject() &&
+            hitUIObjectName != "cammeraPlate") {
             pickTouchSide.transform.position = mouseHitPlane.point;
 
             pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);
