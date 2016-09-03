@@ -2085,8 +2085,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 1584829604}
   - {fileID: 1367649845}
+  - {fileID: 1584829604}
   m_Father: {fileID: 527253493}
   m_RootOrder: 3
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2311,10 +2311,10 @@ RectTransform:
   m_Children:
   - {fileID: 417426705}
   m_Father: {fileID: 1220533952}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -153, y: -259}
+  m_AnchoredPosition: {x: -281, y: -259}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1367649846
@@ -2794,10 +2794,10 @@ RectTransform:
   m_Children:
   - {fileID: 2069970954}
   m_Father: {fileID: 1220533952}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 217, y: -260}
+  m_AnchoredPosition: {x: 375, y: -260}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1584829605
@@ -2999,7 +2999,11 @@ MonoBehaviour:
   hitUIObject: {fileID: 0}
   hitUIObjectName: 
   nowButton: 
-  cammeraPlatemouse: {fileID: 0}
+  cammeraPlateMouse: {fileID: 0}
+  movePlateMouse: {fileID: 0}
+  movePlate: {fileID: 0}
+  cammeraPlatein2out: 0
+  movePlatein2out: 0
 --- !u!4 &1653811513
 Transform:
   m_ObjectHideFlags: 0

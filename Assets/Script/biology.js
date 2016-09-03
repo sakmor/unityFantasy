@@ -219,7 +219,7 @@ function _movment() {
 
         //var tempAngel = mainGamejs.cameraAngle;
         var tempAngel = Vector3.Angle(mainGamejs.PlayerCamera.transform.forward, (Sphere.transform.position - this.transform.position));
-        print(mainGamejs.PlayerCamera.transform.eulerAngles.y);
+
         //角度轉徑度
         //弳度=角度*pi/180
         tempAngel = -mainGamejs.PlayerCamera.transform.eulerAngles.y * Mathf.PI / 180;

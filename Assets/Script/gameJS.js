@@ -36,11 +36,15 @@ var hitUIObjectName: String = "";
 //目前點擊的UI名稱
 var nowButton: String;
 var cammeraPlateMouse: GameObject;
-var movePlatemouse: GameObject;
+var movePlateMouse: GameObject;
+var movePlate: GameObject;
+var cammeraPlatein2out: boolean = false;
+var movePlatein2out = false;
 
 function Start() {
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
     movePlateMouse = GameObject.Find("movePlateMouse");
+    movePlate = GameObject.Find("movePlate");
     cameraAngle = cameraAngle || 45.0;
 
     //宣告各個變數代表的gameObject
@@ -109,7 +113,6 @@ function Update() {
     fellowPlayerLight();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
-    _input();
     buttonDetect();
 
 }
@@ -207,14 +210,16 @@ function buttonDetect() {
             var UIObjectRGB: Color;
             var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
 
+
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
             temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
             temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
             UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
 
             if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
+                cammeraPlatein2out = true;
                 cammeraPlateMouse.transform.position = Input.mousePosition;
-            } else {
+            } else if (cammeraPlatein2out) {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
                 var a: Vector2 = Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 var b: Vector2 = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
@@ -225,82 +230,61 @@ function buttonDetect() {
             }
 
             //控制攝影機
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (cammeraPlateMouse.transform.position.x - hitUIObject.transform.position.x) * Time.deltaTime);
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
 
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.left, (cammeraPlateMouse.transform.position.y - hitUIObject.transform.position.y) * Time.deltaTime);
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.left, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
         }
-        /*else
-               if (hitUIObjectName == 'movePlate') {
-                   var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
-                   var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
-                   var temp: Vector2;
-                   var UIObjectRGB: Color;
-                   var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
+        if (hitUIObjectName == 'movePlate') {
+            _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+            _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+            imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
 
-                   //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
-                   temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
-                   temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
-                   UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
 
-                   if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
-                       movePlateMouse.transform.position = Input.mousePosition;
-                   } else {
-                       //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
-                       var a: Vector2 = Vector2(Input.mousePosition.x, Input.mousePosition.y);
-                       var b: Vector2 = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
-                       var c: Vector3 = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
-                       var x: Vector2 = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
-                       movePlateMouse.transform.position.x = x.x;
-                       movePlateMouse.transform.position.y = x.y;
-                   }
+            //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+            temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+            temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+            UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
 
-                   //控制生物移動
-                   PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (cammeraPlateMouse.transform.position.x - hitUIObject.transform.position.x) * Time.deltaTime);
+            if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
+                movePlatein2out = true;
+                movePlateMouse.transform.position = Input.mousePosition;
+            } else if (movePlatein2out) {
+                //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                a = Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                b = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                c = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
+                x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                movePlateMouse.transform.position.x = x.x;
+                movePlateMouse.transform.position.y = x.y;
+            }
 
-                   PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.left, (cammeraPlateMouse.transform.position.y - hitUIObject.transform.position.y) * Time.deltaTime);
-               }
-               */
+            //控制生物移動
+            if (Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) > 0) {
+                if (!clickStart) {
+                    clickStart = true;
+                    mouseStartPOS = Input.mousePosition;
+                }
+                mouseDragVector.x = (Input.mousePosition.x - mouseStartPOS.x) * 2.5;
+                mouseDragVector.z = (Input.mousePosition.y - mouseStartPOS.y) * 2.5;
+                mouseDragDist = Vector3.Distance(Input.mousePosition, mouseStartPOS);
+            }
+        }
 
 
     } else {
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
-        movePlateMouse.transform.position = cammeraPlate.transform.position;
+        movePlateMouse.transform.position = movePlate.transform.position;
         hitUIObject = null;
         hitUIObjectName = "";
+        clickStart = false;
+        cammeraPlatein2out = false;
+        movePlatein2out = false;
     }
 
 }
 
 
-function _input() {
-    if (Input.anyKey) {
-        if (Input.GetKey(KeyCode.Space)) {
-            //            Sphere.transform.position = this.transform.position;
-            //            this.bioAction = "Action";
 
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, 200 * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.F)) {
-            //            this.bioAction = "Jump";
-
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, 200 * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, -200 * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.W)) {
-            PlayerCamera.transform.position.x += 1;
-        }
-        if (Input.GetKey(KeyCode.S)) {
-            Sphere.transform.position.x = this.transform.position.x - transform.forward.x * 2.5;
-            Sphere.transform.position.z = this.transform.position.z - transform.forward.z * 2.5;
-        }
-    }
-
-
-}
 //========================================================
 
 function fellowPlayerCameraMove() {
@@ -372,7 +356,9 @@ function getMousehitGroupPos() {
         if (Input.GetMouseButton(0) &&
             Physics.Raycast(ray, mouseHitPlane) &&
             !EventSystem.current.IsPointerOverGameObject() &&
-            hitUIObjectName != "cammeraPlate") {
+            hitUIObjectName != "cammeraPlate" &&
+            hitUIObjectName != "movePlate"
+        ) {
             pickTouchSide.transform.position = mouseHitPlane.point;
 
             pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);
@@ -416,21 +402,7 @@ function getMousehitGroupPos() {
                 }
             }
         }
-        //如果滑鼠右鍵按下，並點擊到plane，並沒有點擊到任何UI
-        //clickStart:如果是false狀態，則將現在點擊的座標視為原點，並將狀態改為true
-        //所以clickStart=true時，表示現在是滑鼠拖拉狀態
-        if (Input.GetMouseButton(1)) {
-            if (!clickStart) {
-                clickStart = true;
-                mouseStartPOS = Input.mousePosition;
-            }
-            mouseDragVector.x = (Input.mousePosition.x - mouseStartPOS.x);
-            mouseDragVector.z = (Input.mousePosition.y - mouseStartPOS.y);
-            mouseDragDist = Vector3.Distance(Input.mousePosition, mouseStartPOS);
-        } else {
-            clickStart = false;
-            //            mouseDragDist = 0;
-        }
+
     }
 
     //    Cube.layer = 0;
