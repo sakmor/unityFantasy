@@ -107,6 +107,7 @@ function checkArray(a: Vector3) {
         }
     }
 }
+var tempVector: Vector3;
 
 function Update() {
     getMousehitGroupPos();
@@ -114,6 +115,13 @@ function Update() {
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     buttonDetect();
+    tempVector = PlayerCamera.transform.position - Player.transform.position;
+    Debug.DrawLine(Vector3.zero, tempVector, Color.green);
+    tempVector = Vector3(tempVector.y, tempVector.x, tempVector.z);
+    Debug.DrawLine(Vector3.zero, tempVector, Color.red);
+    tempVector = Quaternion.Euler(0, 0, 90) * tempVector;
+    tempVector.y = 0;
+    Debug.DrawLine(Vector3.zero, tempVector, Color.blue);
 
 }
 
@@ -230,9 +238,12 @@ function buttonDetect() {
             }
 
             //控制攝影機
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
+            //            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
 
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.left, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+            //            Debug.DrawLine(Vector3.zero, tempVector, Color.red);
+            tempVector = Quaternion.Euler(0, 0, 90) * tempVector;
+            tempVector.y = 0;
+            PlayerCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
         }
         if (hitUIObjectName == 'movePlate') {
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
