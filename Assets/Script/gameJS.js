@@ -41,6 +41,10 @@ var movePlate: GameObject;
 var cammeraPlatein2out: boolean = false;
 var movePlatein2out = false;
 
+var tempxx: float;
+var tempyy: float;
+var tempzz: float;
+
 function Start() {
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
     movePlateMouse = GameObject.Find("movePlateMouse");
@@ -107,7 +111,6 @@ function checkArray(a: Vector3) {
         }
     }
 }
-var tempVector: Vector3;
 
 function Update() {
     getMousehitGroupPos();
@@ -115,13 +118,6 @@ function Update() {
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     buttonDetect();
-    tempVector = PlayerCamera.transform.position - Player.transform.position;
-    Debug.DrawLine(Vector3.zero, tempVector, Color.green);
-    tempVector = Vector3(tempVector.y, tempVector.x, tempVector.z);
-    Debug.DrawLine(Vector3.zero, tempVector, Color.red);
-    tempVector = Quaternion.Euler(0, 0, 90) * tempVector;
-    tempVector.y = 0;
-    Debug.DrawLine(Vector3.zero, tempVector, Color.blue);
 
 }
 
@@ -237,13 +233,16 @@ function buttonDetect() {
                 cammeraPlateMouse.transform.position.y = x.y;
             }
 
-            //控制攝影機
-            //            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
+            //控制攝影機--香菇頭左右
+            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
 
-            //            Debug.DrawLine(Vector3.zero, tempVector, Color.red);
-            tempVector = Quaternion.Euler(0, 0, 90) * tempVector;
+            //控制攝影機--香菇頭上下
+            var tempVector = PlayerCamera.transform.position - Player.transform.position;
             tempVector.y = 0;
+            tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
+            print(PlayerCamera.transform.rotation);
             PlayerCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+
         }
         if (hitUIObjectName == 'movePlate') {
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
