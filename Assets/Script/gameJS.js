@@ -41,9 +41,8 @@ var movePlate: GameObject;
 var cammeraPlatein2out: boolean = false;
 var movePlatein2out = false;
 
-var tempxx: float;
-var tempyy: float;
-var tempzz: float;
+//攝影機相對目標
+var cameraRelativeTarget: Vector3;
 
 function Start() {
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
@@ -72,9 +71,9 @@ function Start() {
     myButtonForward = GameObject.Find("Button_RIGHT");
     myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_RIGHT);
     myButtonBackward = GameObject.Find("Button_down");
-
-
     cammeraPlate = GameObject.Find("cammeraPlate");
+
+    cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
 
 }
 
@@ -243,6 +242,9 @@ function buttonDetect() {
             print(PlayerCamera.transform.rotation);
             PlayerCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
 
+            //更新攝影機與目標的相對位置
+            cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
+
         }
         if (hitUIObjectName == 'movePlate') {
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
@@ -299,16 +301,7 @@ function buttonDetect() {
 
 function fellowPlayerCameraMove() {
     //    print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
-    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) > 15) {
-        PlayerCamera.transform.position -= (PlayerCamera.transform.position - Player.transform.position) * 0.01;
-        PlayerCamera.transform.position.y = 5;
-        print('forward');
-    }
-    if (Vector3.Distance(PlayerCamera.transform.position, Player.transform.position) < 10) {
-        PlayerCamera.transform.position += (PlayerCamera.transform.position - Player.transform.position) * 0.01;
-        PlayerCamera.transform.position.y = 5;
-        print('Backward');
-    }
+    PlayerCamera.transform.position = cameraRelativeTarget + Player.transform.position;
     PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 1.0, Player.transform.position.z));
 
 }
