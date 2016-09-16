@@ -8,7 +8,8 @@ var Cube: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
-var array3d: Dictionary. < Vector3, boolean > = new Dictionary. < Vector3,
+var array3d: Dictionary. < Vector3, boolean > =
+    new Dictionary. < Vector3,
     boolean > ();
 var myButton: GameObject;
 var myButtonJump: GameObject;
@@ -27,7 +28,6 @@ var clickStart = false;
 var mouseDragVector: Vector3;
 var mouseDragDist: float;
 var cameraAngle: float;
-
 
 //紀錄滑鼠首次按壓的UI
 var hitUIObject: GameObject;
@@ -77,13 +77,8 @@ function Start() {
 
 }
 
-
-
-
-
 function Button_LEFT() {
     biologyJS.bioAction = "Create";
-    print("ButtonLeft");
 }
 
 function Button_jump() {
@@ -93,7 +88,6 @@ function Button_jump() {
 function Button_RIGHT() {
     biologyJS.bioAction = "Action";
 }
-
 
 function setArray(a: Vector3) {
     array3d[a] = true;
@@ -119,9 +113,6 @@ function Update() {
     buttonDetect();
 
 }
-
-
-
 
 function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float, cy: float, cz: float) {
     var a = [ax, ay];
@@ -239,7 +230,6 @@ function buttonDetect() {
             var tempVector = PlayerCamera.transform.position - Player.transform.position;
             tempVector.y = 0;
             tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
-            print(PlayerCamera.transform.rotation);
             PlayerCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
 
             //更新攝影機與目標的相對位置
@@ -295,12 +285,7 @@ function buttonDetect() {
 
 }
 
-
-
-//========================================================
-
 function fellowPlayerCameraMove() {
-    //    print(Vector3.Distance(PlayerCamera.transform.position, Player.transform.position));
     PlayerCamera.transform.position = cameraRelativeTarget + Player.transform.position;
     PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 1.0, Player.transform.position.z));
 

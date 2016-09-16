@@ -192,7 +192,6 @@ GameObject:
   - 92: {fileID: 125124732}
   - 124: {fileID: 125124731}
   - 81: {fileID: 125124730}
-  - 114: {fileID: 125124735}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: MainCamera
@@ -268,47 +267,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 666247398}
   m_RootOrder: 0
---- !u!114 &125124735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 125124729}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90852fc24c7b5fa47a72a8e71b0de95f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Operational: 1
-  GetInputs: {fileID: 0}
-  LevelCamera: 1
-  ForwardMovementLockEnabled: 1
-  MovementSpeedMagnification: 1
-  WheelMouseMagnification: 5
-  ShiftKeyMagnification: 2
-  ControlKeyMagnification: 0.25
-  RotationMagnification: 1
-  PanLeftRightSensitivity: 1
-  PanUpDownSensitivity: 1
-  MouseRotationSensitivity: 0.5
-  ForwardDampenRate: 0.99
-  PanningDampenRate: 0.95
-  RotateDampenRate: 0.99
-  LookAtTarget: {fileID: 100002, guid: df0777a2e75ec7048b28e7c394efbd53, type: 3}
-  MinimumZoom: 20
-  MaximumZoom: 80
-  LockX: 0
-  UseXRange: 0
-  XRangeMin: 0
-  XRangeMax: 0
-  LockY: 0
-  UseYRange: 0
-  YRangeMin: 0
-  YRangeMax: 0
-  LockZ: 0
-  UseZRange: 0
-  ZRangeMin: 0
-  ZRangeMax: 0
 --- !u!1 &244970532
 GameObject:
   m_ObjectHideFlags: 0
@@ -3004,9 +2962,7 @@ MonoBehaviour:
   movePlate: {fileID: 0}
   cammeraPlatein2out: 0
   movePlatein2out: 0
-  tempxx: 0
-  tempyy: 0
-  tempzz: 0
+  cameraRelativeTarget: {x: 0, y: 0, z: 0}
 --- !u!4 &1653811513
 Transform:
   m_ObjectHideFlags: 0
