@@ -1,6 +1,6 @@
 // #pragma strict
 var moveSpeed: float;
-
+var handCube: float;
 var moveSpeedMax: float;
 var rotateSpeed: float;
 var bioAction: String;
@@ -34,7 +34,7 @@ var pickTouchSide: GameObject;
 
 
 function Start() {
-
+    handCube = 1;
     mainGame = GameObject.Find("mainGame");
     Sphere2 = GameObject.Find("Sphere2");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
@@ -99,7 +99,7 @@ function _createCube() {
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = temp.transform.position.ToString("F0");
-        mainGamejs.setArray(temp.transform.position);
+        mainGamejs.setArray(temp.transform.position, handCube);
     }
 
 }

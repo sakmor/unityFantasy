@@ -8,9 +8,10 @@ var Cube: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
-var array3d: Dictionary. < Vector3, boolean > =
+var dictionary3d: Dictionary. < Vector3, int > =
     new Dictionary. < Vector3,
-    boolean > ();
+    int > ();
+var array3d = new Array();
 var myButton: GameObject;
 var myButtonJump: GameObject;
 var myButtonForward: GameObject;
@@ -83,26 +84,39 @@ function Button_LEFT() {
 
 function Button_jump() {
     biologyJS.bioAction = "Jump";
+    saveGame();
 }
 
 function Button_RIGHT() {
     biologyJS.bioAction = "Action";
 }
 
-function setArray(a: Vector3) {
-    array3d[a] = true;
+function setArray(a: Vector3, b: float) {
+    dictionary3d[a] = array3d.length;
+    array3d.Push(Vector4(a.x, a.y, a.z, b));
 }
 
 function removeArray(a: Vector3) {
-    array3d[a] = false;
+    array3d[dictionary3d[a]] = null;
+    dictionary3d[a] = 0;
 }
 
 function checkArray(a: Vector3) {
-    if (array3d.ContainsKey(a)) {
-        if (array3d[a]) {
+    if (dictionary3d.ContainsKey(a)) {
+        if (dictionary3d[a] != 0) {
             return true;
         }
     }
+}
+
+function saveGame() {
+    for (var i = 0; i < array3d.length; i++) {
+        if (array3d[i] == null) {
+            array3d.splice(i, 1);
+            i--;
+        }
+    }
+    print(array3d);
 }
 
 function Update() {
@@ -231,7 +245,6 @@ function buttonDetect() {
             var tempVector = camera2PlayerVector;
             tempVector.y = 0;
             tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
-            print(Vector3.Angle(camera2PlayerVector, Vector3.up));
 
             //限制攝影機上下移動的角度
             if (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y < 0) {

@@ -26,11 +26,11 @@ Material:
       data:
         first:
           name: _RimPower
-        second: 6.214286
+        second: 6
       data:
         first:
           name: _selfillum
-        second: 1.25
+        second: 1.5
     m_Colors:
       data:
         first:
