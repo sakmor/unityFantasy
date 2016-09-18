@@ -12,16 +12,10 @@ var dictionary3d: Dictionary. < Vector3, int > =
     new Dictionary. < Vector3,
     int > ();
 var array3d = new Array();
-var myButton: GameObject;
-var myButtonJump: GameObject;
-var myButtonForward: GameObject;
-var myButtonBackward: GameObject;
-var myButtonLeft: GameObject;
-var myButtonRight: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
-var cammeraPlate: GameObject;
 var biologyJS: biology;
+var PlayerPrefsX: PlayerPrefsX;
 
 //紀錄滑鼠首次點擊座標
 var mouseStartPOS: Vector3;
@@ -36,11 +30,12 @@ var hitUIObjectName: String = "";
 
 //目前點擊的UI名稱
 var nowButton: String;
-var cammeraPlateMouse: GameObject;
 var movePlateMouse: GameObject;
 var movePlate: GameObject;
 var cammeraPlatein2out: boolean = false;
 var movePlatein2out = false;
+var cammeraPlate: GameObject;
+var cammeraPlateMouse: GameObject;
 
 //攝影機相對目標
 var cameraRelativeTarget: Vector3;
@@ -65,26 +60,42 @@ function Start() {
     pickTouchSide = GameObject.Find("pickTouchSide");
     biologyJS = Player.GetComponent(biology);
 
-    myButton = GameObject.Find("Button_LEFT");
+    var myButton = GameObject.Find("Button_LEFT");
     myButton.GetComponent(UI.Button).onClick.AddListener(Button_LEFT);
-    myButtonJump = GameObject.Find("Button_jump");
-    myButtonJump.GetComponent(UI.Button).onClick.AddListener(Button_jump);
-    myButtonForward = GameObject.Find("Button_RIGHT");
+
+    var myButtonForward = GameObject.Find("Button_RIGHT");
     myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_RIGHT);
-    myButtonBackward = GameObject.Find("Button_down");
+
+    var myButtonJump = GameObject.Find("Button_jump");
+    myButtonJump.GetComponent(UI.Button).onClick.AddListener(Button_jump);
+
+    var myButtonSave = GameObject.Find("Button_Save");
+    myButtonSave.GetComponent(UI.Button).onClick.AddListener(Button_Save);
+
+    var myButtonLoad = GameObject.Find("Button_Load");
+    myButtonLoad.GetComponent(UI.Button).onClick.AddListener(Button_Load);
+
     cammeraPlate = GameObject.Find("cammeraPlate");
 
     cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
 
 }
 
-function Button_LEFT() {
-    biologyJS.bioAction = "Create";
+
+function Button_Save() {
+    saveGame();
+}
+
+function Button_Load() {
+    loadGame();
 }
 
 function Button_jump() {
     biologyJS.bioAction = "Jump";
-    saveGame();
+}
+
+function Button_LEFT() {
+    biologyJS.bioAction = "Create";
 }
 
 function Button_RIGHT() {
@@ -93,7 +104,7 @@ function Button_RIGHT() {
 
 function setArray(a: Vector3, b: float) {
     dictionary3d[a] = array3d.length;
-    array3d.Push(Vector4(a.x, a.y, a.z, b));
+    array3d.Push(Color(a.x, a.y, a.z, b));
 }
 
 function removeArray(a: Vector3) {
@@ -109,14 +120,41 @@ function checkArray(a: Vector3) {
     }
 }
 
-function saveGame() {
-    for (var i = 0; i < array3d.length; i++) {
-        if (array3d[i] == null) {
-            array3d.splice(i, 1);
-            i--;
-        }
+function loadGame() {
+    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
+
+    for (var i = 0; i < array3dLoad.length; i++) {
+        var temp = Instantiate(Cube);
+        temp.GetComponent. < Renderer > ().enabled = true;
+        temp.AddComponent(BoxCollider);
+        temp.name = "(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")";
+        temp.transform.position.x = array3dLoad[i].r;
+        temp.transform.position.y = array3dLoad[i].g;
+        temp.transform.position.z = array3dLoad[i].b;
+        setArray(temp.transform.position, 1);
     }
-    print(array3d);
+
+}
+
+function saveGame() {
+    if (array3d.length > 0) {
+        for (var i = 0; i < array3d.length; i++) {
+            if (array3d[i] == null) {
+                array3d.splice(i, 1);
+                i--;
+            }
+        }
+        var array3dColor = new Color[array3d.length];
+        for (i = 0; i < array3d.length; i++) {
+            array3dColor[i] = array3d[i];
+        }
+        PlayerPrefsX.SetColorArray("array3d", array3dColor);
+        PlayerPrefs.Save();
+
+        print("save game");
+    } else {
+        print("Not game data saved");
+    }
 }
 
 function Update() {
