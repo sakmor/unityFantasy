@@ -78,6 +78,7 @@ function Start() {
     cammeraPlate = GameObject.Find("cammeraPlate");
 
     cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
+    loadGame();
 
 }
 
@@ -105,6 +106,7 @@ function Button_RIGHT() {
 function setArray(a: Vector3, b: float) {
     dictionary3d[a] = array3d.length;
     array3d.Push(Color(a.x, a.y, a.z, b));
+    saveGame();
 }
 
 function removeArray(a: Vector3) {
@@ -122,7 +124,7 @@ function checkArray(a: Vector3) {
 
 function loadGame() {
     var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
-
+    Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
     for (var i = 0; i < array3dLoad.length; i++) {
         var temp = Instantiate(Cube);
         temp.GetComponent. < Renderer > ().enabled = true;
@@ -148,6 +150,7 @@ function saveGame() {
         for (i = 0; i < array3d.length; i++) {
             array3dColor[i] = array3d[i];
         }
+        PlayerPrefsX.SetVector3("playerPos", Player.transform.position);
         PlayerPrefsX.SetColorArray("array3d", array3dColor);
         PlayerPrefs.Save();
 

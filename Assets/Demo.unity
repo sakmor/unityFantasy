@@ -193,6 +193,7 @@ GameObject:
   - 124: {fileID: 125124731}
   - 81: {fileID: 125124730}
   - 114: {fileID: 125124735}
+  - 114: {fileID: 125124736}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: MainCamera
@@ -280,7 +281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Radius: 0.4
-  m_SampleCount: 1
+  m_SampleCount: 0
   m_OcclusionIntensity: 1.5
   m_Blur: 2
   m_Downsampling: 2
@@ -288,6 +289,26 @@ MonoBehaviour:
   m_MinZ: 0.01
   m_SSAOShader: {fileID: 4800000, guid: 43ca18288c424f645aaa1e9e07f04c50, type: 3}
   m_RandomTexture: {fileID: 2800000, guid: a181ca8e3c62f3e4b8f183f6c586b032, type: 3}
+--- !u!114 &125124736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 125124729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 730475ee64f9a894bbac0d9e6f22e813, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mode: 3
+  sensitivityDepth: 1
+  sensitivityNormals: 1
+  lumThreshold: 0.2
+  edgeExp: 1
+  sampleDist: 1
+  edgesOnly: 0
+  edgesOnlyBgColor: {r: 1, g: 1, b: 1, a: 1}
+  edgeDetectShader: {fileID: 4800000, guid: 0d1644bdf064147baa97f235fc5b4903, type: 3}
 --- !u!1 &244970532
 GameObject:
   m_ObjectHideFlags: 0
@@ -3512,7 +3533,7 @@ RectTransform:
   m_RootOrder: 4
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -24, y: 234}
+  m_AnchoredPosition: {x: -24, y: -514}
   m_SizeDelta: {x: 100, y: 55.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1782963152
@@ -4092,7 +4113,7 @@ RectTransform:
   m_RootOrder: 5
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 78, y: 234}
+  m_AnchoredPosition: {x: 78, y: -514}
   m_SizeDelta: {x: 100, y: 55.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1989161565
