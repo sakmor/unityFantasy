@@ -125,6 +125,7 @@ function checkArray(a: Vector3) {
 function loadGame() {
     var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
+    //    Player.transform.Rotate = PlayerPrefsX.GetVector3("playerRotate");
     for (var i = 0; i < array3dLoad.length; i++) {
         var temp = Instantiate(Cube);
         temp.GetComponent. < Renderer > ().enabled = true;
@@ -151,6 +152,7 @@ function saveGame() {
             array3dColor[i] = array3d[i];
         }
         PlayerPrefsX.SetVector3("playerPos", Player.transform.position);
+        //        PlayerPrefsX.SetQuaternion("playerRotate", Player.transform.rotation);
         PlayerPrefsX.SetColorArray("array3d", array3dColor);
         PlayerPrefs.Save();
 

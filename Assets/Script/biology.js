@@ -34,6 +34,7 @@ var pickTouchSide: GameObject;
 
 
 function Start() {
+    bioAction = "Wait";
     handCube = 1;
     mainGame = GameObject.Find("mainGame");
     Sphere2 = GameObject.Find("Sphere2");
