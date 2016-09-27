@@ -208,22 +208,13 @@ function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float,
         //        f.onLine = is_on(a, b, f.coords);
 
         // compute second intersection point
-        //        var g = {
-        //            coords: [],
-        //            onLine: false
-        //        };
         var gcoords0 = ((t + dt) * d[0]) + a[0];
         var gcoords1 = ((t + dt) * d[1]) + a[1];
         var finalAnswer: Vector2 = Vector2(fcoords0, fcoords1);
+
         // check if g lies on the line
-        //        g.onLine = is_on(a, b, g.coords);
         return (finalAnswer);
-        //        return {
-        //            points: {
-        //                intersection1: f,
-        //                intersection2: g
-        //            }
-        //        };
+
 
     } else if (parseInt(eDistCtoE) == parseInt(c[2])) {
         // console.log("Only one intersection");
