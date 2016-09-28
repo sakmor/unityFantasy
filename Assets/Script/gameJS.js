@@ -1,4 +1,5 @@
 // # pragma strict
+import System.IO;
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
 var Plane: GameObject;
@@ -22,7 +23,7 @@ var mouseStartPOS: Vector3;
 var clickStart = false;
 var mouseDragVector: Vector3;
 var mouseDragDist: float;
-var cameraAngle: float;
+
 
 //紀錄滑鼠首次按壓的UI
 var hitUIObject: GameObject;
@@ -37,14 +38,20 @@ var movePlatein2out = false;
 var cammeraPlate: GameObject;
 var cammeraPlateMouse: GameObject;
 
+//設定物件
+var cubeArrayTxt = new Array();
+var cubeArrayObj = new Array();
+
 //攝影機相對目標
 var cameraRelativeTarget: Vector3;
 
 function Start() {
+
+
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
     movePlateMouse = GameObject.Find("movePlateMouse");
     movePlate = GameObject.Find("movePlate");
-    cameraAngle = cameraAngle || 45.0;
+
 
     //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
@@ -52,6 +59,7 @@ function Start() {
     pickTouch = GameObject.Find("pickTouch");
     Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
+
     Player = GameObject.Find("Cha_Knight");
     PlayerCamera = GameObject.Find("PlayerCamera");
     Sphere.transform.position = Player.transform.position;
@@ -75,16 +83,22 @@ function Start() {
     var myButtonLoad = GameObject.Find("Button_Load");
     myButtonLoad.GetComponent(UI.Button).onClick.AddListener(Button_Load);
 
-    cammeraPlate = GameObject.Find("cammeraPlate");
+    var myButton_Next = GameObject.Find("Button_Next");
+    myButton_Next.GetComponent(UI.Button).onClick.AddListener(Button_Next);
 
+    cammeraPlate = GameObject.Find("cammeraPlate");
     cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
+    loadResources();
     loadGame();
 
 }
 
-
 function Button_Save() {
     saveGame();
+}
+
+function Button_Next() {
+    biologyJS.nextCube();
 }
 
 function Button_Load() {
@@ -122,24 +136,39 @@ function checkArray(a: Vector3) {
     }
 }
 
+function loadResources() {
+    //將特定資料夾內的fbx檔名存入陣列之中
+    var tempObject: GameObject;
+    var tempMesh: Mesh = new Mesh();
+    var temptext: String;
+    var filePaths: String[] = Directory.GetFiles("Assets/Resources/item/model/CUBE", "*.fbx");
+    for (var i = 0; i < filePaths.length; i++) {
+        cubeArrayTxt.push(filePaths[i]);
+    }
+    //    tempMesh = Resources.Load('item/model/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[0]), Mesh);
+    //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
+}
+
 function loadGame() {
     var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
     //    Player.transform.Rotate = PlayerPrefsX.GetVector3("playerRotate");
     for (var i = 0; i < array3dLoad.length; i++) {
         var temp = Instantiate(Cube);
+        print(array3dLoad[i].a);
+        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = "(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")";
         temp.transform.position.x = array3dLoad[i].r;
         temp.transform.position.y = array3dLoad[i].g;
         temp.transform.position.z = array3dLoad[i].b;
-        setArray(temp.transform.position, 1);
+        setArray(temp.transform.position, array3dLoad[i].a);
     }
-
 }
 
 function saveGame() {
+    //存檔前先將空格移除
     if (array3d.length > 0) {
         for (var i = 0; i < array3d.length; i++) {
             if (array3d[i] == null) {
@@ -152,7 +181,6 @@ function saveGame() {
             array3dColor[i] = array3d[i];
         }
         PlayerPrefsX.SetVector3("playerPos", Player.transform.position);
-        //        PlayerPrefsX.SetQuaternion("playerRotate", Player.transform.rotation);
         PlayerPrefsX.SetColorArray("array3d", array3dColor);
         PlayerPrefs.Save();
 
@@ -345,7 +373,7 @@ function buttonDetect() {
 
 function fellowPlayerCameraMove() {
     PlayerCamera.transform.position = cameraRelativeTarget + Player.transform.position;
-    PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 1.0, Player.transform.position.z));
+    PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 2.0, Player.transform.position.z));
 
 }
 

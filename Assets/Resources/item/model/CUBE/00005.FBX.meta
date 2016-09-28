@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: e1ec5699a4f1e1c4498b66989ee77e70
-timeCreated: 1468747443
+guid: 354ff36aa96130042a4b1c0b6d9a1a23
+timeCreated: 1475077976
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,8 +9,9 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Cube
-    4300002: Box01
+    4300000: 00005
+    7400000: Take 001
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -69,7 +70,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

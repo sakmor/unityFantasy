@@ -1,5 +1,7 @@
 // #pragma strict
 var moveSpeed: float;
+
+//目前所選擇的材質
 var handCube: float;
 var moveSpeedMax: float;
 var rotateSpeed: float;
@@ -35,7 +37,7 @@ var pickTouchSide: GameObject;
 
 function Start() {
     bioAction = "Wait";
-    handCube = 1;
+    handCube = 0;
     mainGame = GameObject.Find("mainGame");
     Sphere2 = GameObject.Find("Sphere2");
     mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
@@ -50,7 +52,7 @@ function Start() {
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
-    Cube.GetComponent. < Renderer > ().enabled = false;
+    //    Cube.GetComponent. < Renderer > ().enabled = false;
     anim = this.GetComponent. < Animation > ();
 }
 
@@ -59,6 +61,7 @@ function Update() {
     this._movment();
     this._bioStatus();
     this._autoJump();
+    this._cubeHead();
     _pick();
     //    Plane_touch.transform.position.y = this.transform.position.y - 0.2;
 }
@@ -68,9 +71,6 @@ function _autoJump() {
 
         var tempPOS: Vector3;
         tempPOS = Pick.transform.position;
-        //        tempPOS.y = Pick.transform.position.y;
-        //        tempPOS.y = this.transform.position.y;
-        //        tempPOS.z = Pick.transform.position.z;
 
         if ((Pick.transform.position.y - this.transform.position.y) > 0.6) {
             print(Pick.transform.position.y - this.transform.position.y);
@@ -83,7 +83,24 @@ function _autoJump() {
     }
 }
 
+function _cubeHead() {
+    Cube.transform.position.x = this.transform.position.x;
+    Cube.transform.position.z = this.transform.position.z;
+    Cube.transform.position.y = this.transform.position.y + 2.75;
+    Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
+    Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(mainGamejs.cubeArrayTxt[handCube]), Mesh);
+    //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
+}
 
+function nextCube() {
+    print("change");
+    if (handCube == mainGamejs.cubeArrayTxt.length - 1) {
+        handCube = 0;
+    } else {
+        handCube++;
+    }
+
+}
 
 function _createCube() {
 
@@ -97,9 +114,11 @@ function _createCube() {
         tempPOS.y == 0.5) {
         Cube.transform.position = tempPOS;
         var temp = Instantiate(Cube);
+        temp.transform.eulerAngles = Vector3(-90, 0, 0);
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = temp.transform.position.ToString("F0");
+        //        mainGamejs.setArray(temp.transform.position, float.parseFloat(mainGamejs.cubeArrayTxt[handCube]));
         mainGamejs.setArray(temp.transform.position, handCube);
     }
 
