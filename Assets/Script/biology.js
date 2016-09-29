@@ -88,7 +88,7 @@ function _cubeHead() {
     Cube.transform.position.z = this.transform.position.z;
     Cube.transform.position.y = this.transform.position.y + 2.75;
     Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
-    Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(mainGamejs.cubeArrayTxt[handCube]), Mesh);
+    Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + mainGamejs.cubeArrayTxt[handCube], Mesh);
     //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
 }
 

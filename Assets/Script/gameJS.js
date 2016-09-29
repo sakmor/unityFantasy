@@ -1,5 +1,4 @@
 // # pragma strict
-import System.IO;
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
 var Plane: GameObject;
@@ -40,7 +39,7 @@ var cammeraPlateMouse: GameObject;
 
 //設定物件
 var cubeArrayTxt = new Array();
-var cubeArrayObj = new Array();
+
 
 //攝影機相對目標
 var cameraRelativeTarget: Vector3;
@@ -141,10 +140,22 @@ function loadResources() {
     var tempObject: GameObject;
     var tempMesh: Mesh = new Mesh();
     var temptext: String;
-    var filePaths: String[] = Directory.GetFiles("Assets/Resources/item/model/CUBE", "*.fbx");
-    for (var i = 0; i < filePaths.length; i++) {
-        cubeArrayTxt.push(filePaths[i]);
-    }
+
+    //todo：之後要讀設定檔
+    cubeArrayTxt.push('00001');
+    cubeArrayTxt.push('00002');
+    cubeArrayTxt.push('00003');
+    cubeArrayTxt.push('00004');
+    cubeArrayTxt.push('00005');
+    cubeArrayTxt.push('00017');
+    cubeArrayTxt.push('00020');
+    cubeArrayTxt.push('00045');
+    cubeArrayTxt.push('00098');
+
+    //    var filePaths: String[] = Directory.GetFiles("Assets/Resources/item/model/CUBE", "*.fbx");
+    //    for (var i = 0; i < filePaths.length; i++) {
+    //        cubeArrayTxt.push(filePaths[i]);
+    //    }
     //    tempMesh = Resources.Load('item/model/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[0]), Mesh);
     //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
 }
@@ -156,7 +167,8 @@ function loadGame() {
     for (var i = 0; i < array3dLoad.length; i++) {
         var temp = Instantiate(Cube);
         print(array3dLoad[i].a);
-        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
+        //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
+        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + cubeArrayTxt[array3dLoad[i].a], Mesh);
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = "(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")";
