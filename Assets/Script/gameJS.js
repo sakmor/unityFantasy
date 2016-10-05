@@ -101,7 +101,7 @@ function Button_Next() {
 }
 
 function Button_Load() {
-    loadGame();
+    //    loadGame();
 }
 
 function Button_jump() {
@@ -142,15 +142,15 @@ function loadResources() {
     var temptext: String;
 
     //todo：之後要讀設定檔
-    cubeArrayTxt.push('00001');
-    cubeArrayTxt.push('00002');
-    cubeArrayTxt.push('00003');
-    cubeArrayTxt.push('00004');
-    cubeArrayTxt.push('00005');
-    cubeArrayTxt.push('00017');
-    cubeArrayTxt.push('00020');
-    cubeArrayTxt.push('00045');
-    cubeArrayTxt.push('00098');
+    cubeArrayTxt.push(10001);
+    cubeArrayTxt.push(10002);
+    cubeArrayTxt.push(10003);
+    cubeArrayTxt.push(10004);
+    cubeArrayTxt.push(10005);
+    cubeArrayTxt.push(10017);
+    cubeArrayTxt.push(10020);
+    cubeArrayTxt.push(10045);
+    cubeArrayTxt.push(10098);
 
     //    var filePaths: String[] = Directory.GetFiles("Assets/Resources/item/model/CUBE", "*.fbx");
     //    for (var i = 0; i < filePaths.length; i++) {
@@ -168,7 +168,7 @@ function loadGame() {
         var temp = Instantiate(Cube);
         print(array3dLoad[i].a);
         //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
-        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + cubeArrayTxt[array3dLoad[i].a], Mesh);
+        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + array3dLoad[i].a, Mesh);
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = "(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")";

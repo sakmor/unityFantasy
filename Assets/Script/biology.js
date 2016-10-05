@@ -119,7 +119,7 @@ function _createCube() {
         temp.AddComponent(BoxCollider);
         temp.name = temp.transform.position.ToString("F0");
         //        mainGamejs.setArray(temp.transform.position, float.parseFloat(mainGamejs.cubeArrayTxt[handCube]));
-        mainGamejs.setArray(temp.transform.position, handCube);
+        mainGamejs.setArray(temp.transform.position, mainGamejs.cubeArrayTxt[handCube]);
     }
 
 }
