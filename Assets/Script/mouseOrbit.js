@@ -35,7 +35,7 @@ function Start() {
 
 function LateUpdate() {
 
-    if (Input.GetMouseButton(0) &&
+    if (mainGamejs.touchScreen &&
         mainGamejs.hitUIObjectName != "cammeraPlate" &&
         mainGamejs.hitUIObjectName != "removePlate" &&
         mainGamejs.hitUIObjectName != "movePlate" &&

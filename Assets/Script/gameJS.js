@@ -19,9 +19,12 @@ var biologyJS: biology;
 var mouseOrbitJS: mouseOrbit;
 var PlayerPrefsX: PlayerPrefsX;
 
+var myIputPostion: Vector2;
+var touchScreen: boolean = false;
+
 //紀錄滑鼠首次點擊座標
 var mouseStartPOS: Vector3;
-var clickStart = false;
+var clickStart: boolean = false;
 var mouseDragVector: Vector3;
 var mouseDragDist: float;
 
@@ -99,6 +102,15 @@ function Start() {
     mouseOrbitSet();
 }
 
+function Update() {
+    mouseOrTouch();
+    getMousehitGroupPos();
+    fellowPlayerLight();
+    fellowPlayerCameraMove();
+    fellowPlayerCameraContorl();
+    buttonDetect();
+}
+
 function Button_Save() {
     saveGame();
 }
@@ -141,6 +153,22 @@ function checkArray(a: Vector3) {
         }
     }
 }
+
+function mouseOrTouch() {
+    if (Input.touchSupported) {
+        if (Input.touchCount > 0) {
+            myIputPostion = Input.GetTouch(0).position;
+            touchScreen = true;
+        }
+    } else
+    if (Input.GetMouseButton(0)) {
+        myIputPostion = myIputPostion;
+        touchScreen = true;
+    } else {
+        touchScreen = false;
+    }
+}
+
 
 function loadResources() {
     //將特定資料夾內的fbx檔名存入陣列之中
@@ -209,13 +237,6 @@ function saveGame() {
     }
 }
 
-function Update() {
-    getMousehitGroupPos();
-    fellowPlayerLight();
-    fellowPlayerCameraMove();
-    fellowPlayerCameraContorl();
-    buttonDetect();
-}
 
 function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float, cy: float, cz: float) {
     var a = [ax, ay];
@@ -281,7 +302,7 @@ function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float,
 function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
 
-    if (Input.GetMouseButton(0) || Input.touchCount > 0) {
+    if (touchScreen) {
 
 
         //取得按壓的物件名稱
@@ -302,17 +323,17 @@ function buttonDetect() {
 
 
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
-            temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
-            temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+            temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+            temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
 
             UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
 
-            if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
+            if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5) {
                 cammeraPlatein2out = true;
-                cammeraPlateMouse.transform.position = Input.mousePosition;
+                cammeraPlateMouse.transform.position = myIputPostion;
             } else if (cammeraPlatein2out) {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
-                var a: Vector2 = Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                var a: Vector2 = Vector2(myIputPostion.x, myIputPostion.y);
                 var b: Vector2 = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
                 var c: Vector3 = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
                 var x: Vector2 = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
@@ -351,16 +372,16 @@ function buttonDetect() {
 
 
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
-            temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
-            temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+            temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+            temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
             UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
 
-            if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
+            if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5) {
                 movePlatein2out = true;
-                movePlateMouse.transform.position = Input.mousePosition;
+                movePlateMouse.transform.position = myIputPostion;
             } else if (movePlatein2out) {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
-                a = Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                a = Vector2(myIputPostion.x, myIputPostion.y);
                 b = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
                 c = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
                 x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
@@ -369,14 +390,14 @@ function buttonDetect() {
             }
 
             //控制生物移動
-            if (Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) > 0) {
+            if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0) {
                 if (!clickStart) {
                     clickStart = true;
-                    mouseStartPOS = Input.mousePosition;
+                    mouseStartPOS = myIputPostion;
                 }
-                mouseDragVector.x = (Input.mousePosition.x - mouseStartPOS.x) * 2.5;
-                mouseDragVector.z = (Input.mousePosition.y - mouseStartPOS.y) * 2.5;
-                mouseDragDist = Vector3.Distance(Input.mousePosition, mouseStartPOS);
+                mouseDragVector.x = (myIputPostion.x - mouseStartPOS.x) * 2.5;
+                mouseDragVector.z = (myIputPostion.y - mouseStartPOS.y) * 2.5;
+                mouseDragDist = Vector3.Distance(myIputPostion, mouseStartPOS);
             }
         }
         //如果點選到了CUBE按鈕
@@ -452,7 +473,7 @@ function getMousehitGroupPos() {
 
     //滑鼠點擊取得做標點
 
-    ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    ray = Camera.main.ScreenPointToRay(myIputPostion);
 
 
     //預設滑鼠未點擊時，操控球sphere要在角色底下
@@ -460,7 +481,7 @@ function getMousehitGroupPos() {
     Sphere.transform.position = Player.transform.position;
 
     //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
-    if (Input.GetMouseButton(0) &&
+    if (touchScreen &&
         Physics.Raycast(ray, mouseHitPlane) &&
         !EventSystem.current.IsPointerOverGameObject() &&
         hitUIObjectName != "cammeraPlate" &&
