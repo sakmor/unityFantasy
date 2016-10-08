@@ -155,14 +155,14 @@ function checkArray(a: Vector3) {
 }
 
 function mouseOrTouch() {
-    if (Input.touchSupported) {
-        if (Input.touchCount > 0) {
-            myIputPostion = Input.GetTouch(0).position;
-            touchScreen = true;
-        }
+
+    if (Input.touchCount > 0) {
+        myIputPostion = Input.GetTouch(0).position;
+        touchScreen = true;
+
     } else
     if (Input.GetMouseButton(0)) {
-        myIputPostion = myIputPostion;
+        myIputPostion = Input.mousePosition;
         touchScreen = true;
     } else {
         touchScreen = false;
