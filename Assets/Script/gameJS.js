@@ -5,6 +5,7 @@ var Plane: GameObject;
 
 var Sphere: GameObject;
 var Cube: GameObject;
+var CubePick: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
 var PlayerCamera: GameObject;
@@ -15,6 +16,7 @@ var array3d = new Array();
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
 var biologyJS: biology;
+var mouseOrbitJS: mouseOrbit;
 var PlayerPrefsX: PlayerPrefsX;
 
 //紀錄滑鼠首次點擊座標
@@ -43,8 +45,11 @@ var cubeArrayTxt = new Array();
 
 //攝影機相對目標
 var cameraRelativeTarget: Vector3;
+var ray: Ray;
+var mouseHitPlane: RaycastHit;
 
 function Start() {
+
 
 
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
@@ -58,6 +63,7 @@ function Start() {
     pickTouch = GameObject.Find("pickTouch");
     Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
+    CubePick = GameObject.Find("CubePick");
 
     Player = GameObject.Find("Cha_Knight");
     PlayerCamera = GameObject.Find("PlayerCamera");
@@ -89,7 +95,8 @@ function Start() {
     cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
     loadResources();
     loadGame();
-
+    //設定攝影機
+    mouseOrbitSet();
 }
 
 function Button_Save() {
@@ -208,7 +215,6 @@ function Update() {
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     buttonDetect();
-
 }
 
 function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float, cy: float, cz: float) {
@@ -275,16 +281,18 @@ function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float,
 function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
 
-    if (Input.GetMouseButton(0)) {
+    if (Input.GetMouseButton(0) || Input.touchCount > 0) {
 
 
         //取得按壓的物件名稱
         if (EventSystem.current.IsPointerOverGameObject()) {
             hitUIObject = EventSystem.current.currentSelectedGameObject;
-            hitUIObjectName = hitUIObject.name;
+            if (hitUIObject) {
+                hitUIObjectName = hitUIObject.name;
+            }
         }
 
-        //如果點選到了搖桿
+        //如果點選到了攝影機搖桿
         if (hitUIObjectName == 'cammeraPlate') {
             var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
@@ -296,6 +304,7 @@ function buttonDetect() {
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
             temp.x = Input.mousePosition.x - hitUIObject.transform.position.x + _rect.width * 0.5;
             temp.y = Input.mousePosition.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+
             UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
 
             if (UIObjectRGB.a != 0 && Vector2.Distance(Input.mousePosition, hitUIObject.transform.position) < _rect.width * 0.5) {
@@ -334,6 +343,7 @@ function buttonDetect() {
             cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
 
         }
+        //如果點選到了移動搖桿
         if (hitUIObjectName == 'movePlate') {
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
@@ -369,13 +379,26 @@ function buttonDetect() {
                 mouseDragDist = Vector3.Distance(Input.mousePosition, mouseStartPOS);
             }
         }
-
+        //如果點選到了CUBE按鈕
+        if (hitUIObjectName == 'cubePlate') {
+            print('cube ');
+        }
 
     } else {
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
         movePlateMouse.transform.position = movePlate.transform.position;
         hitUIObject = null;
-        hitUIObjectName = "";
+
+        if (hitUIObjectName != "") {
+
+            if (hitUIObjectName == 'removePlate') {
+                biologyJS.bioAction = "Action";
+            }
+            if (hitUIObjectName == 'cubePlate') {
+                biologyJS.bioAction = "Create";
+            }
+            hitUIObjectName = "";
+        }
         clickStart = false;
         cammeraPlatein2out = false;
         movePlatein2out = false;
@@ -402,97 +425,103 @@ function fellowPlayerCameraContorl() {
     }
 }
 
-function _pickAuto() {
-    //新增pickAuto，讓選取框會自動往下格動
-}
-
 function fellowPlayerLight() {
     PlayerLight.transform.position = Vector3(Player.transform.position.x, Player.transform.position.y + 8, Player.transform.position.z);
 }
 
 function getMousehitGroupPos() {
 
+    if (hitUIObjectName == "cubePlate") {
+        CubePick.GetComponent. < Renderer > ().enabled = true;
+        pickTouchSide.GetComponent. < Renderer > ().enabled = true;
+        pickTouch.GetComponent. < Renderer > ().enabled = true;
+    } else if (hitUIObjectName == "removePlate") {
+        CubePick.GetComponent. < Renderer > ().enabled = false;
+        pickTouchSide.GetComponent. < Renderer > ().enabled = false;
+        pickTouch.GetComponent. < Renderer > ().enabled = true;
+    } else {
+        CubePick.GetComponent. < Renderer > ().enabled = false;
+        pickTouchSide.GetComponent. < Renderer > ().enabled = false;
+        pickTouch.GetComponent. < Renderer > ().enabled = false;
+
+    }
     //    Cube.layer = 2;
     //    Plane.transform.position.y = Player.transform.position.y - 1;
     Sphere.layer = 2;
     Player.layer = 2;
 
     //滑鼠點擊取得做標點
-    var mouseHitPlane: RaycastHit;
-    var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    if (Input.touches.length > 0) {
-        for (var touch: Touch in Input.touches) {
-            var id = touch.fingerId;
-            if (Physics.Raycast(ray, mouseHitPlane) && !EventSystem.current.IsPointerOverGameObject(id)) {
-                if (Input.GetMouseButton(0)) {
-                    Sphere.transform.position = mouseHitPlane.point;
-                } else {
-                    Sphere.transform.position = Player.transform.position;
-                    Sphere.transform.position = Player.transform.position;
-                }
+
+    ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+
+    //預設滑鼠未點擊時，操控球sphere要在角色底下
+    //todo:寫在這裡太難擴充了 之後要改
+    Sphere.transform.position = Player.transform.position;
+
+    //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
+    if (Input.GetMouseButton(0) &&
+        Physics.Raycast(ray, mouseHitPlane) &&
+        !EventSystem.current.IsPointerOverGameObject() &&
+        hitUIObjectName != "cammeraPlate" &&
+        hitUIObjectName != "movePlate"
+    ) {
+        pickTouchSide.transform.position = mouseHitPlane.point;
+
+        pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);
+        pickTouchSide.transform.position.y = Mathf.Floor(pickTouchSide.transform.position.y + 0.5 / 1) + 0.5;
+        pickTouchSide.transform.position.z = Mathf.Floor(pickTouchSide.transform.position.z + 0.5 / 1);
+        //                pickTouchSide.transform.position = pickTouch.transform.position;
+
+        if (mouseHitPlane.transform.tag == "Cube") {
+            pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+            pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+            var tempVector: Vector3 = mouseHitPlane.transform.position - mouseHitPlane.point;
+            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
+                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
+                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
+                pickTouchSide.transform.position.x += 1.0;
+            } else
+            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x >= 0.5 &&
+                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
+                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
+                pickTouchSide.transform.position.x -= 1.0;
+            } else
+            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
+                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
+                mouseHitPlane.point.z - mouseHitPlane.transform.position.z >= 0.5) {
+                pickTouchSide.transform.position.z += 1.0;
+            } else
+            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
+                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
+                mouseHitPlane.transform.position.z - mouseHitPlane.point.z >= 0.5) {
+                pickTouchSide.transform.position.z -= 1.0;
+            } else
+            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
+                mouseHitPlane.point.y - mouseHitPlane.transform.position.y >= 0.5 &&
+                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
+                pickTouchSide.transform.position.y += 1.0;
+            } else
+            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
+                mouseHitPlane.transform.position.y - mouseHitPlane.point.y >= 0.5 &&
+                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
+                pickTouchSide.transform.position.y -= 1.0;
             }
         }
-    } else {
-
-        //預設滑鼠未點擊時，操控球sphere要在角色底下
-        //todo:寫在這裡太難擴充了 之後要改
-        Sphere.transform.position = Player.transform.position;
-
-        //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
-        if (Input.GetMouseButton(0) &&
-            Physics.Raycast(ray, mouseHitPlane) &&
-            !EventSystem.current.IsPointerOverGameObject() &&
-            hitUIObjectName != "cammeraPlate" &&
-            hitUIObjectName != "movePlate"
-        ) {
-            pickTouchSide.transform.position = mouseHitPlane.point;
-
-            pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);
-            pickTouchSide.transform.position.y = Mathf.Floor(pickTouchSide.transform.position.y + 0.5 / 1) + 0.5;
-            pickTouchSide.transform.position.z = Mathf.Floor(pickTouchSide.transform.position.z + 0.5 / 1);
-            //                pickTouchSide.transform.position = pickTouch.transform.position;
-
-            if (mouseHitPlane.transform.tag == "Cube") {
-                pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-                pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-                var tempVector: Vector3 = mouseHitPlane.transform.position - mouseHitPlane.point;
-                if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
-                    mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
-                    mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
-                    pickTouchSide.transform.position.x += 1.0;
-                } else
-                if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x >= 0.5 &&
-                    mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
-                    mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
-                    pickTouchSide.transform.position.x -= 1.0;
-                } else
-                if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
-                    mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
-                    mouseHitPlane.point.z - mouseHitPlane.transform.position.z >= 0.5) {
-                    pickTouchSide.transform.position.z += 1.0;
-                } else
-                if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
-                    mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
-                    mouseHitPlane.transform.position.z - mouseHitPlane.point.z >= 0.5) {
-                    pickTouchSide.transform.position.z -= 1.0;
-                } else
-                if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
-                    mouseHitPlane.point.y - mouseHitPlane.transform.position.y >= 0.5 &&
-                    mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
-                    pickTouchSide.transform.position.y += 1.0;
-                } else
-                if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
-                    mouseHitPlane.transform.position.y - mouseHitPlane.point.y >= 0.5 &&
-                    mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
-                    pickTouchSide.transform.position.y -= 1.0;
-                }
-            }
-        }
-
     }
+
+
+    CubePick.transform.position = pickTouchSide.transform.position;
+    CubePick.GetComponent. < MeshFilter > ().mesh = Cube.GetComponent. < MeshFilter > ().mesh;
 
     //    Cube.layer = 0;
     Sphere.layer = 0;
     Player.layer = 0;
 
+}
+
+function mouseOrbitSet() {
+    PlayerCamera.AddComponent(mouseOrbit);
+    PlayerCamera.GetComponent(mouseOrbit).target = Player.transform;
+    PlayerCamera.GetComponent(mouseOrbit).targetMove = Vector3(0, 2, 0);
 }

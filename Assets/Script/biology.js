@@ -52,7 +52,6 @@ function Start() {
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
-    //    Cube.GetComponent. < Renderer > ().enabled = false;
     anim = this.GetComponent. < Animation > ();
 }
 
@@ -62,8 +61,7 @@ function Update() {
     this._bioStatus();
     this._autoJump();
     this._cubeHead();
-    _pick();
-    //    Plane_touch.transform.position.y = this.transform.position.y - 0.2;
+    //    _pick();
 }
 
 function _autoJump() {
@@ -82,7 +80,9 @@ function _autoJump() {
         }
     }
 }
-
+/*************************
+ *_cubeHead 角色頭上旋轉旋轉
+ ************************/
 function _cubeHead() {
     Cube.transform.position.x = this.transform.position.x;
     Cube.transform.position.z = this.transform.position.z;
@@ -132,6 +132,9 @@ function _removeCube() {
 
 }
 
+/*************************
+ *_pick 類似DQM的操作模式
+ ************************/
 function _pick() {
 
     //正規化生物座標
