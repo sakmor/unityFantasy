@@ -27,7 +27,8 @@ var pickPlayer: GameObject;
 var Plane_touch: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
-
+var thisCollider: Collider;
+var onAir: boolean;
 
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
@@ -46,37 +47,60 @@ function Start() {
     Plane_touch = GameObject.Find("Plane_touch");
     pickPlayer = GameObject.Find("pickPlayer");
     _backward = false;
-    WalkSteptweek = WalkSteptweek || 100;
-    moveSpeed = moveSpeed || 0.05;
+    WalkSteptweek = WalkSteptweek || 50;
+    moveSpeed = moveSpeed || 0.07;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
     anim = this.GetComponent. < Animation > ();
+    thisCollider = this.GetComponent(Collider);
+
 }
 
 function Update() {
-
     this._movment();
     this._bioStatus();
-    this._autoJump();
+    //    this._autoJump();
     this._cubeHead();
-    //    _pick();
+    _pick();
+
+}
+
+function OnCollisionEnter(collision: Collision) {
+    if (collision.relativeVelocity.y > 0) {
+        onAir = false;
+    }
+}
+
+function OnCollisionStay(collision: Collision) {
+    if (collision.relativeVelocity.y > 0) {
+        onAir = false;
+    }
+}
+
+function OnCollisionExit(collision: Collision) {
+    if (collision.relativeVelocity.y > 0) {
+        onAir = true;
+    }
 }
 
 function _autoJump() {
-    if (this.bioAction == "Walk" && moveSpeed > 0.04) {
-
+    if (this.bioAction == "Walk" && moveSpeed > 0.06) {
+        print("autoJump");
         var tempPOS: Vector3;
         tempPOS = Pick.transform.position;
 
-        if ((Pick.transform.position.y - this.transform.position.y) > 0.6) {
-            print(Pick.transform.position.y - this.transform.position.y);
-
-            this.transform.position.y += 0.05;
-        }
+        //        if ((Pick.transform.position.y - this.transform.position.y) > 0.6) {
+        //            print(Pick.transform.position.y - this.transform.position.y);
+        //
+        //            this.transform.position.y += 0.1;
+        //        }
         if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
-            this.transform.position.y += 0.05;
+            if (!onAir) {
+                this.transform.position.y += 0.1;
+                //                this.GetComponent. < Rigidbody > ().velocity.y = 5.5;
+            }
         }
     }
 }
@@ -84,9 +108,9 @@ function _autoJump() {
  *_cubeHead 角色頭上旋轉旋轉
  ************************/
 function _cubeHead() {
-    Cube.transform.position.x = this.transform.position.x;
-    Cube.transform.position.z = this.transform.position.z;
-    Cube.transform.position.y = this.transform.position.y + 2.75;
+    Cube.transform.position.x = 0;
+    Cube.transform.position.z = 0;
+    Cube.transform.position.y = 300;
     Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
     Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + mainGamejs.cubeArrayTxt[handCube], Mesh);
     //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
@@ -106,22 +130,35 @@ function _createCube() {
 
     var tempPOS: Vector3 = pickTouchSide.transform.position;
 
-    if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
-        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
-        mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
-        mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
-        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true ||
-        tempPOS.y == 0.5) {
-        Cube.transform.position = tempPOS;
+    //給原本DQM操方式
+    //if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
+    //        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
+    //        mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
+    //        mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
+    //        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true ||
+    //        tempPOS.y == 0.5) {
+    //        Cube.transform.position = tempPOS;
+    //        var temp = Instantiate(Cube);
+    //        temp.transform.eulerAngles = Vector3(-90, 0, 0);
+    //        temp.GetComponent. < Renderer > ().enabled = true;
+    //        temp.AddComponent(BoxCollider);
+    //        temp.name = temp.transform.position.ToString("F0");
+    //        //        mainGamejs.setArray(temp.transform.position, float.parseFloat(mainGamejs.cubeArrayTxt[handCube]));
+    //        mainGamejs.setArray(temp.transform.position, mainGamejs.cubeArrayTxt[handCube]);
+    //    }
+    if (!mainGamejs.checkArray(tempPOS)) {
+
         var temp = Instantiate(Cube);
         temp.transform.eulerAngles = Vector3(-90, 0, 0);
+        temp.transform.position = tempPOS;
+        temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
+        temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = temp.transform.position.ToString("F0");
         //        mainGamejs.setArray(temp.transform.position, float.parseFloat(mainGamejs.cubeArrayTxt[handCube]));
         mainGamejs.setArray(temp.transform.position, mainGamejs.cubeArrayTxt[handCube]);
     }
-
 }
 
 function _removeCube() {
@@ -182,15 +219,6 @@ function _pick() {
     }
 
 
-    //如果生物腳下有方塊，且pick底下正好為空時
-    var temp: Vector3;
-    temp = pickPlayer.transform.position;
-    temp.y -= 1;
-    if (mainGamejs.checkArray(temp) &&
-        !mainGamejs.checkArray(Vector3(Pick.transform.position.x, Pick.transform.position.y - 1, Pick.transform.position.z))) {
-        Pick.transform.position.y -= 1;
-    }
-
 }
 
 function _bioStatus() {
@@ -221,7 +249,7 @@ function _bioStatus() {
             break;
         case "Jump":
             this.GetComponent. < Rigidbody > ().velocity.y = 5;
-            this.bioAction = "Wait";
+            onAir = true;
             break;
         }
     }

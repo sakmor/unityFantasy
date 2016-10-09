@@ -36,8 +36,11 @@ var hitUIObjectName: String = "";
 //目前點擊的UI名稱
 var nowButton: String;
 var movePlateMouse: GameObject;
+var cubePlateMouse: GameObject;
 var movePlate: GameObject;
+var cubePlate: GameObject;
 var cammeraPlatein2out: boolean = false;
+var cubePlatein2out: boolean = false;
 var movePlatein2out = false;
 var cammeraPlate: GameObject;
 var cammeraPlateMouse: GameObject;
@@ -54,7 +57,8 @@ var mouseHitPlane: RaycastHit;
 function Start() {
 
 
-
+    cubePlateMouse = GameObject.Find("cubePlateMouse");
+    cubePlate = GameObject.Find("cubePlate");
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
     movePlateMouse = GameObject.Find("movePlateMouse");
     movePlate = GameObject.Find("movePlate");
@@ -105,7 +109,7 @@ function Start() {
 function Update() {
     mouseOrTouch();
     getMousehitGroupPos();
-    fellowPlayerLight();
+    //    fellowPlayerLight();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     buttonDetect();
@@ -201,6 +205,9 @@ function loadGame() {
     //    Player.transform.Rotate = PlayerPrefsX.GetVector3("playerRotate");
     for (var i = 0; i < array3dLoad.length; i++) {
         var temp = Instantiate(Cube);
+        temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
+        temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        temp.GetComponent. < Renderer > ().enabled = true;
         print(array3dLoad[i].a);
         //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
         temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + array3dLoad[i].a, Mesh);
@@ -307,6 +314,7 @@ function buttonDetect() {
 
         //取得按壓的物件名稱
         if (EventSystem.current.IsPointerOverGameObject()) {
+
             hitUIObject = EventSystem.current.currentSelectedGameObject;
             if (hitUIObject) {
                 hitUIObjectName = hitUIObject.name;
@@ -402,11 +410,31 @@ function buttonDetect() {
         }
         //如果點選到了CUBE按鈕
         if (hitUIObjectName == 'cubePlate') {
-            print('cube ');
+            _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+            _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+            imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+
+            //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+            temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+            temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+            UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+            if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5) {
+                cubePlatein2out = true;
+                cubePlateMouse.transform.position = myIputPostion;
+                pickTouchSide.transform.position = Vector3(-100, -100, 0.5);
+            } else if (cubePlatein2out) {
+                //如果拖拉滑鼠盤脫離搖桿盤的範圍
+                cubePlateMouse.transform.position = cubePlate.transform.position;
+                cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+            }
         }
 
     } else {
+        cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
+        cubePlateMouse.transform.position = cubePlate.transform.position;
         movePlateMouse.transform.position = movePlate.transform.position;
         hitUIObject = null;
 
@@ -422,6 +450,7 @@ function buttonDetect() {
         }
         clickStart = false;
         cammeraPlatein2out = false;
+        cubePlatein2out = false;
         movePlatein2out = false;
     }
 
@@ -447,7 +476,7 @@ function fellowPlayerCameraContorl() {
 }
 
 function fellowPlayerLight() {
-    PlayerLight.transform.position = Vector3(Player.transform.position.x, Player.transform.position.y + 8, Player.transform.position.z);
+    PlayerLight.transform.position = Vector3(Player.transform.position.x, Player.transform.position.y + 1300, Player.transform.position.z);
 }
 
 function getMousehitGroupPos() {
