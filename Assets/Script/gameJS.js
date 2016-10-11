@@ -431,6 +431,29 @@ function buttonDetect() {
             }
         }
 
+        //如果點選到了CUBE按鈕
+        if (hitUIObjectName == 'cubePlate') {
+            _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+            _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+            imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+
+            //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+            temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+            temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+            UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+            if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5) {
+                cubePlatein2out = true;
+                cubePlateMouse.transform.position = myIputPostion;
+                pickTouchSide.transform.position = Vector3(-100, -100, 0.5);
+            } else if (cubePlatein2out) {
+                //如果拖拉滑鼠盤脫離搖桿盤的範圍
+                cubePlateMouse.transform.position = cubePlate.transform.position;
+                cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+            }
+        }
+
     } else {
         cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
@@ -438,8 +461,9 @@ function buttonDetect() {
         movePlateMouse.transform.position = movePlate.transform.position;
         hitUIObject = null;
 
+        //放開滑鼠時...如果前一個按鍵removePlate，則移除
+        //放開滑鼠時...如果前一個按鍵cubePlate，則新增
         if (hitUIObjectName != "") {
-
             if (hitUIObjectName == 'removePlate') {
                 biologyJS.bioAction = "Action";
             }

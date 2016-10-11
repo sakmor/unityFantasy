@@ -2,8 +2,8 @@ var target: Transform;
 var targetMove: Vector3;
 var distance = 10.0;
 
-var xSpeed = 100.0;
-var ySpeed = 100.0;
+var xSpeed = 20.0;
+var ySpeed = 20.0;
 
 var yMinLimit = -20;
 var yMaxLimit = 80;
@@ -41,8 +41,8 @@ function LateUpdate() {
         mainGamejs.hitUIObjectName != "movePlate" &&
         mainGamejs.hitUIObjectName != "cubePlate") {
 
-        x += Input.GetAxis("Mouse X") * xSpeed * distance * 0.02;
-        y -= Input.GetAxis("Mouse Y") * ySpeed * distance * 0.02;
+        x += Input.GetAxis("Mouse X") * xSpeed;
+        y -= Input.GetAxis("Mouse Y") * ySpeed;
 
         y = ClampAngle(y, yMinLimit, yMaxLimit);
 
