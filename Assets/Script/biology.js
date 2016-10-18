@@ -68,18 +68,21 @@ function Update() {
 }
 
 function OnCollisionEnter(collision: Collision) {
-    if (collision.relativeVelocity.y > 0) {
-        onAir = false;
+    print(collision.gameObject.transform.position.y - this.transform.position.y);
+    if (collision.gameObject.transform.position.y - this.transform.position.y > 1) {
+        this.transform.position.y += 0.1;
     }
 }
 
 function OnCollisionStay(collision: Collision) {
+
     if (collision.relativeVelocity.y > 0) {
         onAir = false;
     }
 }
 
 function OnCollisionExit(collision: Collision) {
+
     if (collision.relativeVelocity.y > 0) {
         onAir = true;
     }
@@ -90,18 +93,8 @@ function _autoJump() {
         print("autoJump");
         var tempPOS: Vector3;
         tempPOS = Pick.transform.position;
+        this.transform.position.y += 0.1;
 
-        //        if ((Pick.transform.position.y - this.transform.position.y) > 0.6) {
-        //            print(Pick.transform.position.y - this.transform.position.y);
-        //
-        //            this.transform.position.y += 0.1;
-        //        }
-        if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z)) == true) {
-            if (!onAir) {
-                this.transform.position.y += 0.1;
-                //                this.GetComponent. < Rigidbody > ().velocity.y = 5.5;
-            }
-        }
     }
 }
 /*************************
@@ -269,11 +262,11 @@ function _movment() {
         Sphere.transform.position.z = mainGamejs.mouseDragVector.z * 0.02;
 
         //var tempAngel = mainGamejs.cameraAngle;
-        var tempAngel = Vector3.Angle(mainGamejs.PlayerCamera.transform.forward, (Sphere.transform.position - this.transform.position));
+        var tempAngel = Vector3.Angle(mainGamejs.mainCamera.transform.forward, (Sphere.transform.position - this.transform.position));
 
         //角度轉徑度
         //弳度=角度*pi/180
-        tempAngel = -mainGamejs.PlayerCamera.transform.eulerAngles.y * Mathf.PI / 180;
+        tempAngel = -mainGamejs.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
         // x′=xcosθ-ysinθ,
         //y′=xsin⁡θ+ycos⁡θ....
         Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel) + this.transform.position.x;

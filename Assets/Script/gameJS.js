@@ -8,7 +8,8 @@ var Cube: GameObject;
 var CubePick: GameObject;
 var Player: GameObject;
 var PlayerLight: GameObject;
-var PlayerCamera: GameObject;
+var mainCamera: GameObject;
+var rayCamera: GameObject;
 var dictionary3d: Dictionary. < Vector3, int > =
     new Dictionary. < Vector3,
     int > ();
@@ -73,7 +74,8 @@ function Start() {
     CubePick = GameObject.Find("CubePick");
 
     Player = GameObject.Find("Cha_Knight");
-    PlayerCamera = GameObject.Find("PlayerCamera");
+    mainCamera = GameObject.Find("mainCamera");
+    rayCamera = GameObject.Find("rayCamera");
     Sphere.transform.position = Player.transform.position;
     Player.AddComponent(biology);
     Player.GetComponent(biology).Sphere = Sphere;
@@ -99,7 +101,7 @@ function Start() {
     myButton_Next.GetComponent(UI.Button).onClick.AddListener(Button_Next);
 
     cammeraPlate = GameObject.Find("cammeraPlate");
-    cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
+    cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
     loadResources();
     loadGame();
     //設定攝影機
@@ -107,6 +109,9 @@ function Start() {
 }
 
 function Update() {
+    rayCamera.transform.position = mainCamera.transform.position;
+    rayCamera.transform.rotation = mainCamera.transform.rotation;
+    rayCamera.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
     mouseOrTouch();
     getMousehitGroupPos();
     //    fellowPlayerLight();
@@ -350,10 +355,10 @@ function buttonDetect() {
             }
 
             //控制攝影機--香菇頭左右
-            PlayerCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
+            mainCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
 
             //控制攝影機--香菇頭上下
-            var camera2PlayerVector = PlayerCamera.transform.position - Player.transform.position;
+            var camera2PlayerVector = mainCamera.transform.position - Player.transform.position;
             var tempVector = camera2PlayerVector;
             tempVector.y = 0;
             tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
@@ -361,15 +366,15 @@ function buttonDetect() {
             //限制攝影機上下移動的角度
             if (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y < 0) {
                 if (Vector3.Angle(camera2PlayerVector, Vector3.up) >= 10) {
-                    PlayerCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
                 }
             } else
             if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160) {
-                PlayerCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
             }
 
             //更新攝影機與目標的相對位置
-            cameraRelativeTarget = PlayerCamera.transform.position - Player.transform.position;
+            cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
 
         }
         //如果點選到了移動搖桿
@@ -481,8 +486,8 @@ function buttonDetect() {
 }
 
 function fellowPlayerCameraMove() {
-    PlayerCamera.transform.position = cameraRelativeTarget + Player.transform.position;
-    PlayerCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 2.0, Player.transform.position.z));
+    mainCamera.transform.position = cameraRelativeTarget + Player.transform.position;
+    mainCamera.transform.LookAt(Vector3(Player.transform.position.x, Player.transform.position.y + 2.0, Player.transform.position.z));
 
 }
 
@@ -595,7 +600,7 @@ function getMousehitGroupPos() {
 }
 
 function mouseOrbitSet() {
-    PlayerCamera.AddComponent(mouseOrbit);
-    PlayerCamera.GetComponent(mouseOrbit).target = Player.transform;
-    PlayerCamera.GetComponent(mouseOrbit).targetMove = Vector3(0, 2, 0);
+    mainCamera.AddComponent(mouseOrbit);
+    mainCamera.GetComponent(mouseOrbit).target = Player.transform;
+    mainCamera.GetComponent(mouseOrbit).targetMove = Vector3(0, 2, 0);
 }

@@ -61,7 +61,7 @@ function LateUpdate() {
         transform.position = position;
 
         //更新攝影機與目標的相對位置
-        mainGamejs.cameraRelativeTarget = mainGamejs.PlayerCamera.transform.position - mainGamejs.Player.transform.position;
+        mainGamejs.cameraRelativeTarget = mainGamejs.mainCamera.transform.position - mainGamejs.Player.transform.position;
 
     }
 
