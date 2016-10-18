@@ -46,6 +46,9 @@ var movePlatein2out = false;
 var cammeraPlate: GameObject;
 var cammeraPlateMouse: GameObject;
 
+//Cylinder
+var cylinder: GameObject;
+
 //設定物件
 var cubeArrayTxt = new Array();
 
@@ -57,7 +60,7 @@ var mouseHitPlane: RaycastHit;
 
 function Start() {
 
-
+    cylinder = GameObject.Find("cylinder");
     cubePlateMouse = GameObject.Find("cubePlateMouse");
     cubePlate = GameObject.Find("cubePlate");
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
@@ -213,7 +216,6 @@ function loadGame() {
         temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
         temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         temp.GetComponent. < Renderer > ().enabled = true;
-        print(array3dLoad[i].a);
         //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
         temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + array3dLoad[i].a, Mesh);
         temp.GetComponent. < Renderer > ().enabled = true;
@@ -510,22 +512,24 @@ function fellowPlayerLight() {
 
 function getMousehitGroupPos() {
 
-    if (hitUIObjectName == "cubePlate") {
+    switch (hitUIObjectName) {
+    case "cubePlate":
         CubePick.GetComponent. < Renderer > ().enabled = true;
         pickTouchSide.GetComponent. < Renderer > ().enabled = true;
         pickTouch.GetComponent. < Renderer > ().enabled = true;
-    } else if (hitUIObjectName == "removePlate") {
+        break;
+    case "removePlate":
         CubePick.GetComponent. < Renderer > ().enabled = false;
         pickTouchSide.GetComponent. < Renderer > ().enabled = false;
         pickTouch.GetComponent. < Renderer > ().enabled = true;
-    } else {
+        break;
+    default:
         CubePick.GetComponent. < Renderer > ().enabled = false;
         pickTouchSide.GetComponent. < Renderer > ().enabled = false;
         pickTouch.GetComponent. < Renderer > ().enabled = false;
-
     }
-    //    Cube.layer = 2;
-    //    Plane.transform.position.y = Player.transform.position.y - 1;
+
+
     Sphere.layer = 2;
     Player.layer = 2;
 
@@ -552,7 +556,9 @@ function getMousehitGroupPos() {
         pickTouchSide.transform.position.z = Mathf.Floor(pickTouchSide.transform.position.z + 0.5 / 1);
         //                pickTouchSide.transform.position = pickTouch.transform.position;
 
-        if (mouseHitPlane.transform.tag == "Cube") {
+
+        switch (mouseHitPlane.transform.tag) {
+        case "Cube":
             pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
             pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
             var tempVector: Vector3 = mouseHitPlane.transform.position - mouseHitPlane.point;
@@ -586,6 +592,9 @@ function getMousehitGroupPos() {
                 mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
                 pickTouchSide.transform.position.y -= 1.0;
             }
+            break;
+        case "Player":
+            break;
         }
     }
 
