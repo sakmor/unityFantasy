@@ -9,6 +9,7 @@ public class Bezier : MonoBehaviour
     private int curveCount = 0;
     private int layerOrder = 0;
     private int SEGMENT_COUNT = 50;
+     public float linepapa=0.99993f;
 
 
     void Start()
@@ -23,7 +24,7 @@ public class Bezier : MonoBehaviour
 
     void Update()
     {
-
+print(Time.deltaTime);
         DrawCurve();
 
     }
@@ -35,6 +36,14 @@ public class Bezier : MonoBehaviour
             for (int i = 1; i <= SEGMENT_COUNT; i++)
             {
                 float t = i / (float)SEGMENT_COUNT;
+
+                linepapa= Time.time% 1;
+//                if(linepapa>1){
+//                    linepapa=0.01f;
+//                }
+                if(t>linepapa){
+                    t=linepapa;
+                }
                 int nodeIndex = j * 3;
                 Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints [nodeIndex].position, controlPoints [nodeIndex + 1].position, controlPoints [nodeIndex + 2].position, controlPoints [nodeIndex + 3].position);
                 lineRenderer.SetVertexCount(((j * SEGMENT_COUNT) + i));
