@@ -3,6 +3,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(LineRenderer))]
 public class Bezier : MonoBehaviour
 {
+       public Renderer rend;
     public Transform[] controlPoints;
     public LineRenderer lineRenderer;
 
@@ -19,14 +20,18 @@ public class Bezier : MonoBehaviour
             lineRenderer = GetComponent<LineRenderer>();
         }
         lineRenderer.sortingLayerID = layerOrder;
+        print(controlPoints.Length);
         curveCount = (int)controlPoints.Length / 3;
+
+               rend = GetComponent<Renderer>();
+//        rend.material.shader = Shader.Find("SoftParticlesFactor");
     }
 
     void Update()
     {
-print(Time.deltaTime);
+        Color shininess = new Color(1.0F, 1.0F, 1.0F,1-linepapa);
+      rend.material.SetColor("_TintColor", shininess);
         DrawCurve();
-
     }
 
     void DrawCurve()
@@ -38,12 +43,11 @@ print(Time.deltaTime);
                 float t = i / (float)SEGMENT_COUNT;
 
                 linepapa= Time.time% 1;
-//                if(linepapa>1){
-//                    linepapa=0.01f;
-//                }
+
                 if(t>linepapa){
                     t=linepapa;
                 }
+
                 int nodeIndex = j * 3;
                 Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints [nodeIndex].position, controlPoints [nodeIndex + 1].position, controlPoints [nodeIndex + 2].position, controlPoints [nodeIndex + 3].position);
                 lineRenderer.SetVertexCount(((j * SEGMENT_COUNT) + i));

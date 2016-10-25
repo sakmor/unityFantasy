@@ -103,8 +103,8 @@ function _autoJump() {
 function _cubeHead() {
     Cube.transform.position.x = 0;
     Cube.transform.position.z = 0;
-    Cube.transform.position.y = 300;
-    Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
+    Cube.transform.position.y = 299.8;
+    //    Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
     Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + mainGamejs.cubeArrayTxt[handCube], Mesh);
     //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
 }

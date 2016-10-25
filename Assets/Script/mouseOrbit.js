@@ -36,10 +36,7 @@ function Start() {
 function LateUpdate() {
 
     if (mainGamejs.touchScreen &&
-        mainGamejs.hitUIObjectName != "cammeraPlate" &&
-        mainGamejs.hitUIObjectName != "removePlate" &&
-        mainGamejs.hitUIObjectName != "movePlate" &&
-        mainGamejs.hitUIObjectName != "cubePlate") {
+        mainGamejs.hitUIObjectName == "") {
 
         x += Input.GetAxis("Mouse X") * xSpeed;
         y -= Input.GetAxis("Mouse Y") * ySpeed;

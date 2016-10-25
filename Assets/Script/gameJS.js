@@ -7,6 +7,7 @@ var Sphere: GameObject;
 var Cube: GameObject;
 var CubePick: GameObject;
 var Player: GameObject;
+var itemBagGameObject: GameObject;
 var PlayerLight: GameObject;
 var mainCamera: GameObject;
 var rayCamera: GameObject;
@@ -17,6 +18,7 @@ var array3d = new Array();
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
 var biologyJS: biology;
+var itemBagJS: itemBag;
 var mouseOrbitJS: mouseOrbit;
 var PlayerPrefsX: PlayerPrefsX;
 
@@ -28,7 +30,8 @@ var mouseStartPOS: Vector3;
 var clickStart: boolean = false;
 var mouseDragVector: Vector3;
 var mouseDragDist: float;
-
+var cubePlateTimer: GameObject;
+var cubePlateTimerCurrent: float;
 
 //紀錄滑鼠首次按壓的UI
 var hitUIObject: GameObject;
@@ -59,7 +62,8 @@ var ray: Ray;
 var mouseHitPlane: RaycastHit;
 
 function Start() {
-
+    cubePlateTimer = GameObject.Find("cubePlateTimer");
+    itemBagGameObject = GameObject.Find("itemBag");
     cylinder = GameObject.Find("cylinder");
     cubePlateMouse = GameObject.Find("cubePlateMouse");
     cubePlate = GameObject.Find("cubePlate");
@@ -77,6 +81,7 @@ function Start() {
     CubePick = GameObject.Find("CubePick");
 
     Player = GameObject.Find("Cha_Knight");
+
     mainCamera = GameObject.Find("mainCamera");
     rayCamera = GameObject.Find("rayCamera");
     Sphere.transform.position = Player.transform.position;
@@ -84,6 +89,11 @@ function Start() {
     Player.GetComponent(biology).Sphere = Sphere;
     pickTouchSide = GameObject.Find("pickTouchSide");
     biologyJS = Player.GetComponent(biology);
+
+
+    itemBagGameObject = GameObject.Find("itemBag");
+    itemBagGameObject.AddComponent(itemBag);
+    itemBagJS = itemBagGameObject.GetComponent(itemBag);
 
     var myButton = GameObject.Find("Button_LEFT");
     myButton.GetComponent(UI.Button).onClick.AddListener(Button_LEFT);
@@ -245,9 +255,9 @@ function saveGame() {
         PlayerPrefsX.SetColorArray("array3d", array3dColor);
         PlayerPrefs.Save();
 
-        print("save game");
+        //        print("save game");
     } else {
-        print("Not game data saved");
+        //        print("Not game data saved");
     }
 }
 
@@ -328,6 +338,11 @@ function buttonDetect() {
             }
         }
 
+        //取得首次點擊座標
+        if (!clickStart) {
+            clickStart = true;
+            mouseStartPOS = myIputPostion;
+        }
         //如果點選到了攝影機搖桿
         if (hitUIObjectName == 'cammeraPlate') {
             var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
@@ -406,10 +421,6 @@ function buttonDetect() {
 
             //控制生物移動
             if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0) {
-                if (!clickStart) {
-                    clickStart = true;
-                    mouseStartPOS = myIputPostion;
-                }
                 mouseDragVector.x = (myIputPostion.x - mouseStartPOS.x) * 2.5;
                 mouseDragVector.z = (myIputPostion.y - mouseStartPOS.y) * 2.5;
                 mouseDragDist = Vector3.Distance(myIputPostion, mouseStartPOS);
@@ -417,6 +428,14 @@ function buttonDetect() {
         }
         //如果點選到了CUBE按鈕
         if (hitUIObjectName == 'cubePlate') {
+            if (cubePlateTimerCurrent == 0) {
+                cubePlateTimerCurrent = Time.time;
+            }
+            if (cubePlateTimer.transform.localScale.x < 0.95) {
+                cubePlateTimer.transform.localScale = Vector3.MoveTowards(cubePlateTimer.transform.localScale, Vector3(1, 1, 1), 0.05);
+            } else {
+                itemBagJS.itemBagON = true;
+            }
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
             imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
@@ -435,11 +454,13 @@ function buttonDetect() {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍
                 cubePlateMouse.transform.position = cubePlate.transform.position;
                 cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+                cubePlateTimer.transform.localScale = Vector3(0, 0, 0);
             }
         }
 
         //如果點選到了CUBE按鈕
         if (hitUIObjectName == 'cubePlate') {
+
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
             imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
@@ -458,16 +479,26 @@ function buttonDetect() {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍
                 cubePlateMouse.transform.position = cubePlate.transform.position;
                 cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+                //                itemBag.GetComponent. < UI.RawImage > ().color.a = 0.0;
             }
+        }
+        //如果點選到了itemBag介面
+        if (hitUIObjectName == 'itemBag') {
+            itemBagJS.drag(mouseStartPOS, myIputPostion);
         }
 
     } else {
+        //如果itemBag開著狀態下點到itemBag以外的地方
+        if (itemBagJS.itemBagON) {
+            itemBagJS.itemBagON = false;
+        }
+        cubePlateTimerCurrent = 0;
         cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
         cubePlateMouse.transform.position = cubePlate.transform.position;
         movePlateMouse.transform.position = movePlate.transform.position;
         hitUIObject = null;
-
+        cubePlateTimer.transform.localScale = Vector3(0.0, 0.0, 1);
         //放開滑鼠時...如果前一個按鍵removePlate，則移除
         //放開滑鼠時...如果前一個按鍵cubePlate，則新增
         if (hitUIObjectName != "") {
