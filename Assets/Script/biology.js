@@ -275,7 +275,8 @@ function _movment() {
     }
 
     //將生物移動向目標
-    if (Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
+    if (mainGamejs.hitUIObjectName == 'movePlate' &&
+        Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
 
         moveSpeed = moveSpeedMax;
         this.bioAction = "Walk";

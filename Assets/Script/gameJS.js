@@ -396,6 +396,7 @@ function buttonDetect() {
         }
         //如果點選到了移動搖桿
         if (hitUIObjectName == 'movePlate') {
+
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
             imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
@@ -460,7 +461,6 @@ function buttonDetect() {
 
         //如果點選到了CUBE按鈕
         if (hitUIObjectName == 'cubePlate') {
-
             _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
             _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
             imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
@@ -487,11 +487,15 @@ function buttonDetect() {
             itemBagJS.drag(mouseStartPOS, myIputPostion);
         }
 
-    } else {
-        //如果itemBag開著狀態下點到itemBag以外的地方
-        if (itemBagJS.itemBagON) {
-            itemBagJS.itemBagON = false;
+        //如果點選到了itemBag介面
+        if (hitUIObjectName == '') {
+            if (itemBagJS.itemBagON) {
+                itemBagJS.itemBagON = false;
+            }
         }
+    } else {
+
+
         cubePlateTimerCurrent = 0;
         cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;

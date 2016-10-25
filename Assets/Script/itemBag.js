@@ -136,6 +136,13 @@ function drag(mouseStartPOS: Vector2, myIputPostion: Vector2) {
     }
 
     var goal = orginPos + myIputPostion - mouseStartPOS;
-    inside.transform.position = Vector3.MoveTowards(inside.transform.position, Vector3(inside.transform.position.x, goal.y, 0), 300);
+    print(inside.transform.position.y);
+    if (inside.transform.position.y < 300) {
+        inside.transform.position = Vector3.MoveTowards(inside.transform.position, Vector3(inside.transform.position.x, goal.y, 0), (inside.transform.position.y - 200) * 0.125);
+    } else {
+        inside.transform.position = Vector3.MoveTowards(inside.transform.position, Vector3(inside.transform.position.x, goal.y, 0), (1180 - inside.transform.position.y) * 0.125);
+    }
+
+
 
 }
