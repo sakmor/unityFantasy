@@ -193,12 +193,12 @@ function mouseOrTouch() {
 
     if (Input.GetMouseButton(0)) {
         myIputPostion = Input.mousePosition;
-        logg("x: " + myIputPostion.x.ToString() + ", y:" + myIputPostion.y.ToString());
+        //        logg("x: " + myIputPostion.x.ToString() + ", y:" + myIputPostion.y.ToString());
         touchScreen = true;
     } else
     if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved) {
         myIputPostion = Input.GetTouch(0).deltaPosition;
-        logg("x: " + myIputPostion.x.ToString() + ", y:" + myIputPostion.y.ToString());
+        //        logg("x: " + myIputPostion.x.ToString() + ", y:" + myIputPostion.y.ToString());
         touchScreen = true;
     } else {
         touchScreen = false;
@@ -343,15 +343,16 @@ function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
 
     if (touchScreen) {
-
+        logg("touchScreen!");
 
         //取得按壓的物件名稱
-        if (EventSystem.current.IsPointerOverGameObject()) {
-
-            hitUIObject = EventSystem.current.currentSelectedGameObject;
-            if (hitUIObject) {
-                hitUIObjectName = hitUIObject.name;
-                logg("hitUIObject:" + hitUIObject.name);
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
+            if ((EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))) {
+                hitUIObject = EventSystem.current.currentSelectedGameObject;
+                if (hitUIObject) {
+                    hitUIObjectName = hitUIObject.name;
+                    logg("hitUIObject:" + hitUIObject.name);
+                }
             }
         }
 
