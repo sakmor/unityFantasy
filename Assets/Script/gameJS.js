@@ -60,8 +60,12 @@ var cubeArrayTxt = new Array();
 var cameraRelativeTarget: Vector3;
 var ray: Ray;
 var mouseHitPlane: RaycastHit;
+var LogText: GameObject;
+
 
 function Start() {
+
+    LogText = GameObject.Find("LogText");
     cubePlateTimer = GameObject.Find("cubePlateTimer");
     itemBagGameObject = GameObject.Find("itemBag");
     cylinder = GameObject.Find("cylinder");
@@ -133,6 +137,14 @@ function Update() {
     buttonDetect();
 }
 
+function logg(n: String) {
+    LogText.GetComponent. < UI.Text > ().text += '\n';
+    LogText.GetComponent. < UI.Text > ().text += '<log> ';
+    LogText.GetComponent. < UI.Text > ().text += n;
+
+}
+
+
 function Button_Save() {
     saveGame();
 }
@@ -178,18 +190,22 @@ function checkArray(a: Vector3) {
 
 function mouseOrTouch() {
 
-    if (Input.touchCount > 0) {
-        myIputPostion = Input.GetTouch(0).position;
-        touchScreen = true;
 
-    } else
     if (Input.GetMouseButton(0)) {
         myIputPostion = Input.mousePosition;
+        logg("x: " + myIputPostion.x.ToString() + ", y:" + myIputPostion.y.ToString());
+        touchScreen = true;
+    } else
+    if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved) {
+        myIputPostion = Input.GetTouch(0).deltaPosition;
+        logg("x: " + myIputPostion.x.ToString() + ", y:" + myIputPostion.y.ToString());
         touchScreen = true;
     } else {
         touchScreen = false;
     }
+
 }
+
 
 
 function loadResources() {
@@ -335,6 +351,7 @@ function buttonDetect() {
             hitUIObject = EventSystem.current.currentSelectedGameObject;
             if (hitUIObject) {
                 hitUIObjectName = hitUIObject.name;
+                logg("hitUIObject:" + hitUIObject.name);
             }
         }
 

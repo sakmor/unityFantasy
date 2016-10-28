@@ -31,7 +31,7 @@ function Update() {
     // Interval ended - update GUI text and start new interval
     if (timeleft <= 0.0) {
         // display two fractional digits (f2 format)
-        this.GetComponent. < UI.Text > ().text = "" + (accum / frames).ToString("f2");
+        this.GetComponent. < UI.Text > ().text = "fps:" + (accum / frames).ToString("f5");
         timeleft = updateInterval;
         accum = 0.0;
         frames = 0;
