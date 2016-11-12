@@ -66,7 +66,7 @@ var mouseHitPlane: RaycastHit;
 
 function Start() {
     logText = GameObject.Find("logText");
-    logg('hello');
+    logg('This Device is:' + SystemInfo.deviceType);
     cubePlateTimer = GameObject.Find("cubePlateTimer");
     itemBagGameObject = GameObject.Find("itemBag");
     cylinder = GameObject.Find("cylinder");
@@ -188,7 +188,8 @@ function mouseOrTouch() {
     if (Input.touches.length > 1) {
         for (var touch: Touch in Input.touches) {
             touchScreen = true;
-            myIputPostion = touch.position;
+            myIputPostion.x = touch.position.x;
+            myIputPostion.y = touch.position.y;
         }
     } else
     if (Input.GetMouseButton(0)) {
@@ -333,7 +334,6 @@ function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float,
 
 function logg(n: String) {
     logText.GetComponent. < UI.Text > ().text += '\n';
-    logText.GetComponent. < UI.Text > ().text += '<log> ';
     logText.GetComponent. < UI.Text > ().text += n;
 
 }
@@ -342,6 +342,7 @@ function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
 
     if (touchScreen) {
+        //        logg('inpupPos' + myIputPostion);
 
 
         //取得按壓的物件名稱
