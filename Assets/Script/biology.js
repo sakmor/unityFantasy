@@ -60,7 +60,7 @@ function Start() {
 
 function Update() {
 
-    if (Input.GetKey("k")) {
+    if (Input.GetKeyDown("k")) {
         //        mainGamejs.logg('space');
         _createCube();
     }

@@ -1,6 +1,9 @@
 // # pragma strict
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
+import System.IO;
+import SimpleJSON;
+
 var Plane: GameObject;
 
 var Sphere: GameObject;
@@ -227,26 +230,34 @@ function loadResources() {
 }
 
 function loadGame() {
-    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
+    //    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
-    //    Player.transform.Rotate = PlayerPrefsX.GetVector3("playerRotate");
-    for (var i = 0; i < array3dLoad.length; i++) {
-		if (GameObject.Find("(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")") == null) {
-        var temp = Instantiate(Cube);
-        temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
-        temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-        temp.GetComponent. < Renderer > ().enabled = true;
-        //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i].a]), Mesh);
-        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + array3dLoad[i].a, Mesh);
-        temp.GetComponent. < Renderer > ().enabled = true;
-        temp.AddComponent(BoxCollider);
-        temp.name = "(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")";
-        temp.transform.position.x = array3dLoad[i].r;
-        temp.transform.position.y = array3dLoad[i].g;
-        temp.transform.position.z = array3dLoad[i].b;
-        setArray(temp.transform.position, array3dLoad[i].a);
+    var or = new StreamReader("array3d.txt");
+    var arrayText: String = or.ReadToEnd();
+    var array3dLoad = JSON.Parse(arrayText);
+    var Cube: GameObject = GameObject.Find("Cube");
+    Debug.Log(array3dLoad[0][0]);
+    for (var i = 1; i < 1 + parseInt(array3dLoad[0][0]); i++) {
+        if (GameObject.Find("(" + array3dLoad[i][0].ToString("F0") + ", " + array3dLoad[i][1].ToString("F0") + ", " + array3dLoad[i][2].ToString("F0") + ")") == null) {
+            var temp = Instantiate(Cube);
+            temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
+            temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            temp.GetComponent. < Renderer > ().enabled = true;
+            //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i][3]]), Mesh);
+            temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + array3dLoad[i][3], Mesh);
+            temp.GetComponent. < Renderer > ().enabled = true;
+            temp.AddComponent(BoxCollider);
+            //temp.name = "(" + array3dLoad[i][0] + ", " + array3dLoad[i][1]  + ", " + array3dLoad[i][2] + ")";
+
+            temp.transform.position.x = parseFloat(array3dLoad[i][0]);
+            temp.transform.position.y = parseFloat(array3dLoad[i][1]);
+            temp.transform.position.z = parseFloat(array3dLoad[i][2]);
+            temp.name = temp.transform.position.ToString("F0");
+            setArray(temp.transform.position, parseFloat(array3dLoad[i][3]));
+        }
     }
-	}
+
+    or.Close();
 }
 
 function saveGame() {
