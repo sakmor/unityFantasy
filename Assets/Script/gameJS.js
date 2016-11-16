@@ -231,6 +231,7 @@ function loadGame() {
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
     //    Player.transform.Rotate = PlayerPrefsX.GetVector3("playerRotate");
     for (var i = 0; i < array3dLoad.length; i++) {
+		if (GameObject.Find("(" + array3dLoad[i].r.ToString("F0") + ", " + array3dLoad[i].g.ToString("F0") + ", " + array3dLoad[i].b.ToString("F0") + ")") == null) {
         var temp = Instantiate(Cube);
         temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
         temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
@@ -245,6 +246,7 @@ function loadGame() {
         temp.transform.position.z = array3dLoad[i].b;
         setArray(temp.transform.position, array3dLoad[i].a);
     }
+	}
 }
 
 function saveGame() {
