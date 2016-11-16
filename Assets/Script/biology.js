@@ -59,6 +59,11 @@ function Start() {
 }
 
 function Update() {
+
+    if (Input.GetKey("k")) {
+        //        mainGamejs.logg('space');
+        _createCube();
+    }
     this._movment();
     this._bioStatus();
     //    this._autoJump();
