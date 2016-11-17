@@ -21,7 +21,7 @@ var WalkSteptweek: float;
 private
 var mainGame: GameObject;
 private
-var mainGamejs: gameJS;
+var maingameJS: gameJS;
 var TextMesh: TextMesh;
 var pickPlayer: GameObject;
 var Plane_touch: GameObject;
@@ -41,13 +41,13 @@ function Start() {
     handCube = 0;
     mainGame = GameObject.Find("mainGame");
     Sphere2 = GameObject.Find("Sphere2");
-    mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
-    pickTouch = mainGamejs.pickTouch;
-    pickTouchSide = mainGamejs.pickTouchSide;
+    maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
+    pickTouch = maingameJS.pickTouch;
+    pickTouchSide = maingameJS.pickTouchSide;
     Plane_touch = GameObject.Find("Plane_touch");
     pickPlayer = GameObject.Find("pickPlayer");
     _backward = false;
-    WalkSteptweek = WalkSteptweek || 50;
+    WalkSteptweek = WalkSteptweek || 40;
     moveSpeed = moveSpeed || 0.07;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
@@ -61,7 +61,7 @@ function Start() {
 function Update() {
 
     if (Input.GetKeyDown("k")) {
-        //        mainGamejs.logg('space');
+        //        maingameJS.logg('space');
         _createCube();
     }
     this._movment();
@@ -72,26 +72,26 @@ function Update() {
 
 }
 
-function OnCollisionEnter(collision: Collision) {
-    print(collision.gameObject.transform.position.y - this.transform.position.y);
-    if (collision.gameObject.transform.position.y - this.transform.position.y > 1) {
-        this.transform.position.y += 0.1;
-    }
-}
-
-function OnCollisionStay(collision: Collision) {
-
-    if (collision.relativeVelocity.y > 0) {
-        onAir = false;
-    }
-}
-
-function OnCollisionExit(collision: Collision) {
-
-    if (collision.relativeVelocity.y > 0) {
-        onAir = true;
-    }
-}
+//function OnCollisionEnter(collision: Collision) {
+//    print(collision.gameObject.transform.position.y - this.transform.position.y);
+//    if (collision.gameObject.transform.position.y - this.transform.position.y > 1) {
+//        this.transform.position.y += 0.1;
+//    }
+//}
+//
+//function OnCollisionStay(collision: Collision) {
+//
+//    if (collision.relativeVelocity.y > 0) {
+//        onAir = false;
+//    }
+//}
+//
+//function OnCollisionExit(collision: Collision) {
+//
+//    if (collision.relativeVelocity.y > 0) {
+//        onAir = true;
+//    }
+//}
 
 function _autoJump() {
     if (this.bioAction == "Walk" && moveSpeed > 0.06) {
@@ -110,13 +110,13 @@ function _cubeHead() {
     Cube.transform.position.z = 0;
     Cube.transform.position.y = 299.8;
     //    Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
-    Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + mainGamejs.cubeArrayTxt[handCube], Mesh);
+    Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + maingameJS.cubeArrayTxt[handCube], Mesh);
     //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
 }
 
 function nextCube() {
     print("change");
-    if (handCube == mainGamejs.cubeArrayTxt.length - 1) {
+    if (handCube == maingameJS.cubeArrayTxt.length - 1) {
         handCube = 0;
     } else {
         handCube++;
@@ -129,11 +129,11 @@ function _createCube() {
     var tempPOS: Vector3 = pickTouchSide.transform.position;
 
     //給原本DQM操方式
-    //if (mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
-    //        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
-    //        mainGamejs.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
-    //        mainGamejs.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
-    //        mainGamejs.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true ||
+    //if (maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
+    //        maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
+    //        maingameJS.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
+    //        maingameJS.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
+    //        maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true ||
     //        tempPOS.y == 0.5) {
     //        Cube.transform.position = tempPOS;
     //        var temp = Instantiate(Cube);
@@ -141,10 +141,10 @@ function _createCube() {
     //        temp.GetComponent. < Renderer > ().enabled = true;
     //        temp.AddComponent(BoxCollider);
     //        temp.name = temp.transform.position.ToString("F0");
-    //        //        mainGamejs.setArray(temp.transform.position, float.parseFloat(mainGamejs.cubeArrayTxt[handCube]));
-    //        mainGamejs.setArray(temp.transform.position, mainGamejs.cubeArrayTxt[handCube]);
+    //        //        maingameJS.setArray(temp.transform.position, float.parseFloat(maingameJS.cubeArrayTxt[handCube]));
+    //        maingameJS.setArray(temp.transform.position, maingameJS.cubeArrayTxt[handCube]);
     //    }
-    if (!mainGamejs.checkArray(tempPOS)) {
+    if (!maingameJS.checkArray(tempPOS)) {
 
         var temp = Instantiate(Cube);
         temp.transform.eulerAngles = Vector3(-90, 0, 0);
@@ -154,15 +154,15 @@ function _createCube() {
         temp.GetComponent. < Renderer > ().enabled = true;
         temp.AddComponent(BoxCollider);
         temp.name = temp.transform.position.ToString("F0");
-        //        mainGamejs.setArray(temp.transform.position, float.parseFloat(mainGamejs.cubeArrayTxt[handCube]));
-        mainGamejs.setArray(temp.transform.position, mainGamejs.cubeArrayTxt[handCube]);
+        //        maingameJS.setArray(temp.transform.position, float.parseFloat(maingameJS.cubeArrayTxt[handCube]));
+        maingameJS.setArray(temp.transform.position, maingameJS.cubeArrayTxt[handCube]);
     }
 }
 
 function _removeCube() {
 
     var tempPOS: Vector3 = pickTouch.transform.position;
-    mainGamejs.removeArray(tempPOS);
+    maingameJS.removeArray(tempPOS);
     Destroy(GameObject.Find(tempPOS.ToString("F0")));
 
 }
@@ -257,21 +257,20 @@ function _bioStatus() {
 }
 
 function _movment() {
-    if (!Input.GetMouseButton(1)) {
-        Sphere2.transform.position = this.transform.position;
-    }
+
 
     //轉換sphere座標，轉換成螢幕座標
-    if (mainGamejs.clickStart) {
-        Sphere.transform.position.x = mainGamejs.mouseDragVector.x * 0.02;
-        Sphere.transform.position.z = mainGamejs.mouseDragVector.z * 0.02;
+    if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate') {
+        Debug.Log("clickStart");
+        Sphere.transform.position.x = maingameJS.mouseDragVector.x * 0.02;
+        Sphere.transform.position.z = maingameJS.mouseDragVector.z * 0.02;
 
-        //var tempAngel = mainGamejs.cameraAngle;
-        var tempAngel = Vector3.Angle(mainGamejs.mainCamera.transform.forward, (Sphere.transform.position - this.transform.position));
+        //var tempAngel = maingameJS.cameraAngle;
+        var tempAngel = Vector3.Angle(maingameJS.mainCamera.transform.forward, (Sphere.transform.position - this.transform.position));
 
         //角度轉徑度
         //弳度=角度*pi/180
-        tempAngel = -mainGamejs.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+        tempAngel = -maingameJS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
         // x′=xcosθ-ysinθ,
         //y′=xsin⁡θ+ycos⁡θ....
         Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel) + this.transform.position.x;
@@ -287,11 +286,11 @@ function _movment() {
         this.bioAction = "Walk";
 
         //依照目標距離調整移動速度
-        if (Vector3.Distance(this.transform.position, Sphere2.transform.position) < 5) {
+        if (maingameJS.hitUIObjectName ==
+            'movePlate' && Vector3.Distance(this.transform.position, Sphere2.transform.position) < 5) {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 5);
-            if (moveSpeed < 0.01) {
-                moveSpeed = 0;
-            }
+        } else if (Vector3.Distance(this.transform.position, Sphere2.transform.position) < 1) {
+            moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 1.2);
         }
 
         //移動生物到目標點

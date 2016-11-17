@@ -146,7 +146,7 @@ function Update() {
 }
 
 function clearCube() {
-    or = new StreamReader("array3d.txt");
+    var or = new StreamReader("array3d.txt");
     var arrayText: String = or.ReadToEnd();
     var array3dclearJson = JSON.Parse(arrayText);
     for (var i = 1; i < 1 + parseInt(array3dclearJson[0][0]); i++) {
@@ -155,7 +155,6 @@ function clearCube() {
         tempVector3.y = parseFloat(array3dclearJson[i][1]);
         tempVector3.z = parseFloat(array3dclearJson[i][2]);
         DestroyImmediate(GameObject.Find(tempVector3.ToString("F0")));
-        Debug.Log(array3dclearJson[0][0]);
     }
     or.Close();
 }
@@ -205,13 +204,14 @@ function checkArray(a: Vector3) {
 }
 
 function mouseOrTouch() {
-    if (Input.touches.length > 1) {
-        for (var touch: Touch in Input.touches) {
-            touchScreen = true;
-            myIputPostion.x = touch.position.x;
-            myIputPostion.y = touch.position.y;
-        }
-    } else
+    //    if(SystemInfo.deviceType)
+    //    if (Input.touches.length > 1) {
+    //        for (var touch: Touch in Input.touches) {
+    //            touchScreen = true;
+    //            myIputPostion.x = touch.position.x;
+    //            myIputPostion.y = touch.position.y;
+    //        }
+    //    } else
     if (Input.GetMouseButton(0)) {
         myIputPostion = Input.mousePosition;
         touchScreen = true;
@@ -249,11 +249,11 @@ function loadResources() {
 function loadGame() {
     //    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
+    //    biologyJS.Sphere2.transform.position = PlayerPrefsX.GetVector3("playerPos");
     var or = new StreamReader("array3d.txt");
     var arrayText: String = or.ReadToEnd();
     var array3dLoad = JSON.Parse(arrayText);
     var Cube: GameObject = GameObject.Find("Cube");
-    Debug.Log(array3dLoad[0][0]);
     for (var i = 1; i < 1 + parseInt(array3dLoad[0][0]); i++) {
         if (GameObject.Find("(" + array3dLoad[i][0].ToString("F0") + ", " + array3dLoad[i][1].ToString("F0") + ", " + array3dLoad[i][2].ToString("F0") + ")") == null) {
             var temp = Instantiate(Cube);
@@ -372,9 +372,6 @@ function buttonDetect() {
     //當滑鼠按壓，並點選到UI時
 
     if (touchScreen) {
-        //        logg('inpupPos' + myIputPostion);
-
-
         //取得按壓的物件名稱
         if (EventSystem.current.IsPointerOverGameObject()) {
             hitUIObject = EventSystem.current.currentSelectedGameObject;
@@ -545,7 +542,13 @@ function buttonDetect() {
         }
     } else {
 
-
+        //點螢幕移動
+        if (Input.GetMouseButtonUp(0)) {
+            if (hitUIObjectName == "" &&
+                5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition)) {
+                biologyJS.Sphere2.transform.position = mouseHitPlane.transform.position;
+            }
+        }
         cubePlateTimerCurrent = 0;
         cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
@@ -561,6 +564,9 @@ function buttonDetect() {
             }
             if (hitUIObjectName == 'cubePlate') {
                 biologyJS.bioAction = "Create";
+            }
+            if (hitUIObjectName == 'movePlate') {
+                biologyJS.Sphere2.transform.position = biologyJS.transform.position;
             }
             hitUIObjectName = "";
         }
@@ -596,6 +602,8 @@ function fellowPlayerLight() {
 }
 
 function getMousehitGroupPos() {
+
+
 
     switch (hitUIObjectName) {
     case "cubePlate":
@@ -677,8 +685,6 @@ function getMousehitGroupPos() {
                 mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
                 pickTouchSide.transform.position.y -= 1.0;
             }
-			biologyJS.Sphere2.transform.position=mouseHitPlane.transform.position;
-					Debug.Log('haha');
             break;
         case "biology":
 
@@ -693,7 +699,6 @@ function getMousehitGroupPos() {
     //    Cube.layer = 0;
     Sphere.layer = 0;
     Player.layer = 0;
-
 }
 
 function mouseOrbitSet() {

@@ -29,8 +29,8 @@ public class Bezier : MonoBehaviour
 
     void Update()
     {
-        Color shininess = new Color(1.0F, 1.0F, 1.0F,1-linepapa);
-      rend.material.SetColor("_TintColor", shininess);
+//        Color shininess = new Color(1.0F, 1.0F, 1.0F,1-linepapa);
+//      rend.material.SetColor("_TintColor", shininess);
         DrawCurve();
     }
 
@@ -44,9 +44,9 @@ public class Bezier : MonoBehaviour
 
                 linepapa= Time.time% 1;
 
-                if(t>linepapa){
-                    t=linepapa;
-                }
+//                if(t>linepapa){
+//                    t=linepapa;
+//                }
 
                 int nodeIndex = j * 3;
                 Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints [nodeIndex].position, controlPoints [nodeIndex + 1].position, controlPoints [nodeIndex + 2].position, controlPoints [nodeIndex + 3].position);
