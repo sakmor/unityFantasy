@@ -124,6 +124,7 @@ function Start() {
     cammeraPlate = GameObject.Find("cammeraPlate");
     cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
     loadResources();
+    clearCube();
     loadGame();
     //設定攝影機
     mouseOrbitSet();
@@ -142,6 +143,21 @@ function Update() {
 
 
 
+}
+
+function clearCube() {
+    or = new StreamReader("array3d.txt");
+    var arrayText: String = or.ReadToEnd();
+    var array3dclearJson = JSON.Parse(arrayText);
+    for (var i = 1; i < 1 + parseInt(array3dclearJson[0][0]); i++) {
+        var tempVector3: Vector3;
+        tempVector3.x = parseFloat(array3dclearJson[i][0]);
+        tempVector3.y = parseFloat(array3dclearJson[i][1]);
+        tempVector3.z = parseFloat(array3dclearJson[i][2]);
+        DestroyImmediate(GameObject.Find(tempVector3.ToString("F0")));
+        Debug.Log(array3dclearJson[0][0]);
+    }
+    or.Close();
 }
 
 function Button_Save() {
@@ -177,6 +193,7 @@ function setArray(a: Vector3, b: float) {
 function removeArray(a: Vector3) {
     array3d[dictionary3d[a]] = null;
     dictionary3d[a] = 0;
+    saveGame();
 }
 
 function checkArray(a: Vector3) {
@@ -253,8 +270,8 @@ function loadGame() {
             temp.transform.position.y = parseFloat(array3dLoad[i][1]);
             temp.transform.position.z = parseFloat(array3dLoad[i][2]);
             temp.name = temp.transform.position.ToString("F0");
-            setArray(temp.transform.position, parseFloat(array3dLoad[i][3]));
         }
+        setArray(temp.transform.position, parseFloat(array3dLoad[i][3]));
     }
 
     or.Close();
