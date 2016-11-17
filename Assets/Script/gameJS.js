@@ -677,8 +677,11 @@ function getMousehitGroupPos() {
                 mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
                 pickTouchSide.transform.position.y -= 1.0;
             }
+			biologyJS.Sphere2.transform.position=mouseHitPlane.transform.position;
+					Debug.Log('haha');
             break;
-        case "Player":
+        case "biology":
+
             break;
         }
     }

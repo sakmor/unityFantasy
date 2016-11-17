@@ -280,7 +280,7 @@ function _movment() {
     }
 
     //將生物移動向目標
-    if (mainGamejs.hitUIObjectName == 'movePlate' &&
+    if (
         Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
 
         moveSpeed = moveSpeedMax;
