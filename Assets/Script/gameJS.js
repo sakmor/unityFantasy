@@ -276,6 +276,7 @@ function loadGame() {
         Debug.Log('Color:' + tempColor);
         if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
             var temp = Instantiate(Cube);
+            temp.tag = "Cube";
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
             temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent. < Renderer > ().enabled = true;

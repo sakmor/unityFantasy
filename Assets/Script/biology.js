@@ -149,6 +149,7 @@ function _createCube() {
     if (!maingameJS.checkArray(tempPOS)) {
 
         var temp = Instantiate(Cube);
+        temp.tag = "Cube";
         temp.transform.eulerAngles = Vector3(-90, 0, 0);
         temp.transform.position = tempPOS;
         temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
@@ -228,7 +229,7 @@ function _bioStatus() {
         case "Action":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
-            //            _removeCube();
+            _removeCube();
             break;
         case "Create":
             anim.CrossFade("Attack");

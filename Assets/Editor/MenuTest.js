@@ -12,7 +12,7 @@ function saveGame() {
         var tempJson: Color[] = PlayerPrefsX.GetColorArray("array3d");
         var Player = GameObject.Find("Cha_Knight");
         var json: String;
-        json += '{';
+        json = '{';
         for (var i = 0; i < tempJson.length; i++) {
 
             if (i != 0) {
@@ -29,7 +29,7 @@ function saveGame() {
             json += ']';
 
         }
-        json += ',"length":' + (tempJson.length - 1) + '}';
+        json += ',"length":' + (tempJson.length) + '}';
         Debug.Log('write end');
 
         // Create an instance of StreamWriter to write text to a file.
@@ -77,6 +77,7 @@ function LoadGame() {
             Debug.Log('Color:' + tempColor);
             if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
                 var temp = Instantiate(Cube);
+                temp.tag = "Cube";
                 temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
                 temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                 temp.GetComponent. < Renderer > ().enabled = true;
@@ -132,4 +133,52 @@ function clearCube() {
     }
     Debug.Log('clear cubs: ' + array3dLoadJson["length"]);
     or.Close();
+}
+
+
+@
+MenuItem("==Menu==/Normalized")
+static
+
+function Normalized() {
+    var respawnPrefab: GameObject;
+    var respawns: GameObject[];
+    respawns = GameObject.FindGameObjectsWithTag("Cube");
+    var json: String;
+    json = '{';
+    var step = 0;
+    for (var respawn: GameObject in respawns) {
+        if (step != 0) {
+            json += ',';
+        }
+
+
+        respawn.transform.position.x = Mathf.Floor(respawn.transform.position.x + 0.5);
+        respawn.transform.position.z = Mathf.Floor(respawn.transform.position.z + 0.5);
+        respawn.transform.position.y = Mathf.Floor(respawn.transform.position.y) + 0.5;
+        respawn.name = respawn.transform.position.ToString("F0");
+
+        json += '"' + step + '":[';
+        json += respawn.transform.position.x;
+        json += ',';
+        json += respawn.transform.position.y;
+        json += ',';
+        json += respawn.transform.position.z;
+        json += ',';
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[0];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[1];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[2];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[3];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[4];
+        json += ']';
+        Debug.Log(respawn.GetComponent. < MeshFilter > ().sharedMesh.name[4]);
+        step++;
+    }
+    json += ',"length":' + (step) + '}';
+    Debug.Log('--=== Normalized End ===--');
+
+    sw = new StreamWriter("array3dictionary.txt");
+    sw.Write(json);
+    sw.Close();
+
 }
