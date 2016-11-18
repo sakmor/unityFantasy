@@ -2,7 +2,7 @@
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
 import System.IO;
-import SimpleJSON;
+import MiniJSON;
 
 var Plane: GameObject;
 
@@ -124,7 +124,7 @@ function Start() {
     cammeraPlate = GameObject.Find("cammeraPlate");
     cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
     loadResources();
-    clearCube();
+    //    clearCube();
     loadGame();
     //設定攝影機
     mouseOrbitSet();
@@ -146,16 +146,24 @@ function Update() {
 }
 
 function clearCube() {
-    var or = new StreamReader("array3d.txt");
+    var or = new StreamReader("array3dictionary.txt");
     var arrayText: String = or.ReadToEnd();
-    var array3dclearJson = JSON.Parse(arrayText);
-    for (var i = 1; i < 1 + parseInt(array3dclearJson[0][0]); i++) {
-        var tempVector3: Vector3;
-        tempVector3.x = parseFloat(array3dclearJson[i][0]);
-        tempVector3.y = parseFloat(array3dclearJson[i][1]);
-        tempVector3.z = parseFloat(array3dclearJson[i][2]);
-        DestroyImmediate(GameObject.Find(tempVector3.ToString("F0")));
+    var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+        System.Object > ;
+    var tempi: int = array3dLoadJson["length"];
+    for (var i = 1; i < tempi; i++) {
+        var temp: Vector3;
+        var tempColor: Color;
+        tempColor.r = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
+        tempColor.g = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
+        tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
+        tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
+        temp.x = tempColor.r;
+        temp.y = tempColor.g;
+        temp.z = tempColor.b;
+        DestroyImmediate(GameObject.Find(temp.ToString("F0")));
     }
+    Debug.Log('clear cubs: ' + array3dLoadJson["length"]);
     or.Close();
 }
 
@@ -249,31 +257,41 @@ function loadResources() {
 function loadGame() {
     //    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
-    //    biologyJS.Sphere2.transform.position = PlayerPrefsX.GetVector3("playerPos");
-    var or = new StreamReader("array3d.txt");
+    var or = new StreamReader("array3dictionary.txt");
     var arrayText: String = or.ReadToEnd();
-    var array3dLoad = JSON.Parse(arrayText);
+    var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+        System.Object > ;
     var Cube: GameObject = GameObject.Find("Cube");
-    for (var i = 1; i < 1 + parseInt(array3dLoad[0][0]); i++) {
-        if (GameObject.Find("(" + array3dLoad[i][0].ToString("F0") + ", " + array3dLoad[i][1].ToString("F0") + ", " + array3dLoad[i][2].ToString("F0") + ")") == null) {
+    var Player = GameObject.Find("Cha_Knight");
+    //        Player.transform.position.x = parseFloat(array3dLoadJson[0][1]);
+    //        Player.transform.position.y = parseFloat(array3dLoadJson[0][2]);
+    //        Player.transform.position.z = parseFloat(array3dLoadJson[0][3]);
+    var tempi: int = array3dLoadJson["length"];
+    for (var i = 1; i < tempi; i++) {
+        var tempColor: Color;
+        tempColor.r = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
+        tempColor.g = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
+        tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
+        tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
+        Debug.Log('Color:' + tempColor);
+        if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
             var temp = Instantiate(Cube);
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
             temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent. < Renderer > ().enabled = true;
-            //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoad[i][3]]), Mesh);
-            temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + array3dLoad[i][3], Mesh);
+            //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
+            temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempColor.a, Mesh);
             temp.GetComponent. < Renderer > ().enabled = true;
             temp.AddComponent(BoxCollider);
-            //temp.name = "(" + array3dLoad[i][0] + ", " + array3dLoad[i][1]  + ", " + array3dLoad[i][2] + ")";
+            //temp.name = "(" + array3dLoadJson[i][0] + ", " + array3dLoadJson[i][1]  + ", " + array3dLoadJson[i][2] + ")";
 
-            temp.transform.position.x = parseFloat(array3dLoad[i][0]);
-            temp.transform.position.y = parseFloat(array3dLoad[i][1]);
-            temp.transform.position.z = parseFloat(array3dLoad[i][2]);
+            temp.transform.position.x = tempColor.r;
+            temp.transform.position.y = tempColor.g;
+            temp.transform.position.z = tempColor.b;
             temp.name = temp.transform.position.ToString("F0");
+            setArray(temp.transform.position, tempColor.a);
         }
-        setArray(temp.transform.position, parseFloat(array3dLoad[i][3]));
     }
-
     or.Close();
 }
 
