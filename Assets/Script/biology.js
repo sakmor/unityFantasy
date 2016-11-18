@@ -61,8 +61,10 @@ function Start() {
 function Update() {
 
     if (Input.GetKeyDown("k")) {
-        //        maingameJS.logg('space');
         _createCube();
+    }
+    if (Input.GetKeyDown("a")) {
+        this.bioAction = "Action";
     }
     this._movment();
     this._bioStatus();
@@ -226,7 +228,7 @@ function _bioStatus() {
         case "Action":
             anim.CrossFade("Attack");
             anim.CrossFadeQueued("Wait");
-            _removeCube();
+            //            _removeCube();
             break;
         case "Create":
             anim.CrossFade("Attack");
@@ -281,7 +283,9 @@ function _movment() {
     //將生物移動向目標
     if (
         Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
-
+        if (maingameJS.hitUIObjectName != 'movePlate') {
+            Sphere2.GetComponent. < Renderer > ().enabled = true;
+        }
         moveSpeed = moveSpeedMax;
         this.bioAction = "Walk";
 
@@ -302,7 +306,7 @@ function _movment() {
         anim["Walk"].speed = WalkSteptweek * moveSpeed;
 
     } else {
-
+        Sphere2.GetComponent. < Renderer > ().enabled = false;
         if (this.bioAction == "Walk") {
             this.bioAction = "Wait";
         }

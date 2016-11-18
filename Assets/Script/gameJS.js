@@ -641,8 +641,6 @@ function getMousehitGroupPos() {
     }
 
 
-    Sphere.layer = 2;
-    Player.layer = 2;
 
     //滑鼠點擊取得做標點
 
@@ -714,9 +712,6 @@ function getMousehitGroupPos() {
     CubePick.transform.position = pickTouchSide.transform.position;
     CubePick.GetComponent. < MeshFilter > ().mesh = Cube.GetComponent. < MeshFilter > ().mesh;
 
-    //    Cube.layer = 0;
-    Sphere.layer = 0;
-    Player.layer = 0;
 }
 
 function mouseOrbitSet() {
