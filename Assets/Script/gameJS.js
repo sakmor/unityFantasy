@@ -124,7 +124,7 @@ function Start() {
     cammeraPlate = GameObject.Find("cammeraPlate");
     cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
     loadResources();
-    //    clearCube();
+    clearCube();
     loadGame();
     //設定攝影機
     mouseOrbitSet();
@@ -273,6 +273,9 @@ function loadGame() {
         tempColor.g = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
         tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
         tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
+
+        //建立目錄dictionary3d
+        dictionary3d[Vector3(tempColor.r, tempColor.g, tempColor.b)] = tempColor.a;
         Debug.Log('Color:' + tempColor);
         if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
             var temp = Instantiate(Cube);

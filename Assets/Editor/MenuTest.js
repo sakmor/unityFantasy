@@ -15,6 +15,8 @@ function saveGame() {
     var step = 0;
     json = '{';
     for (var respawn: GameObject in respawns) {
+
+
         if (step != 0) {
             json += ',';
         }
@@ -55,7 +57,7 @@ static
 
 function LoadGame() {
     if (!Application.isPlaying) {
-
+        var Cubes = GameObject.Find("Cubes");
         or = new StreamReader("array3dictionary.txt");
         var arrayText: String = or.ReadToEnd();
         var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
@@ -75,6 +77,7 @@ function LoadGame() {
             Debug.Log('Color:' + tempColor);
             if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
                 var temp = Instantiate(Cube);
+                temp.transform.parent = Cubes.transform;
                 temp.tag = "Cube";
                 temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
                 temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
@@ -174,21 +177,50 @@ function Normalized() {
         }
     }
 }@
-MenuItem("==Menu==/ComMeshes")
+MenuItem("==Menu==/detectOcclusion")
 static
 
-function ComMeshes() {
-    var meshFilters: MeshFilter[];
-    var respawns = Selection.gameObjects;
-    var combine: CombineInstance[] = new CombineInstance[respawns.Length];
-    var i = 0;
-    for (var respawn: GameObject in respawns) {
-        combine[i].MeshFilter.sharedMesh = respawns[i].sharedMesh;
-        i++;
+function detectOcclusion() {
+    var dictionary3d: Dictionary. < Vector3, int > =
+        new Dictionary. < Vector3,
+        int > ();
+    or = new StreamReader("array3dictionary.txt");
+    var arrayText: String = or.ReadToEnd();
+    var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+        System.Object > ;
+
+    //建立目錄dictionary3d
+    for (var i = 1; i < array3dLoadJson["length"]; i++) {
+        var tempColor: Vector3;
+        tempColor.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
+        tempColor.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
+        tempColor.z = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
+        dictionary3d[tempColor] = 1;
     }
-    var magicCube: GameObject = GameObject.Find("magicCube");
-    magicCube.transform.GetComponent. < MeshFilter > ().mesh.CombineMeshes(combine);
-    Debug.Log("ComMesh!");
+
+    //透過目錄檢查是否Cube是完全封閉
+    for (var j = 1; j < array3dLoadJson["length"]; j++) {
+        tempColor.x = ((array3dLoadJson[j.ToString()]) as List. < System.Object > )[0];
+        tempColor.y = ((array3dLoadJson[j.ToString()]) as List. < System.Object > )[1];
+        tempColor.z = ((array3dLoadJson[j.ToString()]) as List. < System.Object > )[2];
+        var tempA: Vector3 = Vector3(tempColor.x + 1, tempColor.y, tempColor.z);
+        var tempB: Vector3 = Vector3(tempColor.x - 1, tempColor.y, tempColor.z);
+        var tempC: Vector3 = Vector3(tempColor.x, tempColor.y + 1, tempColor.z);
+        var tempD: Vector3 = Vector3(tempColor.x, tempColor.y - 1, tempColor.z);
+        var tempE: Vector3 = Vector3(tempColor.x, tempColor.y, tempColor.z + 1);
+        var tempF: Vector3 = Vector3(tempColor.x, tempColor.y, tempColor.z - 1);
+        if (dictionary3d.ContainsKey(tempA) &&
+            dictionary3d.ContainsKey(tempB) &&
+            dictionary3d.ContainsKey(tempC) &&
+            dictionary3d.ContainsKey(tempD) &&
+            dictionary3d.ContainsKey(tempE) &&
+            dictionary3d.ContainsKey(tempF)) {
+
+            DestroyImmediate(GameObject.Find(tempColor.ToString("F0")));
+
+        }
+    }
+    Debug.Log('detectOcclusion Over');
 }
 ////@
 ////MenuItem("==Menu==/goCombineMeshes")
