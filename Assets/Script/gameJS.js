@@ -124,8 +124,8 @@ function Start() {
     cammeraPlate = GameObject.Find("cammeraPlate");
     cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
     loadResources();
-//    clearCube();
-//    loadGame();
+
+    loadGame();
     //設定攝影機
     mouseOrbitSet();
 }
@@ -255,6 +255,7 @@ function loadResources() {
 }
 
 function loadGame() {
+    //    clearCube();
     //    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
     Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
     var or = new StreamReader("array3dictionary.txt");
@@ -277,7 +278,10 @@ function loadGame() {
         //建立目錄dictionary3d
         dictionary3d[Vector3(tempColor.r, tempColor.g, tempColor.b)] = tempColor.a;
         Debug.Log('Color:' + tempColor);
+
+        //重建CUBE
         if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
+            Debug.Log('create new');
             var temp = Instantiate(Cube);
             temp.tag = "Cube";
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
@@ -286,7 +290,7 @@ function loadGame() {
             //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
             temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempColor.a, Mesh);
             temp.GetComponent. < Renderer > ().enabled = true;
-            temp.AddComponent(BoxCollider);
+            //temp.AddComponent(BoxCollider);
             //temp.name = "(" + array3dLoadJson[i][0] + ", " + array3dLoadJson[i][1]  + ", " + array3dLoadJson[i][2] + ")";
 
             temp.transform.position.x = tempColor.r;
@@ -297,6 +301,7 @@ function loadGame() {
         }
     }
     or.Close();
+    //    GameObject.Find("Cubes").GetComponent("DrawCallMinimizer").enabled = true;
 }
 
 function saveGame() {
@@ -568,6 +573,7 @@ function buttonDetect() {
         if (Input.GetMouseButtonUp(0)) {
             if (hitUIObjectName == "" &&
                 5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition)) {
+                Debug.Log("1:" + mouseHitPlane.transform.position);
                 biologyJS.Sphere2.transform.position = mouseHitPlane.transform.position;
             }
         }

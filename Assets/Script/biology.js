@@ -30,6 +30,8 @@ var pickTouchSide: GameObject;
 var thisCollider: Collider;
 var onAir: boolean;
 
+var collisionCubes: GameObject[];
+collisionCubes = new GameObject[28];
 
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
@@ -44,6 +46,7 @@ function Start() {
     Sphere2 = Instantiate(GameObject.Find("Sphere2"));
 
     Sphere2.name = this.name + '_Sphere2';
+    Sphere2.transform.parent = GameObject.Find("Biology").transform;
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     pickTouch = maingameJS.pickTouch;
     pickTouchSide = maingameJS.pickTouchSide;
@@ -59,6 +62,21 @@ function Start() {
     anim = this.GetComponent. < Animation > ();
     thisCollider = this.GetComponent(Collider);
 
+    var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
+    var collisionCubeOBJ: GameObject;
+    collisionCubeOBJ = new GameObject(this + '_collisionCubeOBJ');
+    collisionCubeOBJ.transform.parent = GameObject.Find("Biology").transform;
+    //    collisionCubes.push(Instantiate(GameObject.Find("pickPlayer")));
+    for (var i = 0; i <= 27; i++) {
+        collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
+        collisionCubes[i].name = 'dynamicCollision_' + i;
+        collisionCubes[i].AddComponent(BoxCollider);
+        collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
+        Debug.Log('I==' + i);
+    }
+    //更新pick狀態
+    _pick();
+
 }
 
 function Update() {
@@ -73,7 +91,7 @@ function Update() {
     this._bioStatus();
     //    this._autoJump();
     this._cubeHead();
-    _pick();
+
     dynamicCollision();
 }
 
@@ -228,6 +246,21 @@ function _pick() {
         break;
     }
 
+    //更新碰撞物狀態
+    var g = 0;
+    var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
+    for (var x = -1; x < 2; x++) {
+        for (var y = -1; y < 2; y++) {
+            for (var z = -1; z < 2; z++) {
+                g++;
+                if (maingameJS.checkArray(Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z))) {
+
+                    collisionCubes[g].transform.position = Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
+                }
+            }
+        }
+    }
+
 
 }
 
@@ -307,11 +340,14 @@ function _movment() {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 1.2);
         }
 
+        //更新pick狀態
+        _pick();
+
         //移動生物到目標點
         Sphere.transform.position.y = this.transform.position.y;
         Sphere2.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
-
+        Debug.Log("2:" + Sphere2.transform.position);
         //調整步伐
         anim["Walk"].speed = WalkSteptweek * moveSpeed;
 

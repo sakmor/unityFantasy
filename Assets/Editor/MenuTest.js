@@ -84,7 +84,7 @@ function LoadGame() {
                 //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
                 temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempColor.a, Mesh);
                 temp.GetComponent. < Renderer > ().enabled = true;
-                temp.AddComponent(BoxCollider);
+                //                temp.AddComponent(BoxCollider);
                 //temp.name = "(" + array3dLoadJson[i][0] + ", " + array3dLoadJson[i][1]  + ", " + array3dLoadJson[i][2] + ")";
 
                 temp.transform.position.x = tempColor.r;
@@ -198,6 +198,7 @@ function detectOcclusion() {
     }
 
     //透過目錄檢查是否Cube是完全封閉
+    var os = 0;
     for (var j = 1; j < array3dLoadJson["length"]; j++) {
         tempColor.x = ((array3dLoadJson[j.ToString()]) as List. < System.Object > )[0];
         tempColor.y = ((array3dLoadJson[j.ToString()]) as List. < System.Object > )[1];
@@ -216,41 +217,9 @@ function detectOcclusion() {
             dictionary3d.ContainsKey(tempF)) {
 
             DestroyImmediate(GameObject.Find(tempColor.ToString("F0")));
+            os++;
 
         }
     }
-    Debug.Log('detectOcclusion Over');
+    Debug.Log('detectOcclusion Over: ' + os);
 }
-
-@
-MenuItem("==Menu==/dynamicCollision")
-static
-
-function dynamicCollision() {
-    var collisionCubes: GameObject[];
-    collisionCubes = new GameObject[27];
-    var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
-    //    collisionCubes.push(Instantiate(GameObject.Find("pickPlayer")));
-    for (var i = 0; i < 27; i++) {
-        collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
-        collisionCubes[i].name = 'dynamicCollision_' + i;
-    }
-
-    var g = 0;
-    for (var x = -1; x < 2; x++) {
-        for (var y = -1; y < 2; y++) {
-            for (var z = -1; z < 2; z++) {
-                collisionCubes[g].transform.position = Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                g++;
-            }
-        }
-    }
-
-}
-////@
-////MenuItem("==Menu==/goCombineMeshes")
-////static
-////
-////function goCombineMeshes() {
-//
-////}
