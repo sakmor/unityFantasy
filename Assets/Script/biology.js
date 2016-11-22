@@ -30,6 +30,7 @@ var pickTouchSide: GameObject;
 var thisCollider: Collider;
 var onAir: boolean;
 
+
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
 //PickTouch      --滑鼠點選地面位置,或是點擊的Cube選取框
@@ -40,7 +41,9 @@ function Start() {
     bioAction = "Wait";
     handCube = 0;
     mainGame = GameObject.Find("mainGame");
-    Sphere2 = GameObject.Find("Sphere2");
+    Sphere2 = Instantiate(GameObject.Find("Sphere2"));
+
+    Sphere2.name = this.name + '_Sphere2';
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     pickTouch = maingameJS.pickTouch;
     pickTouchSide = maingameJS.pickTouchSide;
@@ -71,9 +74,15 @@ function Update() {
     //    this._autoJump();
     this._cubeHead();
     _pick();
-
+    dynamicCollision();
 }
 
+
+function dynamicCollision() {
+
+
+
+}
 //function OnCollisionEnter(collision: Collision) {
 //    print(collision.gameObject.transform.position.y - this.transform.position.y);
 //    if (collision.gameObject.transform.position.y - this.transform.position.y > 1) {

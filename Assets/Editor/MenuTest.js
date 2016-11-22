@@ -62,7 +62,6 @@ function LoadGame() {
         var arrayText: String = or.ReadToEnd();
         var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
             System.Object > ;
-        var Cube: GameObject = GameObject.Find("Cube");
         var Player = GameObject.Find("Cha_Knight");
         //        Player.transform.position.x = parseFloat(array3dLoadJson[0][1]);
         //        Player.transform.position.y = parseFloat(array3dLoadJson[0][2]);
@@ -76,7 +75,7 @@ function LoadGame() {
             tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
             Debug.Log('Color:' + tempColor);
             if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
-                var temp = Instantiate(Cube);
+                var temp = Instantiate(GameObject.Find("Cube"));
                 temp.transform.parent = Cubes.transform;
                 temp.tag = "Cube";
                 temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
@@ -221,6 +220,32 @@ function detectOcclusion() {
         }
     }
     Debug.Log('detectOcclusion Over');
+}
+
+@
+MenuItem("==Menu==/dynamicCollision")
+static
+
+function dynamicCollision() {
+    var collisionCubes: GameObject[];
+    collisionCubes = new GameObject[27];
+    var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
+    //    collisionCubes.push(Instantiate(GameObject.Find("pickPlayer")));
+    for (var i = 0; i < 27; i++) {
+        collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
+        collisionCubes[i].name = 'dynamicCollision_' + i;
+    }
+
+    var g = 0;
+    for (var x = -1; x < 2; x++) {
+        for (var y = -1; y < 2; y++) {
+            for (var z = -1; z < 2; z++) {
+                collisionCubes[g].transform.position = Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
+                g++;
+            }
+        }
+    }
+
 }
 ////@
 ////MenuItem("==Menu==/goCombineMeshes")

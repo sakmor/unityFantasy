@@ -124,8 +124,8 @@ function Start() {
     cammeraPlate = GameObject.Find("cammeraPlate");
     cameraRelativeTarget = mainCamera.transform.position - Player.transform.position;
     loadResources();
-    clearCube();
-    loadGame();
+//    clearCube();
+//    loadGame();
     //設定攝影機
     mouseOrbitSet();
 }
