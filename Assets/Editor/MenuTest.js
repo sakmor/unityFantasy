@@ -243,10 +243,12 @@ MenuItem("==Menu==/ AnimationClip")
 static
 
 function AnimationClip() {
-    var mdl: GameObject = Resources.Load("Bio_Data/monster/cha_slime/Motions/Mot_Slime@Attack");
+    var mdl: GameObject = Resources.Load("Bio_Data/monster/cha_slime/Motions/Mot_Slime@Wait");
     var anim: Animation = GameObject.Find("Cha_Slime").GetComponent. < Animation > ();
     Debug.Log(mdl);
-    //    anim.AddClip(walkClip, "Wait");
+    var aClip = mdl.GetComponent. < Animation > ().clip;
+    anim.AddClip(aClip, "Attack");
+
     //    var aClip = mdl.animation.clip;
     //        charAnimation.AddClip(aClip, aName);
     //        Debug.Log(charAnimation[aName].name + " loaded from resource file " + animationFolder + "/" + aName + ". Length check: " + charAnimation[aName].length);
