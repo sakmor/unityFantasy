@@ -72,7 +72,6 @@ function Start() {
         collisionCubes[i].name = 'dynamicCollision_' + i;
         collisionCubes[i].AddComponent(BoxCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
-        Debug.Log('I==' + i);
     }
     //更新pick狀態
     _pick();
@@ -306,7 +305,6 @@ function _movment() {
 
     //轉換sphere座標，轉換成螢幕座標
     if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate') {
-        Debug.Log("clickStart");
         Sphere.transform.position.x = maingameJS.mouseDragVector.x * 0.02;
         Sphere.transform.position.z = maingameJS.mouseDragVector.z * 0.02;
 
@@ -347,7 +345,6 @@ function _movment() {
         Sphere.transform.position.y = this.transform.position.y;
         Sphere2.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
-        Debug.Log("2:" + Sphere2.transform.position);
         //調整步伐
         anim["Walk"].speed = WalkSteptweek * moveSpeed;
 

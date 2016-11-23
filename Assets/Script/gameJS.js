@@ -67,6 +67,11 @@ var cameraRelativeTarget: Vector3;
 var ray: Ray;
 var mouseHitPlane: RaycastHit;
 
+
+var groundPlane: Plane;
+var markerObject: Transform;
+
+
 function Start() {
     logText = GameObject.Find("logText");
     logg('This Device is:' + SystemInfo.deviceType);
@@ -128,9 +133,32 @@ function Start() {
     loadGame();
     //設定攝影機
     mouseOrbitSet();
+
+    groundPlane.Set3Points(
+        Vector3(1.0, 0.0, 0.0),
+        Vector3(0.0, 0.0, 1.0),
+        Vector3(0.0, 0.0, 0.0));
+    var markerObject: Transform;
+
+
 }
 
 function Update() {
+    // If the mouse button is clicked...
+    if (Input.GetMouseButtonDown(0)) {
+        // Get a ray corresponding to the screen position of the mouse.
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var rayDistance: float;
+
+        // If the ray makes contact with the ground plane then
+        // position the marker at the distance along the ray where it
+        // crosses the plane.
+        if (groundPlane.Raycast(ray, rayDistance)) {
+            GameObject.Find("Sphere2").transform.position = ray.GetPoint(rayDistance);
+            Debug.Log(ray.GetPoint(rayDistance));
+        }
+    }
+
     rayCamera.transform.position = mainCamera.transform.position;
     rayCamera.transform.rotation = mainCamera.transform.rotation;
     rayCamera.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
@@ -571,10 +599,16 @@ function buttonDetect() {
 
         //點螢幕移動
         if (Input.GetMouseButtonUp(0)) {
+            groundPlane.Set3Points(
+                Vector3(1.0, 0.0, 0.0),
+                Vector3(0.0, 0.0, biologyJS.pickPlayer.transform.position.y),
+                Vector3(0.0, 0.0, 0.0));
+
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var rayDistance: float;
             if (hitUIObjectName == "" &&
-                5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition)) {
-                Debug.Log("1:" + mouseHitPlane.transform.position);
-                biologyJS.Sphere2.transform.position = mouseHitPlane.transform.position;
+                groundPlane.Raycast(ray, rayDistance)) {
+                biologyJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
             }
         }
         cubePlateTimerCurrent = 0;
@@ -680,7 +714,7 @@ function getMousehitGroupPos() {
         case "Cube":
             pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
             pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-            var tempVector: Vector3 = mouseHitPlane.transform.position - mouseHitPlane.point;
+
             if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
                 mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
                 mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {

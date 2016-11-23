@@ -161,20 +161,23 @@ function Normalized() {
             respawn.name = respawn.transform.position.ToString("F0");
         }
     }
-    if (step != 1) {
-        UnityEditor.EditorUtility.DisplayDialog('Normalized End ', ' --=== Normalized End ===--', 'OK');
-    }
-    step = 0;
+    var ss = 0;
     respawns = Selection.gameObjects;
     for (var respawnA: GameObject in respawns) {
         for (var respawnB: GameObject in respawns) {
             if (respawnB != respawnA) {
                 if (respawnB.name == respawnA.name) {
                     DestroyImmediate(respawnB);
+                    ss++;
                 }
             }
         }
     }
+
+    UnityEditor.EditorUtility.DisplayDialog('Normalized End ', ' --=== Normalized End ===--', 'OK');
+    Debug.Log("Normalized:" + step);
+    Debug.Log("DestroyImmediate:" + ss);
+
 }@
 MenuItem("==Menu==/detectOcclusion")
 static
