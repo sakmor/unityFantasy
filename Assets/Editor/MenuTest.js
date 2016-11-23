@@ -239,15 +239,17 @@ function detectOcclusion() {
 }
 
 @
-MenuItem("==Menu==/AnimationClip")
+MenuItem("==Menu==/ AnimationClip")
 static
 
 function AnimationClip() {
-    var walkClip: AnimationClip;
-    var anim: Animation;
-    walkClip = Resources.Load("/Bio_Data/monster/cha_slime/Motions/Mot_Slime@Wait", typeof (AnimationClip));
-    anim = GameObject.Find("Cha_Slime").GetComponent. < Animation > ();
-    Debug.Log(walkClip);
+    var mdl: GameObject = Resources.Load("Bio_Data/monster/cha_slime/Motions/Mot_Slime@Attack");
+    var anim: Animation = GameObject.Find("Cha_Slime").GetComponent. < Animation > ();
+    Debug.Log(mdl);
     //    anim.AddClip(walkClip, "Wait");
+    //    var aClip = mdl.animation.clip;
+    //        charAnimation.AddClip(aClip, aName);
+    //        Debug.Log(charAnimation[aName].name + " loaded from resource file " + animationFolder + "/" + aName + ". Length check: " + charAnimation[aName].length);
+
 
 }
