@@ -1,4 +1,5 @@
 // #pragma strict
+
 var moveSpeed: float;
 
 //目前所選擇的材質
@@ -27,7 +28,6 @@ var pickPlayer: GameObject;
 var Plane_touch: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
-var thisCollider: Collider;
 var onAir: boolean;
 
 var collisionCubes: GameObject[];
@@ -40,11 +40,13 @@ collisionCubes = new GameObject[28];
 
 
 function Start() {
+    anim = GetComponent. < Animation > ();
     bioAction = "Wait";
     handCube = 0;
     mainGame = GameObject.Find("mainGame");
+    Sphere = Instantiate(GameObject.Find("Sphere2"));
+    Sphere.name = this.name + '_Sphere';
     Sphere2 = Instantiate(GameObject.Find("Sphere2"));
-
     Sphere2.name = this.name + '_Sphere2';
     Sphere2.transform.parent = GameObject.Find("Biology").transform;
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
@@ -59,8 +61,6 @@ function Start() {
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
-    anim = this.GetComponent. < Animation > ();
-    thisCollider = this.GetComponent(Collider);
 
     var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
     var collisionCubeOBJ: GameObject;
@@ -342,8 +342,8 @@ function _movment() {
         _pick();
 
         //移動生物到目標點
-        Sphere.transform.position.y = this.transform.position.y;
         Sphere2.transform.position.y = this.transform.position.y;
+        Sphere.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
         //調整步伐
         anim["Walk"].speed = WalkSteptweek * moveSpeed;

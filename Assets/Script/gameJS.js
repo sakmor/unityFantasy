@@ -99,7 +99,6 @@ function Start() {
     rayCamera = GameObject.Find("rayCamera");
     Sphere.transform.position = Player.transform.position;
     Player.AddComponent(biology);
-    Player.GetComponent(biology).Sphere = Sphere;
     pickTouchSide = GameObject.Find("pickTouchSide");
     biologyJS = Player.GetComponent(biology);
 
@@ -144,20 +143,6 @@ function Start() {
 }
 
 function Update() {
-    // If the mouse button is clicked...
-    if (Input.GetMouseButtonDown(0)) {
-        // Get a ray corresponding to the screen position of the mouse.
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        var rayDistance: float;
-
-        // If the ray makes contact with the ground plane then
-        // position the marker at the distance along the ray where it
-        // crosses the plane.
-        if (groundPlane.Raycast(ray, rayDistance)) {
-            GameObject.Find("Sphere2").transform.position = ray.GetPoint(rayDistance);
-            Debug.Log(ray.GetPoint(rayDistance));
-        }
-    }
 
     rayCamera.transform.position = mainCamera.transform.position;
     rayCamera.transform.rotation = mainCamera.transform.rotation;
@@ -285,7 +270,7 @@ function loadResources() {
 function loadGame() {
     //    clearCube();
     //    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
-    Player.transform.position = PlayerPrefsX.GetVector3("playerPos");
+    //    Player.transform.position = array3dLoadJson["PlayerPOS"];
     var or = new StreamReader("array3dictionary.txt");
     var arrayText: String = or.ReadToEnd();
     var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
@@ -599,14 +584,16 @@ function buttonDetect() {
 
         //點螢幕移動
         if (Input.GetMouseButtonUp(0)) {
+            biologyJS._pick();
             groundPlane.Set3Points(
-                Vector3(1.0, 0.0, 0.0),
-                Vector3(0.0, 0.0, biologyJS.pickPlayer.transform.position.y),
-                Vector3(0.0, 0.0, 0.0));
+                Vector3(1.0, biologyJS.pickPlayer.transform.position.y, 0.0),
+                Vector3(0.0, biologyJS.pickPlayer.transform.position.y, 1.0),
+                Vector3(1.0, biologyJS.pickPlayer.transform.position.y, 1.0));
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             var rayDistance: float;
             if (hitUIObjectName == "" &&
+                5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
                 groundPlane.Raycast(ray, rayDistance)) {
                 biologyJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
             }

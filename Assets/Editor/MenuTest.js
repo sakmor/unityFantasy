@@ -11,6 +11,7 @@ function saveGame() {
     var json: String;
     var respawnPrefab: GameObject;
     var respawns: GameObject[];
+    var Player = GameObject.Find("Cha_Knight");
     respawns = GameObject.FindGameObjectsWithTag("Cube");
     var step = 0;
     json = '{';
@@ -39,9 +40,19 @@ function saveGame() {
         json += ']';
         step++;
     }
-    json += ',"length":' + (step) + '}';
+    json += ',';
+    json += '"playerPos": [';
+    json += Player.transform.position.x;
+    json += ',';
+    json += Player.transform.position.y;
+    json += ',';
+    json += Player.transform.position.z;
+    json += ']';
+    json += ',';
+
+    json += '"length":' + (step) + '}';
     if (step != 1) {
-        UnityEditor.EditorUtility.DisplayDialog('Save End ', ' --=== Save End ===--', 'OK');
+        UnityEditor.EditorUtility.DisplayDialog('Save End ', ' --=== Save End ===--', '[OK]');
     }
     step = 0;
 
@@ -225,4 +236,16 @@ function detectOcclusion() {
         }
     }
     Debug.Log('detectOcclusion Over: ' + os);
+}
+
+@
+MenuItem("==Menu==/ AnimationClip")
+static
+
+function AnimationClip() {
+    var walkClip: AnimationClip;
+    var anim: Animation;
+    anim = GameObject.Find("Cha_Slime").GetComponent. < Animation > ();
+    anim.AddClip(walkClip, "walk");
+
 }
