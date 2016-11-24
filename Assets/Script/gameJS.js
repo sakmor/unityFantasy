@@ -74,8 +74,12 @@ var mouseHitPlane: RaycastHit;
 var groundPlane: Plane;
 var markerObject: Transform;
 
+var biologyList: String;
 
 function Start() {
+    var or = new StreamReader("Assets/Resources/db/biologyList.json");
+    biologyList = or.ReadToEnd();
+    or.Close();
     logText = GameObject.Find("logText");
     logg('This Device is:' + SystemInfo.deviceType);
     cubePlateTimer = GameObject.Find("cubePlateTimer");
@@ -179,7 +183,6 @@ function clearCube() {
         temp.z = tempColor.b;
         DestroyImmediate(GameObject.Find(temp.ToString("F0")));
     }
-    Debug.Log('clear cubs: ' + array3dLoadJson["length"]);
     or.Close();
 }
 
@@ -289,11 +292,9 @@ function loadGame() {
 
         //建立目錄dictionary3d
         dictionary3d[Vector3(tempColor.r, tempColor.g, tempColor.b)] = tempColor.a;
-        Debug.Log('Color:' + tempColor);
 
         //重建CUBE
         if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
-            Debug.Log('create new');
             var temp = Instantiate(Cube);
             temp.tag = "Cube";
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;

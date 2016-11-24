@@ -1,13 +1,30 @@
-// #pragma strict
+//pragma strict
 @
 script RequireComponent(Animation)
 
-@
+@ script RequireComponent(Rigidbody)
 
-script RequireComponent(Rigidbody)
+@ script RequireComponent(BoxCollider)
 
-@
-script RequireComponent(BoxCollider)
+
+class biologyInfo {
+    public
+    var name: String;
+    public
+    var walkStep: float;
+    public
+    var BoxCollider_CenterY: float;
+    public
+    var BoxCollider_SizeY: float;
+    public
+    var effectScale: float;
+    public static
+
+    function CreateFromJSON(jsonString: String) {
+        return JsonUtility.FromJson. < biologyInfo > (jsonString);
+    }
+}
+
 var moveSpeed: float;
 
 //目前所選擇的材質
@@ -48,6 +65,8 @@ collisionCubes = new GameObject[28];
 
 
 function Start() {
+
+
     anim = GetComponent. < Animation > ();
     bioAction = "Wait";
     handCube = 0;
@@ -69,7 +88,8 @@ function Start() {
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
-
+    var myJsonBiology: biologyInfo = new biologyInfo().CreateFromJSON(maingameJS.biologyList);
+    Debug.Log(myJsonBiology.name);
     var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
     var collisionCubeOBJ: GameObject;
     collisionCubeOBJ = new GameObject(this + '_collisionCubeOBJ');
@@ -392,10 +412,12 @@ function AnimationClip() {
     }
     for (var name: String in animationsName) {
         var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + bioName + "@" + name);
-        var anim: Animation = GameObject.Find(bioName).GetComponent. < Animation > ();
-        Debug.Log(anim);
-        Debug.Log(bioFlodr + "/Animation/" + bioName + "@" + name);
+        var anim: Animation = this.GetComponent. < Animation > ();
         var aClip = mdl.GetComponent. < Animation > ().clip;
         anim.AddClip(aClip, name);
     }
+
+    this.GetComponent. < Rigidbody > ().freezeRotation = true;
 }
+
+function loadBiologyList() {}

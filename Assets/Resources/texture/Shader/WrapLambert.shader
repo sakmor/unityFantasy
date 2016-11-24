@@ -3,7 +3,7 @@ Shader "Custom/WrapLambert" {
             _MainTex ("Texture", 2D) = "white" {}
             _RimColor("Rim Color", Color) = (0.26,0.19,0.16,0.0)
 			_RimPower("Rim Power", Range(0.5,8.0)) = 3.0
-            _selfillum("Self Illum", Range(1,3.0)) = 1.0
+            _selfillum("Self Illum", Range(1,3.0)) = 1.5
         	}
         SubShader {
         Tags { "RenderType" = "Opaque" }

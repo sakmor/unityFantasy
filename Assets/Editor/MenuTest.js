@@ -239,30 +239,15 @@ function detectOcclusion() {
 }
 
 @
-MenuItem("==Menu==/AnimationClip")
+MenuItem("==Menu==/loadJson")
 static
 
-function AnimationClip() {
-    var animationsName = [
-            'Attack',
-            'Damage',
-            'Dead',
-            'Wait',
-            'Walk'
-        ];
-    var bioName: String = 'Cha_Knight';
-    var bioFlodr: String;
-    if (bioName[0] == 'm') {
-        bioFlodr = 'Biology';
-    } else if (bioName[0] == 'C') {
-        bioFlodr = 'char/' + bioName;
-    }
-    for (var name: String in animationsName) {
-        var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + bioName + "@" + name);
-        var anim: Animation = GameObject.Find(bioName).GetComponent. < Animation > ();
-        Debug.Log(anim);
-        Debug.Log(bioFlodr + "/Animation/" + bioName + "@" + name);
-        var aClip = mdl.GetComponent. < Animation > ().clip;
-        anim.AddClip(aClip, name);
-    }
+function loadJson() {
+
+
+    or = new StreamReader("Assets/Resources/db/biologyList.json");
+    var loadJsonString: String = or.ReadToEnd();
+    or.Close();
+    Debug.Log(loadJsonString);
+    or.Close();
 }
