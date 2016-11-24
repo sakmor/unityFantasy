@@ -1,6 +1,13 @@
 // #pragma strict
 @
 script RequireComponent(Animation)
+
+@
+
+script RequireComponent(Rigidbody)
+
+@
+script RequireComponent(BoxCollider)
 var moveSpeed: float;
 
 //目前所選擇的材質

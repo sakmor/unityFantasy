@@ -279,10 +279,6 @@ function loadGame() {
     var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
         System.Object > ;
     var Cube: GameObject = GameObject.Find("Cube");
-    var Player = GameObject.Find("Cha_Knight");
-    //        Player.transform.position.x = parseFloat(array3dLoadJson[0][1]);
-    //        Player.transform.position.y = parseFloat(array3dLoadJson[0][2]);
-    //        Player.transform.position.z = parseFloat(array3dLoadJson[0][3]);
     var tempi: int = array3dLoadJson["length"];
     for (var i = 1; i < tempi; i++) {
         var tempColor: Color;
