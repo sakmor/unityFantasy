@@ -75,6 +75,8 @@ function Start() {
     }
     //更新pick狀態
     _pick();
+    //抓取動作檔案
+    AnimationClip();
 
 }
 
@@ -362,5 +364,23 @@ function _movment() {
         var step = rotateSpeed * Time.deltaTime;
         var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
         this.transform.rotation = Quaternion.LookRotation(newDir);
+    }
+}
+
+function AnimationClip() {
+    var animationsName = [
+            'Attack',
+            'Damage',
+            'Dead',
+            'Wait',
+            'Walk'
+        ];
+    var bioName = 'm101';
+    for (var name: String in animationsName) {
+        Debug.Log(name);
+        var mdl: GameObject = Resources.Load("Biology/Animation/" + bioName + "@" + name);
+        var anim: Animation = GameObject.Find(bioName).GetComponent. < Animation > ();
+        var aClip = mdl.GetComponent. < Animation > ().clip;
+        anim.AddClip(aClip, name);
     }
 }
