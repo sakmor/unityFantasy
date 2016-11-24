@@ -1,4 +1,7 @@
 // # pragma strict
+@
+script RequireComponent(Animation)
+
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
 import System.IO;

@@ -250,11 +250,18 @@ function AnimationClip() {
             'Wait',
             'Walk'
         ];
-    var bioName = 'm101';
+    var bioName: String = 'Cha_Knight';
+    var bioFlodr: String;
+    if (bioName[0] == 'm') {
+        bioFlodr = 'Biology';
+    } else if (bioName[0] == 'C') {
+        bioFlodr = 'char/' + bioName;
+    }
     for (var name: String in animationsName) {
-        Debug.Log(name);
-        var mdl: GameObject = Resources.Load("Biology/Animation/" + bioName + "@" + name);
+        var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + bioName + "@" + name);
         var anim: Animation = GameObject.Find(bioName).GetComponent. < Animation > ();
+        Debug.Log(anim);
+        Debug.Log(bioFlodr + "/Animation/" + bioName + "@" + name);
         var aClip = mdl.GetComponent. < Animation > ().clip;
         anim.AddClip(aClip, name);
     }

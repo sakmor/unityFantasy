@@ -1,5 +1,6 @@
 // #pragma strict
-
+@
+script RequireComponent(Animation)
 var moveSpeed: float;
 
 //目前所選擇的材質
@@ -348,7 +349,7 @@ function _movment() {
         Sphere.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
         //調整步伐
-        anim["Walk"].speed = WalkSteptweek * moveSpeed;
+        //        anim["Walk"].speed = WalkSteptweek * moveSpeed;
 
     } else {
         Sphere2.GetComponent. < Renderer > ().enabled = false;
@@ -375,11 +376,18 @@ function AnimationClip() {
             'Wait',
             'Walk'
         ];
-    var bioName = 'm101';
+    var bioName: String = this.name;
+    var bioFlodr: String;
+    if (bioName[0] == 'm') {
+        bioFlodr = 'Biology';
+    } else if (bioName[0] == 'C') {
+        bioFlodr = 'char/' + bioName;
+    }
     for (var name: String in animationsName) {
-        Debug.Log(name);
-        var mdl: GameObject = Resources.Load("Biology/Animation/" + bioName + "@" + name);
+        var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + bioName + "@" + name);
         var anim: Animation = GameObject.Find(bioName).GetComponent. < Animation > ();
+        Debug.Log(anim);
+        Debug.Log(bioFlodr + "/Animation/" + bioName + "@" + name);
         var aClip = mdl.GetComponent. < Animation > ().clip;
         anim.AddClip(aClip, name);
     }
