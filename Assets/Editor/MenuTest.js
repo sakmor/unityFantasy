@@ -243,11 +243,9 @@ MenuItem("==Menu==/loadJson")
 static
 
 function loadJson() {
-
-
-    or = new StreamReader("Assets/Resources/db/biologyList.json");
-    var loadJsonString: String = or.ReadToEnd();
-    or.Close();
-    Debug.Log(loadJsonString);
-    or.Close();
+    var biologyList = Resources.Load("db/biologyList");
+    var array3dLoadJson = Json.Deserialize(biologyList.text) as Dictionary. < String,
+        System.Object > ;
+    Debug.Log(biologyList.text);
+    Debug.Log(((array3dLoadJson["m101"]) as List. < System.Object > )[0]);
 }

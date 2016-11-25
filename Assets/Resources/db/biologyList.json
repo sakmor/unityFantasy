@@ -1,1 +1,19 @@
-{"name": "Cha_Knight1__","walkStep": "40","BoxCollider_CenterY": 25,"BoxCollider_SizeY": 50,"effectScale": "1" }
+{
+  "m101": [
+    40,
+    25,
+    0.5,
+    10
+  ],
+  "Cha_Knight": [
+    40,
+    25,
+    50,
+    0.02
+  ]
+}
+
+//[0]	WalkStep;
+//[1]	boxCollider.center.Y
+//[2]	boxCollider.size.XYZ
+//[3]	bodyScale
