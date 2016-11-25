@@ -74,12 +74,10 @@ var mouseHitPlane: RaycastHit;
 var groundPlane: Plane;
 var markerObject: Transform;
 
-var biologyList: String;
+var biologyList: TextAsset;
 
 function Start() {
-    var or = new StreamReader("Assets/Resources/db/biologyList.json");
-    biologyList = or.ReadToEnd();
-    or.Close();
+    biologyList = Resources.Load("db/biologyList");
     logText = GameObject.Find("logText");
     logg('This Device is:' + SystemInfo.deviceType);
     cubePlateTimer = GameObject.Find("cubePlateTimer");

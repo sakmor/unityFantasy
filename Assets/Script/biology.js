@@ -88,7 +88,7 @@ function Start() {
     rotateSpeed = rotateSpeed || 10;
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
-    var myJsonBiology: biologyInfo = new biologyInfo().CreateFromJSON(maingameJS.biologyList);
+    var myJsonBiology: biologyInfo = new biologyInfo().CreateFromJSON(maingameJS.biologyList.text);
     Debug.Log(myJsonBiology.name);
     var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
     var collisionCubeOBJ: GameObject;
