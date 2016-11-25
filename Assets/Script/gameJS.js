@@ -103,6 +103,7 @@ function Start() {
     mainCamera = GameObject.Find("mainCamera");
     rayCamera = GameObject.Find("rayCamera");
     Sphere.transform.position = Player.transform.position;
+    GameObject.Find("m101").AddComponent(biology);
     Player.AddComponent(biology);
     pickTouchSide = GameObject.Find("pickTouchSide");
     biologyJS = Player.GetComponent(biology);

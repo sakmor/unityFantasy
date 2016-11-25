@@ -377,7 +377,7 @@ function _movment() {
         Sphere.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
         //調整步伐
-        //        anim["Walk"].speed = WalkSteptweek * moveSpeed;
+        anim["Walk"].speed = WalkSteptweek * moveSpeed;
 
     } else {
         Sphere2.GetComponent. < Renderer > ().enabled = false;
@@ -419,9 +419,9 @@ function AnimationClip() {
     }
 
     //讀取生物清單表
-    var biologyList = Resources.Load("db/biologyList");
-    var array3dLoadJson = Json.Deserialize(biologyList.text) as Dictionary. < String,
+    var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
         System.Object > ;
+    this.WalkSteptweek = ((array3dLoadJson[this.name]) as List. < System.Object > )[0];
     this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[this.name]) as List. < System.Object > )[1];
     this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[this.name]) as List. < System.Object > )[2];
     this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[this.name]) as List. < System.Object > )[2];
@@ -429,7 +429,6 @@ function AnimationClip() {
     this.transform.localScale.x = ((array3dLoadJson[this.name]) as List. < System.Object > )[3];
     this.transform.localScale.y = ((array3dLoadJson[this.name]) as List. < System.Object > )[3];
     this.transform.localScale.z = ((array3dLoadJson[this.name]) as List. < System.Object > )[3];
-    //    Debug.Log(((array3dLoadJson["m101"]) as List. < System.Object > )[0]);
 
     this.GetComponent. < Rigidbody > ().freezeRotation = true;
 }
