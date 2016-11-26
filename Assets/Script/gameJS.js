@@ -7,9 +7,31 @@ import System.Collections.Generic;
 import System.IO;
 import MiniJSON;
 
-var Plane: GameObject;
-
-var Sphere: GameObject;
+/****************
+ < GameObject > ===========================
+ *
+ * Cube                 :場地的母體
+ * CubePick             :從托盤拉出後的預覽物
+ * Player               :由玩家控制的生物 (biology.js)
+ * itemBagGameObject    :背包介面
+ * mainCamera           :主要攝影機
+ * rayCamera            :當Player生物被物件遮蔽時使用 (功能尚未撰寫)TODO
+ * pickTouch            :顯示玩家在拖曳CUBE時，點選的CUBE
+ * pickTouchSide        :顯示玩家在拖曳CUBE時，點選的CUBE那一面
+ * cubePlateTimer       :以縮放圓形圖案的方式，顯示玩家在點選cubePlate按鈕時間
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ < Dictionary > ===========================
+ *
+ * cubesPosDictionary   :記錄場景CUBE的位置，checkArray、setArray、removeArray查找用
+ * array3d              :紀錄場景CUBE的類型 (但需要再整理該功能)TODO
+ * 顯示
+ ** */
 var Cube: GameObject;
 var CubePick: GameObject;
 var Player: GameObject;
@@ -17,12 +39,18 @@ var itemBagGameObject: GameObject;
 var PlayerLight: GameObject;
 var mainCamera: GameObject;
 var rayCamera: GameObject;
-var dictionary3d: Dictionary. < Vector3, int > =
+var pickTouch: GameObject;
+var pickTouchSide: GameObject;
+var cubePlateMouse: GameObject;
+var cubePlateTimer: GameObject;
+
+
+var cubesPosDictionary: Dictionary. < Vector3, int > =
     new Dictionary. < Vector3,
     int > ();
 var array3d = new Array();
-var pickTouch: GameObject;
-var pickTouchSide: GameObject;
+
+
 var biologyJS: biology;
 var itemBagJS: itemBag;
 var mouseOrbitJS: mouseOrbit;
@@ -36,7 +64,7 @@ var mouseStartPOS: Vector3;
 var clickStart: boolean = false;
 var mouseDragVector: Vector3;
 var mouseDragDist: float;
-var cubePlateTimer: GameObject;
+
 var cubePlateTimerCurrent: float;
 
 //紀錄滑鼠首次按壓的UI
@@ -46,7 +74,7 @@ var hitUIObjectName: String = "";
 //目前點擊的UI名稱
 var nowButton: String;
 var movePlateMouse: GameObject;
-var cubePlateMouse: GameObject;
+
 var movePlate: GameObject;
 var cubePlate: GameObject;
 var cammeraPlatein2out: boolean = false;
@@ -92,9 +120,7 @@ function Start() {
 
     //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
-    Plane = GameObject.Find("Plane");
     pickTouch = GameObject.Find("pickTouch");
-    Sphere = GameObject.Find("Sphere");
     Cube = GameObject.Find("Cube");
     CubePick = GameObject.Find("CubePick");
 
@@ -102,7 +128,6 @@ function Start() {
 
     mainCamera = GameObject.Find("mainCamera");
     rayCamera = GameObject.Find("rayCamera");
-    Sphere.transform.position = Player.transform.position;
     GameObject.Find("m101").AddComponent(biology);
     Player.AddComponent(biology);
     pickTouchSide = GameObject.Find("pickTouchSide");
@@ -210,20 +235,20 @@ function Button_RIGHT() {
 }
 
 function setArray(a: Vector3, b: float) {
-    dictionary3d[a] = array3d.length;
+    cubesPosDictionary[a] = array3d.length;
     array3d.Push(Color(a.x, a.y, a.z, b));
     saveGame();
 }
 
 function removeArray(a: Vector3) {
-    array3d[dictionary3d[a]] = null;
-    dictionary3d[a] = 0;
+    array3d[cubesPosDictionary[a]] = null;
+    cubesPosDictionary[a] = 0;
     saveGame();
 }
 
 function checkArray(a: Vector3) {
-    if (dictionary3d.ContainsKey(a)) {
-        if (dictionary3d[a] != 0) {
+    if (cubesPosDictionary.ContainsKey(a)) {
+        if (cubesPosDictionary[a] != 0) {
             return true;
         }
     }
@@ -289,8 +314,8 @@ function loadGame() {
         tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
         tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
 
-        //建立目錄dictionary3d
-        dictionary3d[Vector3(tempColor.r, tempColor.g, tempColor.b)] = tempColor.a;
+        //建立目錄cubesPosDictionary
+        cubesPosDictionary[Vector3(tempColor.r, tempColor.g, tempColor.b)] = tempColor.a;
 
         //重建CUBE
         if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
@@ -655,12 +680,10 @@ function getMousehitGroupPos() {
 
     switch (hitUIObjectName) {
     case "cubePlate":
-        CubePick.GetComponent. < Renderer > ().enabled = true;
         pickTouchSide.GetComponent. < Renderer > ().enabled = true;
         pickTouch.GetComponent. < Renderer > ().enabled = true;
         break;
     case "removePlate":
-        CubePick.GetComponent. < Renderer > ().enabled = false;
         pickTouchSide.GetComponent. < Renderer > ().enabled = false;
         pickTouch.GetComponent. < Renderer > ().enabled = true;
         break;
@@ -673,13 +696,7 @@ function getMousehitGroupPos() {
 
 
     //滑鼠點擊取得做標點
-
     ray = Camera.main.ScreenPointToRay(myIputPostion);
-
-
-    //預設滑鼠未點擊時，操控球sphere要在角色底下
-    //todo:寫在這裡太難擴充了 之後要改
-    Sphere.transform.position = Player.transform.position;
 
     //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
     if (touchScreen &&
