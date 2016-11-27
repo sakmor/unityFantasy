@@ -131,7 +131,7 @@ function Start() {
     pickTouch = GameObject.Find("pickTouch");
     Cube = GameObject.Find("Cube");
     CubePick = GameObject.Find("CubePick");
-    Player = GameObject.Find("m101");
+    Player = GameObject.Find("Cha_Knight");
     mainCamera = GameObject.Find("mainCamera");
     rayCamera = GameObject.Find("rayCamera");
     pickTouchSide = GameObject.Find("pickTouchSide");
