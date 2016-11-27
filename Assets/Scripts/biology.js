@@ -75,9 +75,11 @@ function Start() {
     mainGame = GameObject.Find("mainGame");
     Sphere = Instantiate(GameObject.Find("Sphere2"));
     Sphere.name = this.name + '_Sphere';
+    Sphere.transform.parent = GameObject.Find("Biology/Items").transform;
     Sphere2 = Instantiate(GameObject.Find("Sphere2"));
     Sphere2.name = this.name + '_Sphere2';
-    Sphere2.transform.parent = GameObject.Find("Biology").transform;
+    Sphere2.transform.parent = GameObject.Find("Biology/Items").transform;
+    Sphere2.transform.position = this.transform.position;
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     pickTouch = maingameJS.pickTouch;
     pickTouchSide = maingameJS.pickTouchSide;
@@ -94,7 +96,7 @@ function Start() {
     var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
     var collisionCubeOBJ: GameObject;
     collisionCubeOBJ = new GameObject(this + '_collisionCubeOBJ');
-    collisionCubeOBJ.transform.parent = GameObject.Find("Biology").transform;
+    collisionCubeOBJ.transform.parent = GameObject.Find("Biology/Items").transform;
     //    collisionCubes.push(Instantiate(GameObject.Find("pickPlayer")));
     for (var i = 0; i <= 27; i++) {
         collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
@@ -111,17 +113,10 @@ function Start() {
 
 function Update() {
 
-    if (Input.GetKeyDown("k")) {
-        _createCube();
-    }
-    if (Input.GetKeyDown("a")) {
-        this.bioAction = "Action";
-    }
     this._movment();
     this._bioStatus();
-    //    this._autoJump();
     this._cubeHead();
-
+    //    this._autoJump();
     dynamicCollision();
 }
 
@@ -233,9 +228,9 @@ function _removeCube() {
 function _pick() {
 
     //正規化生物座標
-    pickPlayer.transform.position.x = Mathf.Floor(this.transform.position.x + 0.5 / 1);
-    pickPlayer.transform.position.z = Mathf.Floor(this.transform.position.z + 0.5 / 1);
-    pickPlayer.transform.position.y = Mathf.Floor(this.transform.position.y + 0.5 / 1) + 0.5;
+    pickPlayer.transform.position.x = Mathf.Floor(this.transform.position.x + 0.5);
+    pickPlayer.transform.position.z = Mathf.Floor(this.transform.position.z + 0.5);
+    pickPlayer.transform.position.y = Mathf.Floor(this.transform.position.y + 0.5) + 0.5;
 
     //TODO:效能可以調整
     //將依據生物面相角度，將Pick放在角色正前方
@@ -334,8 +329,9 @@ function _bioStatus() {
 function _movment() {
 
 
-    //轉換sphere座標，轉換成螢幕座標
-    if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate') {
+    //轉換sphere座標，轉換成螢幕座標(搖桿專用)
+    if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate' &&
+        maingameJS.Player.name == this.name) {
         Sphere.transform.position.x = maingameJS.mouseDragVector.x * 0.02;
         Sphere.transform.position.z = maingameJS.mouseDragVector.z * 0.02;
 
@@ -355,7 +351,8 @@ function _movment() {
     //將生物移動向目標
     if (
         Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
-        if (maingameJS.hitUIObjectName != 'movePlate') {
+        if (maingameJS.hitUIObjectName != 'movePlate' &&
+            maingameJS.Player.name == this.name) {
             Sphere2.GetComponent. < Renderer > ().enabled = true;
         }
         moveSpeed = moveSpeedMax;

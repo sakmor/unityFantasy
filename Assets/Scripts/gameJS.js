@@ -14,7 +14,7 @@ import MiniJSON;
  * CubePick             :從托盤拉出後的預覽物
  * Player               :由玩家控制的生物 (biology.js)
  * itemBagGameObject    :背包介面
- * mainCamera           :主要攝影機
+ * mainCamera           :主要攝影機--->biologyJS有索引
  * rayCamera            :當Player生物被物件遮蔽時使用 (功能尚未撰寫)TODO
  * pickTouch            :顯示玩家在拖曳CUBE時，點選的CUBE
  * pickTouchSide        :顯示玩家在拖曳CUBE時，點選的CUBE那一面
@@ -38,15 +38,15 @@ import MiniJSON;
  * cubePlatein2out      :滑鼠是否從cubePlate移出?
  * movePlatein2out      :滑鼠是否從movePlate移出?
  * clickStart           :滑鼠是否第一次點擊?
- * touchScreen          :滑鼠是否第點擊螢幕?
+ * touchScreen          :滑鼠是否第點擊螢幕?--->biologyJS有索引
  *
  < String > ===========================
- * hitUIObjectName      :取得最後一次按壓到的物件的名稱
+ * hitUIObjectName      :取得最後一次按壓到的物件的名稱--->biologyJS有索引
  *
  < Vector2、Vector3 > ===========================
  * myIputPostion       :紀錄輸入座標(滑鼠或觸控最終都將統一用此紀錄)
  * mouseStartPOS       :紀錄滑鼠初次點擊的座標
- * mouseDragVector     :紀錄現在座標與滑鼠初次點擊的座標之間的向量
+ * mouseDragVector     :紀錄現在座標與滑鼠初次點擊的座標之間的向量--->biologyJS有索引
  * cameraRELtarget     :紀錄攝影機與Player之間的相對位置
  *
   < Script 自定義 > ===========================
@@ -58,7 +58,7 @@ import MiniJSON;
  *
  * mouseHitPlane       :RaycastHit->Structure used to get information back from a raycast.
  * groundPlane         :Plane->一片無限框廣的平面。
- * biologyList         :TextAsset->文字檔。
+ * biologyList         :TextAsset->文字檔。--->biologyJS有索引
  *
  *
  */
@@ -113,7 +113,6 @@ var PlayerPrefsX: PlayerPrefsX;
 //UnityEngine ----------------------------
 var mouseHitPlane: RaycastHit;
 var groundPlane: Plane;
-var markerObject: Transform;
 var biologyList: TextAsset;
 
 function Start() {
@@ -128,59 +127,29 @@ function Start() {
     cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
     movePlateMouse = GameObject.Find("movePlateMouse");
     movePlate = GameObject.Find("movePlate");
-
-
-    //宣告各個變數代表的gameObject
     PlayerLight = GameObject.Find("PlayerLight");
     pickTouch = GameObject.Find("pickTouch");
     Cube = GameObject.Find("Cube");
     CubePick = GameObject.Find("CubePick");
-
-    Player = GameObject.Find("Cha_Knight");
-
+    Player = GameObject.Find("m101");
     mainCamera = GameObject.Find("mainCamera");
     rayCamera = GameObject.Find("rayCamera");
-    GameObject.Find("m101").AddComponent(biology);
-    Player.AddComponent(biology);
     pickTouchSide = GameObject.Find("pickTouchSide");
+    GameObject.Find("Cha_Knight").AddComponent(biology);
+    GameObject.Find("m101").AddComponent(biology);
     playerBioJS = Player.GetComponent(biology);
-
-
     itemBagGameObject = GameObject.Find("itemBag");
     itemBagGameObject.AddComponent(itemBag);
     itemBagJS = itemBagGameObject.GetComponent(itemBag);
-
-    var myButton = GameObject.Find("Button_LEFT");
-    myButton.GetComponent(UI.Button).onClick.AddListener(Button_LEFT);
-
-    var myButtonForward = GameObject.Find("Button_RIGHT");
-    myButtonForward.GetComponent(UI.Button).onClick.AddListener(Button_RIGHT);
-
-    var myButtonJump = GameObject.Find("Button_jump");
-    myButtonJump.GetComponent(UI.Button).onClick.AddListener(Button_jump);
-
-    var myButtonSave = GameObject.Find("Button_Save");
-    myButtonSave.GetComponent(UI.Button).onClick.AddListener(Button_Save);
-
-    var myButtonLoad = GameObject.Find("Button_Load");
-    myButtonLoad.GetComponent(UI.Button).onClick.AddListener(Button_Load);
-
-    var myButton_Next = GameObject.Find("Button_Next");
-    myButton_Next.GetComponent(UI.Button).onClick.AddListener(Button_Next);
-
     cammeraPlate = GameObject.Find("cammeraPlate");
-    cameraRELtarget = mainCamera.transform.position - Player.transform.position;
-    loadResources();
 
+    GameObject.Find("Button_jump").GetComponent(UI.Button).onClick.AddListener(Button_jump);
+    cameraRELtarget = mainCamera.transform.position - Player.transform.position;
+
+    loadResources();
     loadGame();
-    //設定攝影機
     mouseOrbitSet();
 
-    groundPlane.Set3Points(
-        Vector3(1.0, 0.0, 0.0),
-        Vector3(0.0, 0.0, 1.0),
-        Vector3(0.0, 0.0, 0.0)
-    );
 
 }
 
@@ -221,29 +190,17 @@ function clearCube() {
     or.Close();
 }
 
-function Button_Save() {
-    saveGame();
-}
 
 function Button_Next() {
     playerBioJS.nextCube();
 }
 
-function Button_Load() {
-    //    loadGame();
-}
 
 function Button_jump() {
     playerBioJS.bioAction = "Jump";
 }
 
-function Button_LEFT() {
-    playerBioJS.bioAction = "Create";
-}
 
-function Button_RIGHT() {
-    playerBioJS.bioAction = "Action";
-}
 
 function setArray(a: Vector3, b: float) {
     cubesPosDictionary[a] = array3d.length;
@@ -442,9 +399,14 @@ function logg(n: String) {
     logText.GetComponent. < UI.Text > ().text += n;
 
 }
+/****************
+ *
+ * buttonDetect()
+ * 判斷、執行滑鼠按壓到各個UI元件後的後續反應
+ *
+ ****************/
 
 function buttonDetect() {
-    //當滑鼠按壓，並點選到UI時
 
     if (touchScreen) {
         //取得按壓的物件名稱
@@ -613,23 +575,6 @@ function buttonDetect() {
         }
     } else {
 
-        //點螢幕移動
-        if (Input.GetMouseButtonUp(0)) {
-            playerBioJS._pick();
-            groundPlane.Set3Points(
-                Vector3(1.0, playerBioJS.pickPlayer.transform.position.y, 0.0),
-                Vector3(0.0, playerBioJS.pickPlayer.transform.position.y, 1.0),
-                Vector3(1.0, playerBioJS.pickPlayer.transform.position.y, 1.0));
-
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var rayDistance: float;
-            if (hitUIObjectName == "" &&
-                5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
-                groundPlane.Raycast(ray, rayDistance)) {
-                playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
-            }
-        }
-
         cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
         cubePlateMouse.transform.position = cubePlate.transform.position;
@@ -683,27 +628,25 @@ function fellowPlayerLight() {
 
 function getMousehitGroupPos() {
 
+    //點螢幕移動
+    if (Input.GetMouseButtonUp(0)) {
+        playerBioJS._pick();
+        groundPlane.Set3Points(
+            Vector3(1.0, playerBioJS.pickPlayer.transform.position.y, 0.0),
+            Vector3(0.0, playerBioJS.pickPlayer.transform.position.y, 1.0),
+            Vector3(1.0, playerBioJS.pickPlayer.transform.position.y, 1.0));
 
-
-    switch (hitUIObjectName) {
-    case "cubePlate":
-        pickTouchSide.GetComponent. < Renderer > ().enabled = true;
-        pickTouch.GetComponent. < Renderer > ().enabled = true;
-        break;
-    case "removePlate":
-        pickTouchSide.GetComponent. < Renderer > ().enabled = false;
-        pickTouch.GetComponent. < Renderer > ().enabled = true;
-        break;
-    default:
-        CubePick.GetComponent. < Renderer > ().enabled = false;
-        pickTouchSide.GetComponent. < Renderer > ().enabled = false;
-        pickTouch.GetComponent. < Renderer > ().enabled = false;
+        //滑鼠點擊取得做標點
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var rayDistance: float;
+        if (hitUIObjectName == "" &&
+            5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
+            groundPlane.Raycast(ray, rayDistance)) {
+            playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
+        }
     }
 
 
-
-    //滑鼠點擊取得做標點
-    var ray = Camera.main.ScreenPointToRay(myIputPostion);
 
     //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
     if (touchScreen &&
@@ -712,6 +655,7 @@ function getMousehitGroupPos() {
         hitUIObjectName != "cammeraPlate" &&
         hitUIObjectName != "movePlate"
     ) {
+
         pickTouchSide.transform.position = mouseHitPlane.point;
 
         pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);

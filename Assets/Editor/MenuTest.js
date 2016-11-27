@@ -239,13 +239,34 @@ function detectOcclusion() {
 }
 
 @
-MenuItem("==Menu==/loadJson")
+MenuItem("==Menu==/loadBiologyList")
 static
 
-function loadJson() {
+function loadBiologyList() {
     var biologyList = Resources.Load("db/biologyList");
     var array3dLoadJson = Json.Deserialize(biologyList.text) as Dictionary. < String,
         System.Object > ;
     Debug.Log(biologyList.text);
     Debug.Log(((array3dLoadJson["m101"]) as List. < System.Object > )[0]);
+}
+
+@
+MenuItem("==Menu==/lineDecte")
+static
+
+function lineDecte() {
+    var mainCamera: GameObject = GameObject.Find("mainCamera");
+    var tempPick: GameObject = GameObject.Find("tempPick");
+
+    //正規化生物座標
+    //    tempPick.transform.position.x = Mathf.Floor(mainCamera.transform.position.x + 0.5);
+    //    tempPick.transform.position.z = Mathf.Floor(mainCamera.transform.position.z + 0.5);
+    //    tempPick.transform.position.y = Mathf.Floor(mainCamera.transform.position.y + 0.5);
+    //取得射線
+    var myVector: Vector3 = tempPick.transform.position - GameObject.Find("m101").transform.position;
+    tempPick.transform.position -= myVector.normalized * 1;
+    tempPick.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
+    tempPick.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
+    tempPick.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5);
+
 }
