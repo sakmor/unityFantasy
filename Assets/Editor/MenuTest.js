@@ -260,9 +260,17 @@ function lineDecte() {
     var tempPick: GameObject = GameObject.Find("tempPick");
     var tempPick2: GameObject = GameObject.Find("tempPick2");
     var myVector: Vector3 = GameObject.Find("m101").transform.position - mainCamera.transform.position;
-    tempPick.transform.position -= myVector.normalized * 1;
-    tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
-    tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
-    tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5) + 0.5;
+    var mylength = Vector3.Distance(GameObject.Find("m101").transform.position, mainCamera.transform.position);
+    for (var i = 0; i < mylength; i++) {
+        tempPick.transform.position -= myVector.normalized * 1;
+        tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
+        tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
+        tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5) + 0.5;
 
+        //        if (maingameJS.checkArray(Vector3(tempPick2.x, tempPick2.y, tempPick2.z))) {
+        //            break;
+        //        }
+
+
+    }
 }
