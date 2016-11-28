@@ -722,7 +722,7 @@ function lineDecte() {
     var myVector: Vector3 = Player.transform.position - mainCamera.transform.position;
     var mylength = Mathf.Floor(Vector3.Distance(Player.transform.position, mainCamera.transform.position));
     for (var i = 0; i < mylength; i++) {
-        tempPick.transform.position -= myVector.normalized * 3;
+        tempPick.transform.position -= myVector.normalized * i;
         tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
         tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
         tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5) + 0.5;

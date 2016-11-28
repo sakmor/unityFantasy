@@ -259,8 +259,8 @@ function lineDecte() {
     var mainCamera: GameObject = GameObject.Find("mainCamera");
     var tempPick: GameObject = GameObject.Find("tempPick");
     var tempPick2: GameObject = GameObject.Find("tempPick2");
-    var myVector: Vector3 = GameObject.Find("m101").transform.position - mainCamera.transform.position;
-    var mylength = Vector3.Distance(GameObject.Find("m101").transform.position, mainCamera.transform.position);
+    var myVector: Vector3 = GameObject.Find("Cha_Knight").transform.position - mainCamera.transform.position;
+    var mylength = Vector3.Distance(GameObject.Find("Cha_Knight").transform.position, mainCamera.transform.position);
     for (var i = 0; i < mylength; i++) {
         tempPick.transform.position -= myVector.normalized * 1;
         tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
