@@ -706,7 +706,6 @@ function getMousehitGroupPos() {
         }
     }
 
-
     CubePick.transform.position = pickTouchSide.transform.position;
     CubePick.GetComponent. < MeshFilter > ().mesh = Cube.GetComponent. < MeshFilter > ().mesh;
 

@@ -239,34 +239,30 @@ function detectOcclusion() {
 }
 
 @
-MenuItem("==Menu==/loadBiologyList")
+MenuItem("==Menu==/lineBack #b")
 static
 
-function loadBiologyList() {
-    var biologyList = Resources.Load("db/biologyList");
-    var array3dLoadJson = Json.Deserialize(biologyList.text) as Dictionary. < String,
-        System.Object > ;
-    Debug.Log(biologyList.text);
-    Debug.Log(((array3dLoadJson["m101"]) as List. < System.Object > )[0]);
-}
+function lineBack() {
+    var mainCamera: GameObject = GameObject.Find("mainCamera");
+    var tempPick: GameObject = GameObject.Find("tempPick");
+    var tempPick2: GameObject = GameObject.Find("tempPick2");
 
-@
-MenuItem("==Menu==/lineDecte")
+    //正規化生物座標
+    tempPick.transform.position = GameObject.Find("m101").transform.position;
+    tempPick2.transform.position = tempPick.transform.position;
+
+}@
+MenuItem("==Menu==/lineDecte #g")
 static
 
 function lineDecte() {
     var mainCamera: GameObject = GameObject.Find("mainCamera");
     var tempPick: GameObject = GameObject.Find("tempPick");
-
-    //正規化生物座標
-    //    tempPick.transform.position.x = Mathf.Floor(mainCamera.transform.position.x + 0.5);
-    //    tempPick.transform.position.z = Mathf.Floor(mainCamera.transform.position.z + 0.5);
-    //    tempPick.transform.position.y = Mathf.Floor(mainCamera.transform.position.y + 0.5);
-    //取得射線
-    var myVector: Vector3 = tempPick.transform.position - GameObject.Find("m101").transform.position;
+    var tempPick2: GameObject = GameObject.Find("tempPick2");
+    var myVector: Vector3 = GameObject.Find("m101").transform.position - mainCamera.transform.position;
     tempPick.transform.position -= myVector.normalized * 1;
-    tempPick.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
-    tempPick.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
-    tempPick.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5);
+    tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
+    tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
+    tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5) + 0.5;
 
 }
