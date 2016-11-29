@@ -249,6 +249,7 @@ function lineBack() {
 
     //正規化生物座標
     tempPick.transform.position = GameObject.Find("Cha_Knight").transform.position;
+    tempPick.transform.position.y += 1.25;
     tempPick2.transform.position = tempPick.transform.position;
 
 }@
@@ -259,12 +260,14 @@ function lineDecte() {
     var mainCamera: GameObject = GameObject.Find("mainCamera");
     var tempPick: GameObject = GameObject.Find("tempPick");
     var tempPick2: GameObject = GameObject.Find("tempPick2");
-    var myVector: Vector3 = GameObject.Find("Cha_Knight").transform.position - mainCamera.transform.position;
-    var mylength = Vector3.Distance(GameObject.Find("Cha_Knight").transform.position, mainCamera.transform.position);
+    var targetVector3 = GameObject.Find("Cha_Knight").transform.position;
+    targetVector3.y += 1.25;
+    var myVector: Vector3 = targetVector3 - mainCamera.transform.position;
+    var mylength = Vector3.Distance(targetVector3, mainCamera.transform.position);
 
     tempPick.transform.position -= myVector.normalized * 1;
     tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
     tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
-    tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5) + 0.5;
+    tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y) + 0.5;
 
 }

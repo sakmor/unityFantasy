@@ -15,7 +15,7 @@ import MiniJSON;
  * Player               :由玩家控制的生物 (biology.js)
  * itemBagGameObject    :背包介面
  * mainCamera           :主要攝影機--->biologyJS有索引
- * rayCamera            :當Player生物被物件遮蔽時使用 (功能尚未撰寫)TODO
+ * mainCamera2            :當Player生物被物件遮蔽時使用 (功能尚未撰寫)TODO
  * pickTouch            :顯示玩家在拖曳CUBE時，點選的CUBE
  * pickTouchSide        :顯示玩家在拖曳CUBE時，點選的CUBE那一面
  * cubePlateTimer       :以縮放圓形圖案的方式，顯示玩家在點選cubePlate按鈕時間
@@ -70,7 +70,7 @@ var Cube: GameObject;
 var itemBagGameObject: GameObject;
 var PlayerLight: GameObject;
 var mainCamera: GameObject;
-var rayCamera: GameObject;
+var mainCamera2: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
 var cubePlateMouse: GameObject;
@@ -115,7 +115,12 @@ var mouseHitPlane: RaycastHit;
 var groundPlane: Plane;
 var biologyList: TextAsset;
 
+
+var camera1: Camera;
+var camera2: Camera;
+
 function Start() {
+
 
     biologyList = Resources.Load("db/biologyList");
     logText = GameObject.Find("logText");
@@ -133,7 +138,7 @@ function Start() {
     CubePick = GameObject.Find("CubePick");
     Player = GameObject.Find("Cha_Knight");
     mainCamera = GameObject.Find("mainCamera");
-    rayCamera = GameObject.Find("rayCamera");
+    mainCamera2 = GameObject.Find("mainCamera2");
     pickTouchSide = GameObject.Find("pickTouchSide");
     GameObject.Find("Cha_Knight").AddComponent(biology);
     GameObject.Find("m101").AddComponent(biology);
@@ -145,7 +150,10 @@ function Start() {
 
     GameObject.Find("Button_jump").GetComponent(UI.Button).onClick.AddListener(Button_jump);
     cameraRELtarget = mainCamera.transform.position - Player.transform.position;
-
+    camera1 = mainCamera.GetComponent(Camera);
+    camera2 = mainCamera2.GetComponent(Camera);
+    camera1.enabled = true;
+    camera2.enabled = false;
     loadResources();
     loadGame();
     mouseOrbitSet();
@@ -155,11 +163,11 @@ function Start() {
 
 function Update() {
 
-    lineDecte();
 
-    rayCamera.transform.position = mainCamera.transform.position;
-    rayCamera.transform.rotation = mainCamera.transform.rotation;
-    rayCamera.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
+
+    mainCamera2.transform.position = mainCamera.transform.position;
+    mainCamera2.transform.rotation = mainCamera.transform.rotation;
+    mainCamera2.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
     mouseOrTouch();
     getMousehitGroupPos();
     //    fellowPlayerLight();
@@ -718,25 +726,37 @@ function getMousehitGroupPos() {
 
 function lineDecte() {
 
-    var tempPick: GameObject = GameObject.Find("tempPick");
-    var tempPick2: GameObject = GameObject.Find("tempPick2");
-    tempPick.transform.position = Player.transform.position;
-    var myVector: Vector3 = Player.transform.position - mainCamera.transform.position;
-    var mylength = Mathf.Floor(Vector3.Distance(Player.transform.position, mainCamera.transform.position));
+    var yScaleUP = 1.25;
+    var target = Player.transform.position;
+    target.y += yScaleUP;
 
-    Debug.DrawLine(Player.transform.position, mainCamera.transform.position);
+    var tempPick: Vector3;
+    var tempPick2: Vector3;
+    tempPick = target;
+    var myVector: Vector3 = target - mainCamera.transform.position;
+    var mylength = Mathf.Round(Vector3.Distance(target, mainCamera.transform.position));
+
+
+    Debug.DrawLine(target, mainCamera.transform.position);
     for (var i = 0; i < mylength; i++) {
-        tempPick.transform.position = Player.transform.position - myVector.normalized * i;
-        tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
-        tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
-        tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y + 0.5) + 0.5;
+        tempPick = target - myVector.normalized * i;
+        tempPick2.x = Mathf.Floor(tempPick.x + 0.5);
+        tempPick2.z = Mathf.Floor(tempPick.z + 0.5);
+        tempPick2.y = Mathf.Floor(tempPick.y) + 0.5;
 
         if (checkArray(Vector3(
-                tempPick2.transform.position.x,
-                tempPick2.transform.position.y,
-                tempPick2.transform.position.z))) {
+                tempPick2.x,
+                tempPick2.y,
+                tempPick2.z))) {
+            mainCamera2.transform.position = tempPick;
+            camera2.enabled = true;
+            camera1.enabled = false;
+
             Debug.Log("stop");
             break;
+        } else {
+            camera1.enabled = true;
+            camera2.enabled = false;
         }
 
     }
