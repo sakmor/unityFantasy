@@ -155,6 +155,8 @@ function Start() {
 
 function Update() {
 
+    lineDecte();
+
     rayCamera.transform.position = mainCamera.transform.position;
     rayCamera.transform.rotation = mainCamera.transform.rotation;
     rayCamera.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
@@ -715,12 +717,16 @@ function getMousehitGroupPos() {
 }
 
 function lineDecte() {
-    Debug.Log("lineDecte");
+
     var tempPick: GameObject = GameObject.Find("tempPick");
     var tempPick2: GameObject = GameObject.Find("tempPick2");
     tempPick.transform.position = Player.transform.position;
     var myVector: Vector3 = Player.transform.position - mainCamera.transform.position;
     var mylength = Mathf.Floor(Vector3.Distance(Player.transform.position, mainCamera.transform.position));
+
+
+
+    Debug.DrawLine(Player.transform.position, mainCamera.transform.position);
     for (var i = 0; i < mylength; i++) {
         tempPick.transform.position -= myVector.normalized * i;
         tempPick2.transform.position.x = Mathf.Floor(tempPick.transform.position.x + 0.5);
