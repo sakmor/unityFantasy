@@ -637,10 +637,8 @@ function getMousehitGroupPos() {
     //點螢幕移動
     if (Input.GetMouseButtonUp(0)) {
         playerBioJS._pick();
-        groundPlane.Set3Points(
-            Vector3(1.0, playerBioJS.pickPlayer.transform.position.y, 0.0),
-            Vector3(0.0, playerBioJS.pickPlayer.transform.position.y, 1.0),
-            Vector3(1.0, playerBioJS.pickPlayer.transform.position.y, 1.0));
+
+        mouseLineDecte();
 
         //滑鼠點擊取得做標點
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -754,6 +752,46 @@ function lineDecte() {
 
     }
 }
+
+function mouseLineDecte() {
+    var tempPick: Vector3;
+    var tempPick2: Vector3;
+    if (Input.GetMouseButtonUp(0)) {
+
+        //滑鼠點擊取得做標點
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        var rayDistance: float;
+        if (hitUIObjectName == "" &&
+            5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition)) {
+
+            for (var i = Mathf.Floor(mainCamera.transform.position.y); i > 0; i--) {
+                tempPick = ray.GetPoint(i);
+                tempPick2.x = Mathf.Floor(tempPick.x + 0.5);
+                tempPick2.z = Mathf.Floor(tempPick.z + 0.5);
+                tempPick2.y = Mathf.Floor(tempPick.y) + 0.5;
+
+
+                if (checkArray(Vector3(
+                        tempPick2.x,
+                        tempPick2.y,
+                        tempPick2.z))) {
+
+                    groundPlane.Set3Points(
+                        Vector3(1.0, tempPick.y + 0.5, 0.0),
+                        Vector3(0.0, tempPick.y + 0.5, 1.0),
+                        Vector3(1.0, tempPick.y + 0.5, 1.0));
+
+                    Debug.Log("stop");
+                    break;
+                }
+            }
+        }
+
+
+    }
+}
+
 
 function mouseOrbitSet() {
     mainCamera.AddComponent(mouseOrbit);
