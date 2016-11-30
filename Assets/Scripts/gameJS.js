@@ -141,6 +141,7 @@ function Start() {
     pickTouchSide = GameObject.Find("pickTouchSide");
     GameObject.Find("Cha_Knight").AddComponent(biology);
     GameObject.Find("m101").AddComponent(biology);
+    GameObject.Find("m1011").AddComponent(biology);
     playerBioJS = Player.GetComponent(biology);
     itemBagGameObject = GameObject.Find("itemBag");
     itemBagGameObject.AddComponent(itemBag);
