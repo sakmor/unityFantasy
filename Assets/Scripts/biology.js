@@ -56,8 +56,9 @@ var Plane_touch: GameObject;
 var pickTouch: GameObject;
 var pickTouchSide: GameObject;
 var onAir: boolean;
-
+var lastAttackTime: float;
 var collisionCubes: GameObject[];
+var nameText: GameObject;
 collisionCubes = new GameObject[28];
 
 //Pick           --在玩家面前的選取框
@@ -76,6 +77,7 @@ function Start() {
     Sphere = Instantiate(GameObject.Find("Sphere2"));
     Sphere.name = this.name + '_Sphere';
     Sphere.transform.parent = GameObject.Find("Biology/Items").transform;
+    nameText = GameObject.Find(this.name + "/nameText");
     Sphere2 = Instantiate(GameObject.Find("Sphere2"));
     Sphere2.name = this.name + '_Sphere2';
     Sphere2.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -115,6 +117,7 @@ function Start() {
 }
 
 function Update() {
+    Debug.Log(Camera.main.WorldToScreenPoint(nameText.transform.position));
     this._catchPlayer();
     this._movment();
     this._bioStatus();
@@ -291,22 +294,16 @@ function _pick() {
 }
 
 function _bioStatus() {
+
     //對應生物所處狀態，播放對應動作
     if (!anim.IsPlaying("Attack")) {
         switch (this.bioAction) {
-        case "Action":
+        case "Attack":
+            Debug.Log(this.name + ":" + this.bioAction);
             anim.CrossFade("Attack");
-            anim.CrossFadeQueued("Wait");
-            _removeCube();
-            break;
-        case "Create":
-            anim.CrossFade("Attack");
-            anim.CrossFadeQueued("Wait");
-            _createCube();
             break;
         case "Damage":
-            //jump
-            this.bioAction = 'Jump';
+            anim.CrossFade("Damage");
             break;
         case "Walk":
             anim.CrossFade("Walk");
@@ -438,13 +435,25 @@ function AnimationClip() {
 }
 
 function _catchPlayer() {
+    var seeMax = 15;
+    var catchSpeed = 0.05;
+    var attackDistance = 1.5;
+    var attackCoolDown = 1200;
+    var playerDistance = Vector3.Distance(maingameJS.Player.transform.position, this.transform.position);
+
     if (this.name != maingameJS.Player.name) {
-        if (Vector3.Distance(maingameJS.Player.transform.position, this.transform.position) < 5) {
+        if (playerDistance < seeMax &&
+            playerDistance > attackDistance) {
             this.Sphere2.transform.position = maingameJS.Player.transform.position;
-            //追擊狀態下減速...不然目前這版玩家甩不開怪物
-            this.moveSpeedMax = 0.05;
+            this.moveSpeedMax = catchSpeed;
         } else {
             this.Sphere2.transform.position = this.transform.position;
+        }
+        if (playerDistance < 1.6) {
+            if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
+                lastAttackTime = Time.time * 1000;
+                bioAction = "Attack";
+            }
         }
     }
 
