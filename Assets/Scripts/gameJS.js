@@ -638,7 +638,11 @@ function getMousehitGroupPos() {
     if (Input.GetMouseButtonUp(0)) {
         playerBioJS._pick();
 
-        mouseLineDecte();
+        groundPlane.Set3Points(
+            Vector3(1.0, Player.transform.position.y, 0.0),
+            Vector3(0.0, Player.transform.position.y, 1.0),
+            Vector3(1.0, Player.transform.position.y, 1.0));
+        //        mouseLineDecte();
 
         //滑鼠點擊取得做標點
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -765,7 +769,7 @@ function mouseLineDecte() {
         if (hitUIObjectName == "" &&
             5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition)) {
 
-            for (var i = Mathf.Floor(mainCamera.transform.position.y); i > 0; i--) {
+            for (var i = 0; i < Mathf.Floor(mainCamera.transform.position.y); i++) {
                 tempPick = ray.GetPoint(i);
                 tempPick2.x = Mathf.Floor(tempPick.x + 0.5);
                 tempPick2.z = Mathf.Floor(tempPick.z + 0.5);

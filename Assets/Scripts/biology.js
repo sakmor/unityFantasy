@@ -370,8 +370,8 @@ function _movment() {
         _pick();
 
         //移動生物到目標點
-//        Sphere2.transform.position.y = this.transform.position.y;
-//        Sphere.transform.position.y = this.transform.position.y;
+        Sphere2.transform.position.y = this.transform.position.y;
+        Sphere.transform.position.y = this.transform.position.y;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
         //調整步伐
         anim["Walk"].speed = WalkSteptweek * moveSpeed;
