@@ -29,7 +29,7 @@ import MiniJSON;
  *
   < Dictionary、Array > ===========================
  *
- * cubesPosDictionary   :記錄場景CUBE的位置，checkArray、setArray、removeArray查找用 (需使用 System.Collections.Generic)
+                * cubesPosDictionary   :記錄場景CUBE的位置，checkArray、setArray、removeArray查找用 (需使用 System.Collections.Generic)
  * array3d              :紀錄場景CUBE的類型 (但需要再整理該功能)TODO
  * cubeArrayTxt         :紀錄CUBE各個編號材質貼圖編號
  *
