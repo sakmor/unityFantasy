@@ -84,7 +84,9 @@ function Start() {
     pickTouch = maingameJS.pickTouch;
     pickTouchSide = maingameJS.pickTouchSide;
     Plane_touch = GameObject.Find("Plane_touch");
-    pickPlayer = GameObject.Find("pickPlayer");
+    pickPlayer = Instantiate(GameObject.Find("pickPlayer"));
+    pickPlayer.transform.parent = GameObject.Find("Biology/Items").transform;
+    pickPlayer.name = this.name + 'pickPlayer';
     _backward = false;
     WalkSteptweek = WalkSteptweek || 40;
     moveSpeed = moveSpeed || 0.07;
@@ -93,7 +95,7 @@ function Start() {
     Pick = GameObject.Find("pick");
     Cube = GameObject.Find("Cube");
 
-    var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
+    var tempVector3: Vector3 = pickPlayer.transform.position;
     var collisionCubeOBJ: GameObject;
     collisionCubeOBJ = new GameObject(this + '_collisionCubeOBJ');
     collisionCubeOBJ.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -108,6 +110,7 @@ function Start() {
     _pick();
     //抓取動作檔案
     AnimationClip();
+    dynamicCollision();
 
 }
 
@@ -117,12 +120,23 @@ function Update() {
     this._bioStatus();
     this._cubeHead();
     //    this._autoJump();
-    dynamicCollision();
 }
 
 
 function dynamicCollision() {
-
+    //更新碰撞物狀態
+    var g = 0;
+    var tempVector3: Vector3 = pickPlayer.transform.position;
+    for (var x = -1; x < 2; x++) {
+        for (var y = -1; y < 2; y++) {
+            for (var z = -1; z < 2; z++) {
+                g++;
+                if (maingameJS.checkArray(Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z))) {
+                    collisionCubes[g].transform.position = Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
+                }
+            }
+        }
+    }
 
 
 }
@@ -271,20 +285,7 @@ function _pick() {
         break;
     }
 
-    //更新碰撞物狀態
-    var g = 0;
-    var tempVector3: Vector3 = GameObject.Find("pickPlayer").transform.position;
-    for (var x = -1; x < 2; x++) {
-        for (var y = -1; y < 2; y++) {
-            for (var z = -1; z < 2; z++) {
-                g++;
-                if (maingameJS.checkArray(Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z))) {
 
-                    collisionCubes[g].transform.position = Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                }
-            }
-        }
-    }
 
 
 }
@@ -368,6 +369,7 @@ function _movment() {
 
         //更新pick狀態
         _pick();
+        dynamicCollision();
 
         //移動生物到目標點
         Sphere2.transform.position.y = this.transform.position.y;

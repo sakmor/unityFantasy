@@ -120,7 +120,12 @@ var camera2: Camera;
 
 function Start() {
 
-
+    //把所有旗標是biology的物件都加biology.js
+    var respawns: GameObject[];
+    respawns = GameObject.FindGameObjectsWithTag("biology");
+    for (var respawn: GameObject in respawns) {
+        respawn.AddComponent(biology);
+    }
     biologyList = Resources.Load("db/biologyList");
     logText = GameObject.Find("logText");
     logg('This Device is:' + SystemInfo.deviceType);
@@ -139,9 +144,6 @@ function Start() {
     mainCamera = GameObject.Find("mainCamera");
     mainCamera2 = GameObject.Find("mainCamera2");
     pickTouchSide = GameObject.Find("pickTouchSide");
-    GameObject.Find("Cha_Knight").AddComponent(biology);
-    GameObject.Find("m101").AddComponent(biology);
-    GameObject.Find("m1011").AddComponent(biology);
     playerBioJS = Player.GetComponent(biology);
     itemBagGameObject = GameObject.Find("itemBag");
     itemBagGameObject.AddComponent(itemBag);
@@ -181,7 +183,7 @@ function Update() {
 
 function clearCube() {
 
-    var arrayText = Resources.Load("scene/s999");
+    var arrayText: TextAsset = Resources.Load("scene/s999");
     var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
         System.Object > ;
     var tempi: int = array3dLoadJson["length"];
@@ -277,7 +279,7 @@ function loadResources() {
 }
 
 function loadGame() {
-    var arrayText = Resources.Load("scene/s999");
+    var arrayText: TextAsset = Resources.Load("scene/s999");
     var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
         System.Object > ;
     var Cube: GameObject = GameObject.Find("Cube");
