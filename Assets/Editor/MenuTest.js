@@ -69,9 +69,8 @@ static
 function LoadGame() {
     if (!Application.isPlaying) {
         var Cubes = GameObject.Find("Cubes");
-        or = new StreamReader("array3dictionary.txt");
-        var arrayText: String = or.ReadToEnd();
-        var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+        var arrayText = Resources.Load("scene/s999");
+        var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
             System.Object > ;
         var Player = GameObject.Find("Cha_Knight");
         //        Player.transform.position.x = parseFloat(array3dLoadJson[0][1]);
@@ -105,7 +104,6 @@ function LoadGame() {
                 //setArray(temp.transform.position, array3dLoadJson[i][3]);
             }
         }
-        or.Close();
     } else {
         UnityEditor.EditorUtility.DisplayDialog('oh,Come on ?', ' >_ < 請在編輯模式使用該功能啦', '我明白了');
     }
@@ -126,9 +124,8 @@ MenuItem("==Menu==/clearGame")
 static
 
 function clearCube() {
-    or = new StreamReader("array3dictionary.txt");
-    var arrayText: String = or.ReadToEnd();
-    var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+    var arrayText = Resources.Load("scene/s999");
+    var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
         System.Object > ;
     for (var i = 1; i < array3dLoadJson["length"]; i++) {
         var temp: Vector3;
@@ -143,7 +140,6 @@ function clearCube() {
         DestroyImmediate(GameObject.Find(temp.ToString("F0")));
     }
     Debug.Log('clear cubs: ' + array3dLoadJson["length"]);
-    or.Close();
 }
 
 

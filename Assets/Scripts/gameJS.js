@@ -4,7 +4,6 @@ script RequireComponent(Animation)
 
 import UnityEngine.EventSystems;
 import System.Collections.Generic;
-import System.IO;
 import MiniJSON;
 
 /*
@@ -180,9 +179,9 @@ function Update() {
 }
 
 function clearCube() {
-    var or = new StreamReader("array3dictionary.txt");
-    var arrayText: String = or.ReadToEnd();
-    var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+
+    var arrayText = Resources.Load("scene/s999");
+    var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
         System.Object > ;
     var tempi: int = array3dLoadJson["length"];
     for (var i = 1; i < tempi; i++) {
@@ -197,7 +196,6 @@ function clearCube() {
         temp.z = tempColor.b;
         DestroyImmediate(GameObject.Find(temp.ToString("F0")));
     }
-    or.Close();
 }
 
 
@@ -278,12 +276,8 @@ function loadResources() {
 }
 
 function loadGame() {
-    //    clearCube();
-    //    var array3dLoad: Color[] = PlayerPrefsX.GetColorArray("array3d");
-    //    Player.transform.position = array3dLoadJson["PlayerPOS"];
-    var or = new StreamReader("array3dictionary.txt");
-    var arrayText: String = or.ReadToEnd();
-    var array3dLoadJson = Json.Deserialize(arrayText) as Dictionary. < String,
+    var arrayText = Resources.Load("scene/s999");
+    var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
         System.Object > ;
     var Cube: GameObject = GameObject.Find("Cube");
     var tempi: int = array3dLoadJson["length"];
@@ -317,7 +311,6 @@ function loadGame() {
             setArray(temp.transform.position, tempColor.a);
         }
     }
-    or.Close();
     //    GameObject.Find("Cubes").GetComponent("DrawCallMinimizer").enabled = true;
 }
 
