@@ -112,7 +112,7 @@ function Start() {
 }
 
 function Update() {
-
+    this._catchPlayer();
     this._movment();
     this._bioStatus();
     this._cubeHead();
@@ -430,4 +430,16 @@ function AnimationClip() {
     this.GetComponent. < Rigidbody > ().freezeRotation = true;
 }
 
-function loadBiologyList() {}
+function _catchPlayer() {
+    if (this.name != maingameJS.Player.name) {
+        if (Vector3.Distance(maingameJS.Player.transform.position, this.transform.position) < 5) {
+            this.Sphere2.transform.position = maingameJS.Player.transform.position;
+            //追擊狀態下減速...不然目前這版玩家甩不開怪物
+            this.moveSpeedMax = 0.05;
+        } else {
+            this.Sphere2.transform.position = this.transform.position;
+        }
+    }
+
+
+}
