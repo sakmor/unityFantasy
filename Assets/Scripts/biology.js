@@ -125,17 +125,24 @@ function Start() {
 }
 
 function Update() {
-    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
-        this.transform.position.x,
-        this.transform.position.y + 2.5,
-        this.transform.position.z));
-    nameText.transform.position = nametextScreenPos;
+
     if (this.name == maingameJS.Player.name) {
         this._catchPlayer();
         this._movment();
         this._bioStatus();
         this._cubeHead();
     }
+}
+
+function updateUI() {
+    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
+        this.transform.position.x,
+        this.transform.position.y + 2.5,
+        this.transform.position.z));
+
+    nameText.transform.position.x = nametextScreenPos.x;
+    nameText.transform.position.y = nametextScreenPos.y;
+    nameText.transform.position.z = nametextScreenPos.z;
 }
 
 function BioUpdate() {
@@ -366,6 +373,7 @@ function _movment() {
         Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel) + this.transform.position.x;
         Sphere2.transform.position.z = Sphere.transform.position.x * Mathf.Sin(tempAngel) + Sphere.transform.position.z * Mathf.Cos(tempAngel) + this.transform.position.z;
 
+
     }
 
     //將生物移動向目標
@@ -389,6 +397,7 @@ function _movment() {
         //更新pick狀態
         _pick();
         dynamicCollision();
+
 
         //移動生物到目標點
         Sphere2.transform.position.y = this.transform.position.y;
@@ -482,6 +491,7 @@ function _catchPlayer() {
                 }
             }
         } else {
+            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
             this.Sphere2.transform.position = this.transform.position;
 
         }

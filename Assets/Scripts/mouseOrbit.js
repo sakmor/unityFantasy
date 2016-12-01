@@ -17,13 +17,13 @@ private
 var y = 0.0;
 
 private
-var mainGamejs: gameJS;
+var maingameJS: gameJS;
 
 @
 script AddComponentMenu("Camera-Control/Mouse Orbit")
 
 function Start() {
-    mainGamejs = GameObject.Find("mainGame").GetComponent(gameJS);
+    maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     var angles = transform.eulerAngles;
     x = angles.y;
     y = angles.x;
@@ -35,8 +35,8 @@ function Start() {
 
 function LateUpdate() {
 
-    if (mainGamejs.touchScreen &&
-        mainGamejs.hitUIObjectName == "") {
+    if (maingameJS.touchScreen &&
+        maingameJS.hitUIObjectName == "") {
 
         x += Input.GetAxis("Mouse X") * xSpeed;
         y -= Input.GetAxis("Mouse Y") * ySpeed;
@@ -58,7 +58,7 @@ function LateUpdate() {
         transform.position = position;
 
         //更新攝影機與目標的相對位置
-        mainGamejs.cameraRELtarget = mainGamejs.mainCamera.transform.position - mainGamejs.Player.transform.position;
+        maingameJS.cameraRELtarget = maingameJS.mainCamera.transform.position - maingameJS.Player.transform.position;
 
     }
 

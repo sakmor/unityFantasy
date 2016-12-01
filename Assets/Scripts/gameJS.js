@@ -119,6 +119,8 @@ var allBiologys: GameObject[];
 var camera1: Camera;
 var camera2: Camera;
 
+var lastCameraPos: Vector3;
+
 function Start() {
 
     //把所有旗標是biology的物件都加biology.js
@@ -166,14 +168,17 @@ function Start() {
 
 function Update() {
     if (playerBioJS.bioAction != "Wait") {
-        bioAction();
+        allBioupdate();
     }
+
     mainCamera2.transform.position = mainCamera.transform.position;
     mainCamera2.transform.rotation = mainCamera.transform.rotation;
+
     mainCamera2.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
     mouseOrTouch();
     getMousehitGroupPos();
     //    fellowPlayerLight();
+    isCameraPosMove();
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     buttonDetect();
@@ -673,7 +678,7 @@ function getMousehitGroupPos() {
         pickTouchSide.transform.position.z = Mathf.Floor(pickTouchSide.transform.position.z + 0.5 / 1);
         //                pickTouchSide.transform.position = pickTouch.transform.position;
 
-
+        Debug.Log('' + mouseHitPlane.transform.tag);
         switch (mouseHitPlane.transform.tag) {
         case "Cube":
             //            pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
@@ -711,8 +716,8 @@ function getMousehitGroupPos() {
             //            }
             break;
         case "biology":
-            Debug.Log("biology hit!!!");
-            if (3 > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
+
+            if (100 > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
                 playerBioJS.Sphere2.transform.position = playerBioJS.Sphere2.transform.position;
                 var targetDir = mouseHitPlane.transform.position - Player.transform.position;
                 var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
@@ -806,7 +811,7 @@ function mouseLineDecte() {
     }
 }
 
-function bioAction() {
+function allBioupdate() {
     for (var thisBiology: GameObject in allBiologys) {
         thisBiology.GetComponent(biology).BioUpdate();
     }
@@ -816,4 +821,14 @@ function mouseOrbitSet() {
     mainCamera.AddComponent(mouseOrbit);
     mainCamera.GetComponent(mouseOrbit).target = Player.transform;
     mainCamera.GetComponent(mouseOrbit).targetMove = Vector3(0, 2, 0);
+}
+
+function isCameraPosMove() {
+    if (lastCameraPos != mainCamera.transform.position) {
+        for (var thisBiology: GameObject in allBiologys) {
+            thisBiology.GetComponent(biology).updateUI();
+        }
+        lastCameraPos = mainCamera.transform.position;
+    }
+
 }
