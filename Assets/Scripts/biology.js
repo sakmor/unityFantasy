@@ -61,6 +61,8 @@ var collisionCubes: GameObject[];
 var nameText: GameObject;
 collisionCubes = new GameObject[28];
 
+var nametextScreenPos: Vector3;
+
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
 //PickTouch      --滑鼠點選地面位置,或是點擊的Cube選取框
@@ -69,6 +71,11 @@ collisionCubes = new GameObject[28];
 
 function Start() {
 
+    nameText = Instantiate(GameObject.Find("nameText"));
+    nameText.name = this.name + "_nameText";
+    nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
+
+    nameText.GetComponent. < UnityEngine.UI.Text > ().text = this.name;
 
     anim = GetComponent. < Animation > ();
     bioAction = "Wait";
@@ -77,7 +84,8 @@ function Start() {
     Sphere = Instantiate(GameObject.Find("Sphere2"));
     Sphere.name = this.name + '_Sphere';
     Sphere.transform.parent = GameObject.Find("Biology/Items").transform;
-    nameText = GameObject.Find(this.name + "/nameText");
+
+
     Sphere2 = Instantiate(GameObject.Find("Sphere2"));
     Sphere2.name = this.name + '_Sphere2';
     Sphere2.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -117,7 +125,11 @@ function Start() {
 }
 
 function Update() {
-    Debug.Log(Camera.main.WorldToScreenPoint(nameText.transform.position));
+    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
+        this.transform.position.x,
+        this.transform.position.y + 2.5,
+        this.transform.position.z));
+    nameText.transform.position = nametextScreenPos;
     this._catchPlayer();
     this._movment();
     this._bioStatus();
@@ -435,26 +447,35 @@ function AnimationClip() {
 }
 
 function _catchPlayer() {
-    var seeMax = 15;
+    var seeMax = 5;
     var catchSpeed = 0.05;
     var attackDistance = 1.5;
-    var attackCoolDown = 1200;
+    var attackCoolDown = 3000;
     var playerDistance = Vector3.Distance(maingameJS.Player.transform.position, this.transform.position);
 
     if (this.name != maingameJS.Player.name) {
-        if (playerDistance < seeMax &&
-            playerDistance > attackDistance) {
-            this.Sphere2.transform.position = maingameJS.Player.transform.position;
+        if (playerDistance < seeMax) {
+
+            if (playerDistance > attackDistance) {
+                this.Sphere2.transform.position = maingameJS.Player.transform.position;
+            }
+
             this.moveSpeedMax = catchSpeed;
+            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.red;
+
+            if (playerDistance < attackDistance) {
+                if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
+                    lastAttackTime = Time.time * 1000;
+                    this.Sphere2.transform.position = this.transform.position;
+                    nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
+                    bioAction = "Attack";
+                }
+            }
         } else {
             this.Sphere2.transform.position = this.transform.position;
+
         }
-        if (playerDistance < 1.6) {
-            if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
-                lastAttackTime = Time.time * 1000;
-                bioAction = "Attack";
-            }
-        }
+
     }
 
 
