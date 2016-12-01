@@ -114,6 +114,7 @@ var mouseHitPlane: RaycastHit;
 var groundPlane: Plane;
 var biologyList: TextAsset;
 
+var allBiologys: GameObject[];
 
 var camera1: Camera;
 var camera2: Camera;
@@ -121,10 +122,10 @@ var camera2: Camera;
 function Start() {
 
     //把所有旗標是biology的物件都加biology.js
-    var respawns: GameObject[];
-    respawns = GameObject.FindGameObjectsWithTag("biology");
-    for (var respawn: GameObject in respawns) {
-        respawn.AddComponent(biology);
+
+    allBiologys = GameObject.FindGameObjectsWithTag("biology");
+    for (var thisBiology: GameObject in allBiologys) {
+        thisBiology.AddComponent(biology);
     }
     biologyList = Resources.Load("db/biologyList");
     logText = GameObject.Find("logText");
@@ -164,9 +165,9 @@ function Start() {
 }
 
 function Update() {
-
-
-
+    if (playerBioJS.bioAction != "Wait") {
+        bioAction();
+    }
     mainCamera2.transform.position = mainCamera.transform.position;
     mainCamera2.transform.rotation = mainCamera.transform.rotation;
     mainCamera2.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
@@ -176,8 +177,6 @@ function Update() {
     fellowPlayerCameraMove();
     fellowPlayerCameraContorl();
     buttonDetect();
-
-
 
 }
 
@@ -799,6 +798,11 @@ function mouseLineDecte() {
     }
 }
 
+function bioAction() {
+    for (var thisBiology: GameObject in allBiologys) {
+        thisBiology.GetComponent(biology).BioUpdate();
+    }
+}
 
 function mouseOrbitSet() {
     mainCamera.AddComponent(mouseOrbit);

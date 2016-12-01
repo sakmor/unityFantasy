@@ -125,15 +125,31 @@ function Start() {
 }
 
 function Update() {
-    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
-        this.transform.position.x,
-        this.transform.position.y + 2.5,
-        this.transform.position.z));
-    nameText.transform.position = nametextScreenPos;
-    this._catchPlayer();
-    this._movment();
-    this._bioStatus();
-    this._cubeHead();
+    if (this.name == maingameJS.Player.name) {
+        nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
+            this.transform.position.x,
+            this.transform.position.y + 2.5,
+            this.transform.position.z));
+        nameText.transform.position = nametextScreenPos;
+        this._catchPlayer();
+        this._movment();
+        this._bioStatus();
+        this._cubeHead();
+    }
+}
+
+function BioUpdate() {
+    if (this.name != maingameJS.Player.name) {
+        nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
+            this.transform.position.x,
+            this.transform.position.y + 2.5,
+            this.transform.position.z));
+        nameText.transform.position = nametextScreenPos;
+        this._catchPlayer();
+        this._movment();
+        this._bioStatus();
+        this._cubeHead();
+    }
     //    this._autoJump();
 }
 
