@@ -327,7 +327,6 @@ function _bioStatus() {
     if (!anim.IsPlaying("Attack")) {
         switch (this.bioAction) {
         case "Attack":
-            Debug.Log(this.name + ":" + this.bioAction);
             anim.CrossFade("Attack");
             break;
         case "Damage":

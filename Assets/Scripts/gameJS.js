@@ -659,12 +659,12 @@ function getMousehitGroupPos() {
 
 
     //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
-    if (touchScreen &&
-        Physics.Raycast(ray, mouseHitPlane) &&
+    if (Physics.Raycast(ray, mouseHitPlane) &&
         !EventSystem.current.IsPointerOverGameObject() &&
         hitUIObjectName != "cammeraPlate" &&
         hitUIObjectName != "movePlate"
     ) {
+
 
         pickTouchSide.transform.position = mouseHitPlane.point;
 
@@ -676,48 +676,56 @@ function getMousehitGroupPos() {
 
         switch (mouseHitPlane.transform.tag) {
         case "Cube":
-            pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-            pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-
-            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
-                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
-                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
-                pickTouchSide.transform.position.x += 1.0;
-            } else
-            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x >= 0.5 &&
-                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
-                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
-                pickTouchSide.transform.position.x -= 1.0;
-            } else
-            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
-                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
-                mouseHitPlane.point.z - mouseHitPlane.transform.position.z >= 0.5) {
-                pickTouchSide.transform.position.z += 1.0;
-            } else
-            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
-                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
-                mouseHitPlane.transform.position.z - mouseHitPlane.point.z >= 0.5) {
-                pickTouchSide.transform.position.z -= 1.0;
-            } else
-            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
-                mouseHitPlane.point.y - mouseHitPlane.transform.position.y >= 0.5 &&
-                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
-                pickTouchSide.transform.position.y += 1.0;
-            } else
-            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
-                mouseHitPlane.transform.position.y - mouseHitPlane.point.y >= 0.5 &&
-                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
-                pickTouchSide.transform.position.y -= 1.0;
-            }
+            //            pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+            //            pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
+            //
+            //            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
+            //                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
+            //                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
+            //                pickTouchSide.transform.position.x += 1.0;
+            //            } else
+            //            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x >= 0.5 &&
+            //                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
+            //                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
+            //                pickTouchSide.transform.position.x -= 1.0;
+            //            } else
+            //            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
+            //                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
+            //                mouseHitPlane.point.z - mouseHitPlane.transform.position.z >= 0.5) {
+            //                pickTouchSide.transform.position.z += 1.0;
+            //            } else
+            //            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
+            //                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
+            //                mouseHitPlane.transform.position.z - mouseHitPlane.point.z >= 0.5) {
+            //                pickTouchSide.transform.position.z -= 1.0;
+            //            } else
+            //            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
+            //                mouseHitPlane.point.y - mouseHitPlane.transform.position.y >= 0.5 &&
+            //                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
+            //                pickTouchSide.transform.position.y += 1.0;
+            //            } else
+            //            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
+            //                mouseHitPlane.transform.position.y - mouseHitPlane.point.y >= 0.5 &&
+            //                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
+            //                pickTouchSide.transform.position.y -= 1.0;
+            //            }
             break;
         case "biology":
+            Debug.Log("biology hit!!!");
+            if (3 > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
+                playerBioJS.Sphere2.transform.position = playerBioJS.Sphere2.transform.position;
+                var targetDir = mouseHitPlane.transform.position - Player.transform.position;
+                var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
+                Player.transform.rotation = Quaternion.LookRotation(newDir);
+                playerBioJS.bioAction = "Attack";
+            }
 
             break;
         }
     }
 
-    CubePick.transform.position = pickTouchSide.transform.position;
-    CubePick.GetComponent. < MeshFilter > ().mesh = Cube.GetComponent. < MeshFilter > ().mesh;
+    //    CubePick.transform.position = pickTouchSide.transform.position;
+    //    CubePick.GetComponent. < MeshFilter > ().mesh = Cube.GetComponent. < MeshFilter > ().mesh;
 
 }
 
