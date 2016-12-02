@@ -73,7 +73,7 @@ function Start() {
 
     nameText = Instantiate(GameObject.Find("nameText"));
     nameText.name = this.name + "_nameText";
-    nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
+    nameText.transform.parent = this.transform;
 
     nameText.GetComponent. < TextMesh > ().text = this.name;
 
@@ -483,18 +483,17 @@ function _catchPlayer() {
             }
 
             this.moveSpeedMax = catchSpeed;
-            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.red;
 
             if (playerDistance < attackDistance) {
                 if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
                     lastAttackTime = Time.time * 1000;
                     this.Sphere2.transform.position = this.transform.position;
-                    nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
+
                     bioAction = "Attack";
                 }
             }
         } else {
-            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
+
             this.Sphere2.transform.position = this.transform.position;
 
         }
