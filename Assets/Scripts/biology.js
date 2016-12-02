@@ -75,7 +75,7 @@ function Start() {
     nameText.name = this.name + "_nameText";
     nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
 
-    nameText.GetComponent. < UnityEngine.UI.Text > ().text = this.name;
+    nameText.GetComponent. < TextMesh > ().text = this.name;
 
     anim = GetComponent. < Animation > ();
     bioAction = "Wait";
@@ -135,14 +135,17 @@ function Update() {
 }
 
 function updateUI() {
-    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
-        this.transform.position.x,
-        this.transform.position.y + 2.5,
-        this.transform.position.z));
+    //    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
+    //        this.transform.position.x,
+    //        this.transform.position.y + 2.5,
+    //        this.transform.position.z));
+    //
+    //    nameText.transform.position.x = nametextScreenPos.x;
+    //    nameText.transform.position.y = nametextScreenPos.y;
+    //    nameText.transform.position.z = nametextScreenPos.z;
 
-    nameText.transform.position.x = nametextScreenPos.x;
-    nameText.transform.position.y = nametextScreenPos.y;
-    nameText.transform.position.z = nametextScreenPos.z;
+    nameText.transform.position = this.transform.position;
+    nameText.transform.position.y = this.transform.position.y + 2.5;
 }
 
 function BioUpdate() {
