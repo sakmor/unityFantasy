@@ -162,6 +162,7 @@ function Start() {
     loadResources();
     loadGame();
     mouseOrbitSet();
+    //    mainCamera.GetComponent. < Camera > ().depthTextureMode = DepthTextureMode.Depth;
 
 
 }

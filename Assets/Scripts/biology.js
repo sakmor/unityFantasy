@@ -73,9 +73,9 @@ function Start() {
 
     nameText = Instantiate(GameObject.Find("nameText"));
     nameText.name = this.name + "_nameText";
-    nameText.transform.parent = this.transform;
+    nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
 
-    nameText.GetComponent. < TextMesh > ().text = this.name;
+    nameText.GetComponent. < UnityEngine.UI.Text > ().text = this.name;
 
     anim = GetComponent. < Animation > ();
     bioAction = "Wait";
@@ -135,17 +135,14 @@ function Update() {
 }
 
 function updateUI() {
-    //    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
-    //        this.transform.position.x,
-    //        this.transform.position.y + 2.5,
-    //        this.transform.position.z));
-    //
-    //    nameText.transform.position.x = nametextScreenPos.x;
-    //    nameText.transform.position.y = nametextScreenPos.y;
-    //    nameText.transform.position.z = nametextScreenPos.z;
+    nametextScreenPos = Camera.main.WorldToScreenPoint(Vector3(
+        this.transform.position.x,
+        this.transform.position.y + 2.5,
+        this.transform.position.z));
 
-    nameText.transform.position = this.transform.position;
-    nameText.transform.position.y = this.transform.position.y + 2.5;
+    nameText.transform.position.x = nametextScreenPos.x;
+    nameText.transform.position.y = nametextScreenPos.y;
+    nameText.transform.position.z = nametextScreenPos.z;
 }
 
 function BioUpdate() {
@@ -483,17 +480,18 @@ function _catchPlayer() {
             }
 
             this.moveSpeedMax = catchSpeed;
+            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.red;
 
             if (playerDistance < attackDistance) {
                 if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
                     lastAttackTime = Time.time * 1000;
                     this.Sphere2.transform.position = this.transform.position;
-
+                    nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
                     bioAction = "Attack";
                 }
             }
         } else {
-
+            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
             this.Sphere2.transform.position = this.transform.position;
 
         }
