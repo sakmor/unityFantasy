@@ -2,6 +2,7 @@ import System.IO;
 import MiniJSON;
 import System.Collections.Generic;
 
+
 // Add a menu item named "Do Something" to MyMenu in the menu bar.
 @
 MenuItem("==Menu==/saveGame")
@@ -37,6 +38,35 @@ function saveGame() {
         json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[2];
         json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[3];
         json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[4];
+        json += ',';
+        json += 0;
+        json += ']';
+        step++;
+    }
+
+    respawns = GameObject.FindGameObjectsWithTag("Cube_WalkSMP");
+    for (var respawn: GameObject in respawns) {
+        if (step != 0) {
+            json += ',';
+        }
+        respawn.transform.position.x = Mathf.Floor(respawn.transform.position.x + 0.5);
+        respawn.transform.position.z = Mathf.Floor(respawn.transform.position.z + 0.5);
+        respawn.transform.position.y = Mathf.Floor(respawn.transform.position.y) + 0.5;
+        respawn.name = respawn.transform.position.ToString("F0");
+        json += '"' + step + '":[';
+        json += respawn.transform.position.x;
+        json += ',';
+        json += respawn.transform.position.y;
+        json += ',';
+        json += respawn.transform.position.z;
+        json += ',';
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[0];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[1];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[2];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[3];
+        json += respawn.GetComponent. < MeshFilter > ().sharedMesh.name[4];
+        json += ',';
+        json += 1;
         json += ']';
         step++;
     }
@@ -56,7 +86,7 @@ function saveGame() {
     }
     step = 0;
 
-    sw = new StreamWriter("array3dictionary.txt");
+    sw = new StreamWriter(Application.dataPath + "/Resources/scene/s999.json");
     sw.Write(json);
     sw.Close();
 
@@ -87,7 +117,15 @@ function LoadGame() {
             if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
                 var temp = Instantiate(GameObject.Find("Cube"));
                 temp.transform.parent = Cubes.transform;
-                temp.tag = "Cube";
+
+                switch (((array3dLoadJson[i.ToString()]) as List. < System.Object > )[4]) {
+                case 0:
+                    temp.tag = "Cube";
+                    break;
+                case 1:
+                    temp.tag = "Cube_WalkSMP";
+                    break;
+                }
                 temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
                 temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
                 temp.GetComponent. < Renderer > ().enabled = true;
@@ -153,14 +191,9 @@ function Normalized() {
     if (respawns.length == 1) {
         UnityEditor.EditorUtility.DisplayDialog('oh,Come on ?', ' Select GameObject First!', 'OK');
     }
-    var json: String;
-    json = '{';
     var step = 0;
     for (var respawn: GameObject in respawns) {
-        if (step != 0) {
-            json += ',';
-        }
-        if (respawn.tag == "Cube") {
+        if (respawn.tag == "Cube" || respawn.tag == "Cube_WalkSMP") {
             respawn.transform.position.x = Mathf.Floor(respawn.transform.position.x + 0.5);
             respawn.transform.position.z = Mathf.Floor(respawn.transform.position.z + 0.5);
             respawn.transform.position.y = Mathf.Floor(respawn.transform.position.y) + 0.5;
@@ -266,4 +299,40 @@ function lineDecte() {
     tempPick2.transform.position.z = Mathf.Floor(tempPick.transform.position.z + 0.5);
     tempPick2.transform.position.y = Mathf.Floor(tempPick.transform.position.y) + 0.5;
 
+}
+
+@
+MenuItem("==Menu==/showWalkSMP")
+static
+
+function showWalkSMP() {
+    //clear
+    var smps: GameObject[];
+    smps = GameObject.FindGameObjectsWithTag("SMP");
+    for (var smp: GameObject in smps) {
+        DestroyImmediate(smp);
+    }
+
+    //show
+    var respawns: GameObject[];
+    respawns = GameObject.FindGameObjectsWithTag("Cube_WalkSMP");
+    for (var respawn: GameObject in respawns) {
+        var temp: GameObject = Instantiate(GameObject.Find("tempPick2"));
+        temp.transform.parent = GameObject.Find("WalkSMP").transform;
+        temp.tag = ("SMP");
+        temp.transform.position = respawn.transform.position;
+        temp.name = respawn.name + "_SMP";
+    }
+
+}@
+MenuItem("==Menu==/hideWalkSMP")
+static
+
+function hideWalkSMP() {
+    //clear
+    var smps: GameObject[];
+    smps = GameObject.FindGameObjectsWithTag("SMP");
+    for (var smp: GameObject in smps) {
+        DestroyImmediate(smp);
+    }
 }

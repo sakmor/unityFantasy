@@ -8,6 +8,8 @@ TagManager:
   - Cube
   - biology
   - GUI
+  - Cube_WalkSMP
+  - SMP
   layers:
   - Default
   - TransparentFX
