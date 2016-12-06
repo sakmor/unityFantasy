@@ -130,7 +130,6 @@ function Update() {
         this._catchPlayer();
         this._movment();
         this._bioStatus();
-        this._cubeHead();
     }
 }
 
@@ -150,7 +149,6 @@ function BioUpdate() {
         this._catchPlayer();
         this._movment();
         this._bioStatus();
-        this._cubeHead();
     }
     //    this._autoJump();
 }
@@ -164,7 +162,7 @@ function dynamicCollision() {
         for (var y = -1; y < 2; y++) {
             for (var z = -1; z < 2; z++) {
                 g++;
-                if (maingameJS.checkArray(Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z))) {
+                if (maingameJS.checkArray(Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z)) != false) {
                     collisionCubes[g].transform.position = Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
                 }
             }
@@ -202,71 +200,6 @@ function _autoJump() {
         this.transform.position.y += 0.1;
 
     }
-}
-/*************************
- *_cubeHead 角色頭上旋轉旋轉
- ************************/
-function _cubeHead() {
-    Cube.transform.position.x = 0;
-    Cube.transform.position.z = 0;
-    Cube.transform.position.y = 299.8;
-    //    Cube.transform.Rotate(Vector3.up * Time.deltaTime * 100.0, Space.World);
-    Cube.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + maingameJS.cubeArrayTxt[handCube], Mesh);
-    //    Cube.GetComponent. < MeshFilter > ().mesh = tempMesh;
-}
-
-function nextCube() {
-    print("change");
-    if (handCube == maingameJS.cubeArrayTxt.length - 1) {
-        handCube = 0;
-    } else {
-        handCube++;
-    }
-
-}
-
-function _createCube() {
-
-    var tempPOS: Vector3 = pickTouchSide.transform.position;
-
-    //給原本DQM操方式
-    //if (maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y - 1, tempPOS.z)) == true ||
-    //        maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y + 1, tempPOS.z)) == true ||
-    //        maingameJS.checkArray(Vector3(tempPOS.x - 1, tempPOS.y, tempPOS.z)) == true ||
-    //        maingameJS.checkArray(Vector3(tempPOS.x + 1, tempPOS.y, tempPOS.z)) == true || maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z - 1)) == true ||
-    //        maingameJS.checkArray(Vector3(tempPOS.x, tempPOS.y, tempPOS.z + 1)) == true ||
-    //        tempPOS.y == 0.5) {
-    //        Cube.transform.position = tempPOS;
-    //        var temp = Instantiate(Cube);
-    //        temp.transform.eulerAngles = Vector3(-90, 0, 0);
-    //        temp.GetComponent. < Renderer > ().enabled = true;
-    //        temp.AddComponent(BoxCollider);
-    //        temp.name = temp.transform.position.ToString("F0");
-    //        //        maingameJS.setArray(temp.transform.position, float.parseFloat(maingameJS.cubeArrayTxt[handCube]));
-    //        maingameJS.setArray(temp.transform.position, maingameJS.cubeArrayTxt[handCube]);
-    //    }
-    if (!maingameJS.checkArray(tempPOS)) {
-
-        var temp = Instantiate(Cube);
-        temp.tag = "Cube";
-        temp.transform.eulerAngles = Vector3(-90, 0, 0);
-        temp.transform.position = tempPOS;
-        temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
-        temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-        temp.GetComponent. < Renderer > ().enabled = true;
-        temp.AddComponent(BoxCollider);
-        temp.name = temp.transform.position.ToString("F0");
-        //        maingameJS.setArray(temp.transform.position, float.parseFloat(maingameJS.cubeArrayTxt[handCube]));
-        maingameJS.setArray(temp.transform.position, maingameJS.cubeArrayTxt[handCube]);
-    }
-}
-
-function _removeCube() {
-
-    var tempPOS: Vector3 = pickTouch.transform.position;
-    maingameJS.removeArray(tempPOS);
-    Destroy(GameObject.Find(tempPOS.ToString("F0")));
-
 }
 
 /*************************

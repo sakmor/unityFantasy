@@ -28,7 +28,7 @@ import MiniJSON;
  *
   < Dictionary、Array > ===========================
  *
-                * cubesPosDictionary   :記錄場景CUBE的位置，checkArray、setArray、removeArray查找用 (需使用 System.Collections.Generic)
+ * cubesPosDictionary   :記錄場景CUBE的位置，checkArray、setArray、removeArray查找用 (需使用 System.Collections.Generic)
  * array3d              :紀錄場景CUBE的類型 (但需要再整理該功能)TODO
  * cubeArrayTxt         :紀錄CUBE各個編號材質貼圖編號
  *
@@ -85,8 +85,8 @@ var logText: GameObject;
 //Dictionary、Array----------------------------
 var array3d = new Array();
 var cubeArrayTxt = new Array();
-var cubesPosDictionary: Dictionary. < Vector3, int > = new Dictionary. < Vector3,
-    int > ();
+var cubesPosDictionary: Dictionary. < Vector3, Vector2 > = new Dictionary. < Vector3,
+    Vector2 > ();
 
 //boolean----------------------------
 var cammeraPlatein2out: boolean = false;
@@ -207,38 +207,10 @@ function clearCube() {
 }
 
 
-function Button_Next() {
-    playerBioJS.nextCube();
-}
-
-
 function Button_jump() {
     playerBioJS.bioAction = "Jump";
 }
 
-
-
-function setArray(a: Vector3, b: float) {
-    cubesPosDictionary[a] = array3d.length;
-    array3d.Push(Color(a.x, a.y, a.z, b));
-    saveGame();
-}
-
-function removeArray(a: Vector3) {
-    array3d[cubesPosDictionary[a]] = null;
-    cubesPosDictionary[a] = 0;
-    saveGame();
-}
-
-function checkArray(a: Vector3) {
-    if (cubesPosDictionary.ContainsKey(a)) {
-        if (cubesPosDictionary[a] != 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
 
 function mouseOrTouch() {
     //    if(SystemInfo.deviceType)
@@ -290,33 +262,41 @@ function loadGame() {
     var Cube: GameObject = GameObject.Find("Cube");
     var tempi: int = array3dLoadJson["length"];
     for (var i = 1; i < tempi; i++) {
-        var tempColor: Color;
-        tempColor.r = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
-        tempColor.g = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
-        tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
-        tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
-
+        var tempVector3: Vector3;
+        var tempVector2: Vector2;
+        tempVector3.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
+        tempVector3.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
+        tempVector3.z = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
+        tempVector2.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
+        tempVector2.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[4];
         //建立目錄cubesPosDictionary
-        cubesPosDictionary[Vector3(tempColor.r, tempColor.g, tempColor.b)] = tempColor.a;
+        cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
 
         //重建CUBE
-        if (GameObject.Find("(" + tempColor.r.ToString("F0") + ", " + tempColor.g.ToString("F0") + ", " + tempColor.b.ToString("F0") + ")") == null) {
+        if (GameObject.Find("(" + tempVector3.x.ToString("F0") + ", " + tempVector3.y.ToString("F0") + ", " + tempVector3.z.ToString("F0") + ")") == null) {
+
             var temp = Instantiate(Cube);
-            temp.tag = "Cube";
+            switch (tempVector2.y) {
+            case 0:
+                temp.tag = "Cube";
+                break;
+            case 1:
+                temp.tag = "Cube_WalkSMP";
+                break;
+            }
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
             temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent. < Renderer > ().enabled = true;
             //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
-            temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempColor.a, Mesh);
+            temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempVector2.x, Mesh);
             temp.GetComponent. < Renderer > ().enabled = true;
             //temp.AddComponent(BoxCollider);
             //temp.name = "(" + array3dLoadJson[i][0] + ", " + array3dLoadJson[i][1]  + ", " + array3dLoadJson[i][2] + ")";
 
-            temp.transform.position.x = tempColor.r;
-            temp.transform.position.y = tempColor.g;
-            temp.transform.position.z = tempColor.b;
+            temp.transform.position.x = tempVector3.x;
+            temp.transform.position.y = tempVector3.y;
+            temp.transform.position.z = tempVector3.z;
             temp.name = temp.transform.position.ToString("F0");
-            setArray(temp.transform.position, tempColor.a);
         }
     }
     //    GameObject.Find("Cubes").GetComponent("DrawCallMinimizer").enabled = true;
@@ -658,7 +638,18 @@ function getMousehitGroupPos() {
         if (hitUIObjectName == "" &&
             5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
             groundPlane.Raycast(ray, rayDistance)) {
-            playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
+            var tempVector3 = ray.GetPoint(rayDistance);
+            tempVector3.x = Mathf.Floor(tempVector3.x + 0.5);
+            tempVector3.z = Mathf.Floor(tempVector3.z + 0.5);
+            tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5;
+
+            if (checkArray(tempVector3) != false) {
+                var tempVector2: Vector2 = checkArray(tempVector3);
+                Debug.Log(tempVector2.y);
+                if (tempVector2.y == 1) {
+                    playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
+                }
+            }
         }
     }
 
@@ -811,6 +802,15 @@ function mouseLineDecte() {
 
     }
 }
+
+function checkArray(a: Vector3) {
+    if (cubesPosDictionary.ContainsKey(a)) {
+        return cubesPosDictionary[a];
+    } else {
+        return false;
+    }
+}
+
 
 function allBioupdate() {
     for (var thisBiology: GameObject in allBiologys) {
