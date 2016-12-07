@@ -4,7 +4,7 @@ script RequireComponent(Animation)
 
 @ script RequireComponent(Rigidbody)
 
-@ script RequireComponent(CapsuleCollider)
+@ script RequireComponent(BoxCollider)
 
 
 //class biologyInfo {
@@ -13,9 +13,9 @@ script RequireComponent(Animation)
 //    public
 //    var walkStep: float;
 //    public
-//    var CapsuleCollider_CenterY: float;
+//    var BoxCollider_CenterY: float;
 //    public
-//    var CapsuleCollider_SizeY: float;
+//    var BoxCollider_SizeY: float;
 //    public
 //    var effectScale: float;
 //    public static
@@ -112,7 +112,7 @@ function Start() {
     for (var i = 0; i <= 27; i++) {
         collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
         collisionCubes[i].name = 'dynamicCollision_' + i;
-        collisionCubes[i].AddComponent(CapsuleCollider);
+        collisionCubes[i].AddComponent(BoxCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
     }
     //更新pick狀態
@@ -358,12 +358,13 @@ function AnimationClip() {
     var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
         System.Object > ;
     this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object > )[0];
-    this.GetComponent. < CapsuleCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
-    this.GetComponent. < CapsuleCollider > ().radius = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < CapsuleCollider > ().height = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
-    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
-    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
-    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
+    this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
+    this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
+    this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
+    this.GetComponent. < BoxCollider > ().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
+    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
 
     this.GetComponent. < Rigidbody > ().freezeRotation = true;
 }
