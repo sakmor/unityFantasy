@@ -386,11 +386,31 @@ function getIntersections(ax: float, ay: float, bx: float, by: float, cx: float,
     }
     /**/
 }
+var loggLine: int = 0;
+var loggLineMax: int = 10;
 
 function logg(n: String) {
-    logText.GetComponent. < UI.Text > ().text += '\n';
-    logText.GetComponent. < UI.Text > ().text += n;
+    if (loggLine == loggLineMax) {
+        logText.GetComponent. < UI.Text > ().text += '\n';
+        logText.GetComponent. < UI.Text > ().text += n;
+        var firstLine: int;
+        var tempString: String = logText.GetComponent. < UI.Text > ().text;
+        logText.GetComponent. < UI.Text > ().text = "";
+        for (var i = 0; i < tempString.length; i++) {
+            if (tempString[i] == '\n') {
+                firstLine = i + 1;
+                break;
+            }
+        }
+        for (firstLine = firstLine; firstLine < tempString.length; firstLine++) {
+            logText.GetComponent. < UI.Text > ().text += tempString[firstLine];
+        }
 
+    } else {
+        logText.GetComponent. < UI.Text > ().text += '\n';
+        logText.GetComponent. < UI.Text > ().text += n;
+        loggLine++;
+    }
 }
 /****************
  *
@@ -645,85 +665,45 @@ function getMousehitGroupPos() {
 
             if (checkArray(tempVector3) != false) {
                 var tempVector2: Vector2 = checkArray(tempVector3);
-                Debug.Log(tempVector2.y);
                 if (tempVector2.y == 1) {
                     playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
+                } else {
+                    logg("點擊到不可走區域了");
                 }
             }
         }
-    }
 
 
 
-    //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
-    if (Physics.Raycast(ray, mouseHitPlane) &&
-        !EventSystem.current.IsPointerOverGameObject() &&
-        hitUIObjectName != "cammeraPlate" &&
-        hitUIObjectName != "movePlate"
-    ) {
+
+        //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
+        if (Physics.Raycast(ray, mouseHitPlane) &&
+            !EventSystem.current.IsPointerOverGameObject() &&
+            hitUIObjectName != "cammeraPlate" &&
+            hitUIObjectName != "movePlate"
+        ) {
 
 
-        pickTouchSide.transform.position = mouseHitPlane.point;
-
-        pickTouchSide.transform.position.x = Mathf.Floor(pickTouchSide.transform.position.x + 0.5 / 1);
-        pickTouchSide.transform.position.y = Mathf.Floor(pickTouchSide.transform.position.y + 0.5 / 1) + 0.5;
-        pickTouchSide.transform.position.z = Mathf.Floor(pickTouchSide.transform.position.z + 0.5 / 1);
-        //                pickTouchSide.transform.position = pickTouch.transform.position;
-
-        Debug.Log('' + mouseHitPlane.transform.tag);
-        switch (mouseHitPlane.transform.tag) {
-        case "Cube":
-            //            pickTouch.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-            //            pickTouchSide.transform.position = mouseHitPlane.transform.gameObject.transform.position;
-            //
-            //            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x >= 0.5 &&
-            //                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
-            //                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
-            //                pickTouchSide.transform.position.x += 1.0;
-            //            } else
-            //            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x >= 0.5 &&
-            //                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
-            //                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
-            //                pickTouchSide.transform.position.x -= 1.0;
-            //            } else
-            //            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
-            //                mouseHitPlane.point.y - mouseHitPlane.transform.position.y <= 0.5 &&
-            //                mouseHitPlane.point.z - mouseHitPlane.transform.position.z >= 0.5) {
-            //                pickTouchSide.transform.position.z += 1.0;
-            //            } else
-            //            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
-            //                mouseHitPlane.transform.position.y - mouseHitPlane.point.y <= 0.5 &&
-            //                mouseHitPlane.transform.position.z - mouseHitPlane.point.z >= 0.5) {
-            //                pickTouchSide.transform.position.z -= 1.0;
-            //            } else
-            //            if (mouseHitPlane.point.x - mouseHitPlane.transform.position.x <= 0.5 &&
-            //                mouseHitPlane.point.y - mouseHitPlane.transform.position.y >= 0.5 &&
-            //                mouseHitPlane.point.z - mouseHitPlane.transform.position.z <= 0.5) {
-            //                pickTouchSide.transform.position.y += 1.0;
-            //            } else
-            //            if (mouseHitPlane.transform.position.x - mouseHitPlane.point.x <= 0.5 &&
-            //                mouseHitPlane.transform.position.y - mouseHitPlane.point.y >= 0.5 &&
-            //                mouseHitPlane.transform.position.z - mouseHitPlane.point.z <= 0.5) {
-            //                pickTouchSide.transform.position.y -= 1.0;
-            //            }
-            break;
-        case "biology":
-
-            if (100 > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
-                playerBioJS.Sphere2.transform.position = playerBioJS.Sphere2.transform.position;
-                var targetDir = mouseHitPlane.transform.position - Player.transform.position;
-                var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
-                Player.transform.rotation = Quaternion.LookRotation(newDir);
-                playerBioJS.bioAction = "Attack";
+            Debug.Log('' + mouseHitPlane.transform.tag);
+            switch (mouseHitPlane.transform.tag) {
+            case "Cube":
+                break;
+            case "biology":
+                logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
+                //如果點擊到生物，停止移動
+                playerBioJS.Sphere2.transform.position = Player.transform.position;
+                //如果點擊到生物，且該生物在攻擊範圍內
+                if (playerBioJS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
+                    var targetDir = mouseHitPlane.transform.position - Player.transform.position;
+                    var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
+                    Player.transform.rotation = Quaternion.LookRotation(newDir);
+                    playerBioJS.bioAction = "Attack";
+                }
+                break;
             }
-
-            break;
         }
+
     }
-
-    //    CubePick.transform.position = pickTouchSide.transform.position;
-    //    CubePick.GetComponent. < MeshFilter > ().mesh = Cube.GetComponent. < MeshFilter > ().mesh;
-
 }
 
 function lineDecte() {
@@ -749,12 +729,10 @@ function lineDecte() {
         if (checkArray(Vector3(
                 tempPick2.x,
                 tempPick2.y,
-                tempPick2.z))) {
+                tempPick2.z)) != false) {
             mainCamera2.transform.position = tempPick;
             camera2.enabled = true;
             camera1.enabled = false;
-
-            Debug.Log("stop");
             break;
         } else {
             camera1.enabled = true;
@@ -792,8 +770,6 @@ function mouseLineDecte() {
                         Vector3(1.0, tempPick.y + 0.5, 0.0),
                         Vector3(0.0, tempPick.y + 0.5, 1.0),
                         Vector3(1.0, tempPick.y + 0.5, 1.0));
-
-                    Debug.Log("stop");
                     break;
                 }
             }

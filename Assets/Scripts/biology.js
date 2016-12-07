@@ -27,6 +27,7 @@ script RequireComponent(Animation)
 //    var myJsonBiology: biologyInfo = new biologyInfo().CreateFromJSON(maingameJS.biologyList.text);
 //    Debug.Log(myJsonBiology.name);
 
+var attackDistance = 1.5;
 var moveSpeed: float;
 
 //目前所選擇的材質
@@ -54,8 +55,7 @@ var TextMesh: TextMesh;
 var pickPlayer: GameObject;
 var Plane_touch: GameObject;
 var pickTouch: GameObject;
-var pickTouchSide: GameObject;
-var onAir: boolean;
+
 var lastAttackTime: float;
 var collisionCubes: GameObject[];
 var nameText: GameObject;
@@ -66,7 +66,6 @@ var nametextScreenPos: Vector3;
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
 //PickTouch      --滑鼠點選地面位置,或是點擊的Cube選取框
-//PickTouchSide  --滑鼠點擊Cube的某一面
 
 
 function Start() {
@@ -92,7 +91,6 @@ function Start() {
     Sphere2.transform.position = this.transform.position;
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     pickTouch = maingameJS.pickTouch;
-    pickTouchSide = maingameJS.pickTouchSide;
     Plane_touch = GameObject.Find("Plane_touch");
     pickPlayer = Instantiate(GameObject.Find("pickPlayer"));
     pickPlayer.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -171,36 +169,8 @@ function dynamicCollision() {
 
 
 }
-//function OnCollisionEnter(collision: Collision) {
-//    print(collision.gameObject.transform.position.y - this.transform.position.y);
-//    if (collision.gameObject.transform.position.y - this.transform.position.y > 1) {
-//        this.transform.position.y += 0.1;
-//    }
-//}
-//
-//function OnCollisionStay(collision: Collision) {
-//
-//    if (collision.relativeVelocity.y > 0) {
-//        onAir = false;
-//    }
-//}
-//
-//function OnCollisionExit(collision: Collision) {
-//
-//    if (collision.relativeVelocity.y > 0) {
-//        onAir = true;
-//    }
-//}
 
-function _autoJump() {
-    if (this.bioAction == "Walk" && moveSpeed > 0.06) {
-        print("autoJump");
-        var tempPOS: Vector3;
-        tempPOS = Pick.transform.position;
-        this.transform.position.y += 0.1;
 
-    }
-}
 
 /*************************
  *_pick 類似DQM的操作模式
@@ -277,7 +247,6 @@ function _bioStatus() {
             break;
         case "Jump":
             this.GetComponent. < Rigidbody > ().velocity.y = 5;
-            onAir = true;
             break;
         }
     }
@@ -401,7 +370,7 @@ function AnimationClip() {
 function _catchPlayer() {
     var seeMax = 5;
     var catchSpeed = 0.05;
-    var attackDistance = 1.5;
+
     var attackCoolDown = 3000;
     var playerDistance = Vector3.Distance(maingameJS.Player.transform.position, this.transform.position);
 
