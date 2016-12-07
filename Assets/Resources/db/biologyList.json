@@ -1,19 +1,21 @@
 {
-    "m101": [
-    20,
-    0.28,
-    0.5,
-   2.5
-  ],
-    "Cha_Knight": [
-    40,
-    25,
-    50,
-    0.02
-  ]
+	"m101" : [
+		20,
+		0.28,
+		0.5,
+		100,
+		2.5
+	],
+	"Cha_Knight" : [
+		53,
+		50,
+		22,
+		100,
+		0.02
+	]
 }
 
 //[0]	WalkStep;
-//[1]	boxCollider.center.Y
-//[2]	boxCollider.size.XYZ
-//[3]	bodyScale
+//[1]	CapsuleCollider.center.Y
+//[2]	CapsuleCollider.radius.XYZ
+//[3]	CapsuleCollider.height

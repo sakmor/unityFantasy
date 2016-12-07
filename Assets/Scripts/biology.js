@@ -4,7 +4,7 @@ script RequireComponent(Animation)
 
 @ script RequireComponent(Rigidbody)
 
-@ script RequireComponent(BoxCollider)
+@ script RequireComponent(CapsuleCollider)
 
 
 //class biologyInfo {
@@ -13,9 +13,9 @@ script RequireComponent(Animation)
 //    public
 //    var walkStep: float;
 //    public
-//    var BoxCollider_CenterY: float;
+//    var CapsuleCollider_CenterY: float;
 //    public
-//    var BoxCollider_SizeY: float;
+//    var CapsuleCollider_SizeY: float;
 //    public
 //    var effectScale: float;
 //    public static
@@ -62,7 +62,7 @@ var nameText: GameObject;
 collisionCubes = new GameObject[28];
 
 var nametextScreenPos: Vector3;
-var targetName: String;
+var targetName: String = "";
 
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
@@ -112,7 +112,7 @@ function Start() {
     for (var i = 0; i <= 27; i++) {
         collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
         collisionCubes[i].name = 'dynamicCollision_' + i;
-        collisionCubes[i].AddComponent(BoxCollider);
+        collisionCubes[i].AddComponent(CapsuleCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
     }
     //更新pick狀態
@@ -167,8 +167,6 @@ function dynamicCollision() {
             }
         }
     }
-
-
 }
 
 
@@ -281,7 +279,7 @@ function _movment() {
 
     //將生物移動向目標
     if (
-        Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0.5) {
+        Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0) {
         if (maingameJS.hitUIObjectName != 'movePlate' &&
             maingameJS.Player.name == this.name) {
             Sphere2.GetComponent. < Renderer > ().enabled = true;
@@ -293,8 +291,6 @@ function _movment() {
         if (maingameJS.hitUIObjectName ==
             'movePlate' && Vector3.Distance(this.transform.position, Sphere2.transform.position) < 5) {
             moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 5);
-        } else if (Vector3.Distance(this.transform.position, Sphere2.transform.position) < 1) {
-            moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 1.2);
         }
 
         //更新pick狀態
@@ -305,6 +301,11 @@ function _movment() {
         //移動生物到目標點
         Sphere2.transform.position.y = this.transform.position.y;
         Sphere.transform.position.y = this.transform.position.y;
+
+        //正規化Sphere2
+        Sphere2.transform.position.x = Mathf.Floor(Sphere2.transform.position.x + 0.5);
+        Sphere2.transform.position.z = Mathf.Floor(Sphere2.transform.position.z + 0.5);
+        //        pickPlayer.transform.position.y = Mathf.Floor(this.transform.position.y + 0.5) + 0.5;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
         //調整步伐
         anim["Walk"].speed = WalkSteptweek * moveSpeed;
@@ -357,13 +358,12 @@ function AnimationClip() {
     var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
         System.Object > ;
     this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object > )[0];
-    this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
-    this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < BoxCollider > ().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
-    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
-    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.GetComponent. < CapsuleCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
+    this.GetComponent. < CapsuleCollider > ().radius = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
+    this.GetComponent. < CapsuleCollider > ().height = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
+    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
+    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
 
     this.GetComponent. < Rigidbody > ().freezeRotation = true;
 }
@@ -377,7 +377,11 @@ function _catchPlayer() {
 
     if (this.name != maingameJS.Player.name) {
         if (playerDistance < seeMax) {
-            maingameJS.logg(this.name + "開始追擊你");
+
+            if (targetName != maingameJS.Player.name) {
+                targetName = maingameJS.Player.name;
+                maingameJS.logg(this.name + "開始追擊你了");
+            }
             if (playerDistance > attackDistance) {
                 this.Sphere2.transform.position = maingameJS.Player.transform.position;
             }
@@ -395,6 +399,10 @@ function _catchPlayer() {
                 }
             }
         } else {
+            if (targetName != "") {
+                targetName = "";
+                maingameJS.logg(this.name + "放棄追擊你");
+            }
             nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
             this.Sphere2.transform.position = this.transform.position;
 
