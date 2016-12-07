@@ -667,6 +667,7 @@ function getMousehitGroupPos() {
                 var tempVector2: Vector2 = checkArray(tempVector3);
                 if (tempVector2.y == 1) {
                     playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
+                    logg("前往座標：x:" + playerBioJS.Sphere2.transform.position.x.ToString("f2") + ",y:" + playerBioJS.Sphere2.transform.position.z.ToString("f2"));
                 } else {
                     logg("點擊到不可走區域了");
                 }

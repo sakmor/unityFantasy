@@ -62,6 +62,7 @@ var nameText: GameObject;
 collisionCubes = new GameObject[28];
 
 var nametextScreenPos: Vector3;
+var targetName: String;
 
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
@@ -376,7 +377,7 @@ function _catchPlayer() {
 
     if (this.name != maingameJS.Player.name) {
         if (playerDistance < seeMax) {
-
+            maingameJS.logg(this.name + "開始追擊你");
             if (playerDistance > attackDistance) {
                 this.Sphere2.transform.position = maingameJS.Player.transform.position;
             }
@@ -390,6 +391,7 @@ function _catchPlayer() {
                     this.Sphere2.transform.position = this.transform.position;
                     nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
                     bioAction = "Attack";
+                    maingameJS.logg(this.name + "攻擊！");
                 }
             }
         } else {
