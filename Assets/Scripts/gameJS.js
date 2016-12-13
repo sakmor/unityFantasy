@@ -108,6 +108,7 @@ var cameraRELtarget: Vector3;
 var playerBioJS: biology;
 var itemBagJS: itemBag;
 var PlayerPrefsX: PlayerPrefsX;
+var gridCS: Grid;
 
 //UnityEngine ----------------------------
 var mouseHitPlane: RaycastHit;
@@ -299,6 +300,17 @@ function loadGame() {
             temp.name = temp.transform.position.ToString("F0");
         }
     }
+    //    GameObject.Find("Astar").AddComponent(Grid);
+    //    gridCS = GameObject.Find("Astar").GetComponent(Grid);
+    //    gridCS.gridWorldSize.x = 20;
+    //   //    gridCS.gridWorldSize.y = 20;
+    //   //    gridCS.nodeRadius = 0.5;
+    //   //    GameObject.Find("Astar").AddComponent(Pathfinding);
+    //
+    //
+    //    gridCS.cubesPosDictionary = cubesPosDictionary;
+    //    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = GameObject.Find("m101").transform;
+    //    GameObject.Find("Astar").GetComponent(Pathfinding).target = Player.transform;
     //    GameObject.Find("Cubes").GetComponent("DrawCallMinimizer").enabled = true;
 }
 

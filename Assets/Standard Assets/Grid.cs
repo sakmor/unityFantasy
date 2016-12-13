@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour {
 
-	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
 	public float nodeRadius;
+    public  Dictionary< Vector3, Vector2> cubesPosDictionary= new Dictionary< Vector3, Vector2>();
+
 	Node[,] grid;
 
 	float nodeDiameter;
@@ -26,7 +27,12 @@ public class Grid : MonoBehaviour {
 		for (int x = 0; x < gridSizeX; x ++) {
 			for (int y = 0; y < gridSizeY; y ++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
-				bool walkable = !(Physics.CheckSphere(worldPoint,nodeRadius,unwalkableMask));
+                worldPoint.y+=0.5f;
+                bool walkable=true;
+                Vector3 gg = new  Vector3(-17f, 0.5f, 13f);
+                if (cubesPosDictionary.ContainsKey(gg)) {
+                    walkable=true;
+                } 
 				grid[x,y] = new Node(walkable,worldPoint, x,y);
 			}
 		}
