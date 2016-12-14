@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using DCM.ReorderableList;
@@ -75,7 +75,7 @@ namespace DCM
 
 		void OnEnable ()
 		{
-			title = "Editor Batcher";
+//			title = "Editor Batcher";
 			_combinedObjects = new List<GameObject> ();
 			InstantiateHiddenParentObject();
 			_infoFoldOuts.Clear ();

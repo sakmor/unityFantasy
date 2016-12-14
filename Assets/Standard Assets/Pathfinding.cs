@@ -67,7 +67,7 @@ public class Pathfinding : MonoBehaviour {
 			currentNode = currentNode.parent;
 		}
 		path.Reverse();
-
+        Debug.Log("run");
 		grid.path = path;
 
 	}

@@ -123,6 +123,11 @@ var camera2: Camera;
 var lastCameraPos: Vector3;
 
 function Start() {
+    GameObject.Find("Astar").AddComponent(Grid);
+    gridCS = GameObject.Find("Astar").GetComponent(Grid);
+    gridCS.nodeRadius = 0.25;
+    gridCS.gridWorldSize.x = 32;
+    gridCS.gridWorldSize.y = 32;
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -272,6 +277,7 @@ function loadGame() {
         tempVector2.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[4];
         //建立目錄cubesPosDictionary
         cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
+        gridCS.cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
 
         //重建CUBE
         if (GameObject.Find("(" + tempVector3.x.ToString("F0") + ", " + tempVector3.y.ToString("F0") + ", " + tempVector3.z.ToString("F0") + ")") == null) {
@@ -300,18 +306,21 @@ function loadGame() {
             temp.name = temp.transform.position.ToString("F0");
         }
     }
-    //    GameObject.Find("Astar").AddComponent(Grid);
-    //    gridCS = GameObject.Find("Astar").GetComponent(Grid);
-    //    gridCS.gridWorldSize.x = 20;
-    //   //    gridCS.gridWorldSize.y = 20;
-    //   //    gridCS.nodeRadius = 0.5;
-    //   //    GameObject.Find("Astar").AddComponent(Pathfinding);
-    //
-    //
-    //    gridCS.cubesPosDictionary = cubesPosDictionary;
-    //    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = GameObject.Find("m101").transform;
-    //    GameObject.Find("Astar").GetComponent(Pathfinding).target = Player.transform;
-    //    GameObject.Find("Cubes").GetComponent("DrawCallMinimizer").enabled = true;
+    //正規化生物座標
+    var pickPlayer: Vector2;
+    pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5 + 0.5);
+    pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5 + 0.5);
+
+    gridCS.gridWorldSizeShift = pickPlayer;
+    GameObject.Find("Astar").transform.position.x = pickPlayer.x + 0.5;
+    GameObject.Find("Astar").transform.position.z = pickPlayer.y + 0.5;
+    gridCS.CreateGrid();
+
+    GameObject.Find("Astar").AddComponent(Pathfinding);
+    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = GameObject.Find("m101").transform;
+    GameObject.Find("Astar").GetComponent(Pathfinding).target = Player.transform;
+
+
 }
 
 function saveGame() {
@@ -414,7 +423,7 @@ function logg(n: String) {
                 break;
             }
         }
-        for (firstLine = firstLine; firstLine < tempString.length; firstLine++) {
+        for (; firstLine < tempString.length; firstLine++) {
             logText.GetComponent. < UI.Text > ().text += tempString[firstLine];
         }
 

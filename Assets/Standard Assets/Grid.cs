@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Grid : MonoBehaviour {
 
 	public Vector2 gridWorldSize;
+    public Vector2 gridWorldSizeShift;
 	public float nodeRadius;
     public  Dictionary< Vector3, Vector2> cubesPosDictionary= new Dictionary< Vector3, Vector2>();
 
@@ -13,25 +14,35 @@ public class Grid : MonoBehaviour {
 	float nodeDiameter;
 	int gridSizeX, gridSizeY;
 
-	void Awake() {
+	/*void Awake() {
 		nodeDiameter = nodeRadius*2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
 		CreateGrid();
-	}
-
-	void CreateGrid() {
+	}*/
+    
+	public void CreateGrid() {
+        nodeDiameter = nodeRadius*2;
+		gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
+		gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
+    
 		grid = new Node[gridSizeX,gridSizeY];
 		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x/2 - Vector3.forward * gridWorldSize.y/2;
 
 		for (int x = 0; x < gridSizeX; x ++) {
 			for (int y = 0; y < gridSizeY; y ++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
-                worldPoint.y+=0.5f;
-                bool walkable=true;
-                Vector3 gg = new  Vector3(-17f, 0.5f, 13f);
-                if (cubesPosDictionary.ContainsKey(gg)) {
-                    walkable=true;
+                worldPoint.x+=gridWorldSizeShift.x;
+                worldPoint.z+=gridWorldSizeShift.y;
+                Vector3 tempPoint=new Vector3(0,0,0);
+                tempPoint.x=Mathf.Floor(worldPoint.x+0.5f );
+                tempPoint.z=Mathf.Floor(worldPoint.z+0.5f );
+                tempPoint.y=worldPoint.y+0.5f ;
+                bool walkable=false;
+                if (cubesPosDictionary.ContainsKey(tempPoint)) {
+                    if(cubesPosDictionary[tempPoint].y==1){
+                        walkable=true;
+                    }
                 } 
 				grid[x,y] = new Node(walkable,worldPoint, x,y);
 			}
@@ -73,7 +84,7 @@ public class Grid : MonoBehaviour {
 	public List<Node> path;
 	void OnDrawGizmos() {
 		Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,1,gridWorldSize.y));
-
+     
 		if (grid != null) {
 			foreach (Node n in grid) {
 				Gizmos.color = (n.walkable)?Color.white:Color.red;
