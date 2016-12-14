@@ -126,8 +126,8 @@ function Start() {
     GameObject.Find("Astar").AddComponent(Grid);
     gridCS = GameObject.Find("Astar").GetComponent(Grid);
     gridCS.nodeRadius = 0.25;
-    gridCS.gridWorldSize.x = 32;
-    gridCS.gridWorldSize.y = 32;
+    gridCS.gridWorldSize.x = 80;
+    gridCS.gridWorldSize.y = 80;
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -312,8 +312,8 @@ function loadGame() {
     pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5 + 0.5);
 
     gridCS.gridWorldSizeShift = pickPlayer;
-    GameObject.Find("Astar").transform.position.x = pickPlayer.x + 0.5;
-    GameObject.Find("Astar").transform.position.z = pickPlayer.y + 0.5;
+    GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 + 0.5;
+    GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 + 0.5;
     gridCS.CreateGrid();
 
     GameObject.Find("Astar").AddComponent(Pathfinding);

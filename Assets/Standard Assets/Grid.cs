@@ -32,13 +32,11 @@ public class Grid : MonoBehaviour {
 		for (int x = 0; x < gridSizeX; x ++) {
 			for (int y = 0; y < gridSizeY; y ++) {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
-                worldPoint.x+=gridWorldSizeShift.x;
-                worldPoint.z+=gridWorldSizeShift.y;
                 Vector3 tempPoint=new Vector3(0,0,0);
                 tempPoint.x=Mathf.Floor(worldPoint.x+0.5f );
                 tempPoint.z=Mathf.Floor(worldPoint.z+0.5f );
                 tempPoint.y=worldPoint.y+0.5f ;
-                bool walkable=false;
+                bool walkable=true;
                 if (cubesPosDictionary.ContainsKey(tempPoint)) {
                     if(cubesPosDictionary[tempPoint].y==1){
                         walkable=true;
