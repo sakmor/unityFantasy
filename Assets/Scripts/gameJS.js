@@ -126,8 +126,8 @@ function Start() {
     GameObject.Find("Astar").AddComponent(Grid);
     gridCS = GameObject.Find("Astar").GetComponent(Grid);
     gridCS.nodeRadius = 0.25;
-    gridCS.gridWorldSize.x = 80;
-    gridCS.gridWorldSize.y = 80;
+    gridCS.gridWorldSize.x = 32;
+    gridCS.gridWorldSize.y = 32;
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -176,6 +176,17 @@ function Start() {
 function Update() {
     if (playerBioJS.bioAction != "Wait") {
         allBioupdate();
+        var pickPlayer: Vector2;
+        pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5 + 0.5);
+        pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5 + 0.5);
+
+        gridCS.gridWorldSizeShift = pickPlayer;
+        GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 + 0.5;
+        GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 + 0.5;
+        gridCS.CreateGrid();
+        GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
+
+        GameObject.Find("Cha_Knight_Sphere2").transform.position = gridCS.path[0].worldPosition;
     }
 
     mainCamera2.transform.position = mainCamera.transform.position;
@@ -317,8 +328,8 @@ function loadGame() {
     gridCS.CreateGrid();
 
     GameObject.Find("Astar").AddComponent(Pathfinding);
-    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = GameObject.Find("m101").transform;
-    GameObject.Find("Astar").GetComponent(Pathfinding).target = Player.transform;
+    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = Player.transform;
+    GameObject.Find("Astar").GetComponent(Pathfinding).target = GameObject.Find("m101").transform;
 
 
 }

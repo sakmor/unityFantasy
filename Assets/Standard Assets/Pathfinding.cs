@@ -11,7 +11,7 @@ public class Pathfinding : MonoBehaviour {
 		grid = GetComponent<Grid> ();
 	}
 
-	void Update() {
+	public void FindPath_Update() {
 		FindPath (seeker.position, target.position);
 	}
 
@@ -67,7 +67,6 @@ public class Pathfinding : MonoBehaviour {
 			currentNode = currentNode.parent;
 		}
 		path.Reverse();
-        Debug.Log("run");
 		grid.path = path;
 
 	}

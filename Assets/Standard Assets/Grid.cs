@@ -36,7 +36,7 @@ public class Grid : MonoBehaviour {
                 tempPoint.x=Mathf.Floor(worldPoint.x+0.5f );
                 tempPoint.z=Mathf.Floor(worldPoint.z+0.5f );
                 tempPoint.y=worldPoint.y+0.5f ;
-                bool walkable=true;
+                bool walkable=false;
                 if (cubesPosDictionary.ContainsKey(tempPoint)) {
                     if(cubesPosDictionary[tempPoint].y==1){
                         walkable=true;
@@ -69,8 +69,8 @@ public class Grid : MonoBehaviour {
 
 
 	public Node NodeFromWorldPoint(Vector3 worldPosition) {
-		float percentX = (worldPosition.x + gridWorldSize.x/2) / gridWorldSize.x;
-		float percentY = (worldPosition.z + gridWorldSize.y/2) / gridWorldSize.y;
+		float percentX = (worldPosition.x-gridWorldSizeShift.x*2 + gridWorldSize.x/2) / gridWorldSize.x;
+		float percentY = (worldPosition.z-gridWorldSizeShift.y*2 + gridWorldSize.y/2) / gridWorldSize.y;
 		percentX = Mathf.Clamp01(percentX);
 		percentY = Mathf.Clamp01(percentY);
 
@@ -81,7 +81,7 @@ public class Grid : MonoBehaviour {
 
 	public List<Node> path;
 	void OnDrawGizmos() {
-		Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,1,gridWorldSize.y));
+//		Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,1,gridWorldSize.y));
      
 		if (grid != null) {
 			foreach (Node n in grid) {
