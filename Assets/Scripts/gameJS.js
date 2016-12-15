@@ -181,7 +181,7 @@ function Update() {
         pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5 + 0.5);
 
         gridCS.gridWorldSizeShift = pickPlayer;
-        GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 + 0.5;
+        GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 +0.5;
         GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 + 0.5;
         gridCS.CreateGrid();
 

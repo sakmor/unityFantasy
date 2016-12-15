@@ -18,6 +18,7 @@ public class Pathfinding : MonoBehaviour {
 	}
 
 	void FindPath(Vector3 startPos, Vector3 targetPos) {
+       
 		Node startNode = grid.NodeFromWorldPoint(startPos);
 		Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
@@ -39,6 +40,13 @@ public class Pathfinding : MonoBehaviour {
 
 			if (node == targetNode) {
 				RetracePath(startNode,targetNode);
+               //取得最近可以走得node
+                foreach (Node neighbour in grid.GetNeighbours(startNode)) {
+                if (grid.path.Contains(neighbour)){
+                    nextPos=neighbour.worldPosition;
+                    break;
+                }
+        }
 				return;
 			}
 
@@ -59,16 +67,6 @@ public class Pathfinding : MonoBehaviour {
 			}
 
 		}
-                //取得最近可以走得node
-        nextPos=startPos;
-        foreach (Node neighbour in grid.GetNeighbours(startNode)) {
-              if (grid.path.Contains(neighbour)){
-                  Debug.Log("i find it out!");
-                    nextPos=neighbour.worldPosition;
-                    break;
-                }
-            }
-
 	}
 
 	void RetracePath(Node startNode, Node endNode) {
