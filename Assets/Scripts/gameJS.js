@@ -177,12 +177,12 @@ function Update() {
     if (playerBioJS.bioAction != "Wait") {
         allBioupdate();
         var pickPlayer: Vector2;
-        pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5 + 0.5);
-        pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5 + 0.5);
+        pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5);
+        pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5);
 
         gridCS.gridWorldSizeShift = pickPlayer;
-        GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 +0.5;
-        GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 + 0.5;
+        GameObject.Find("Astar").transform.position.x = pickPlayer.x* 2;
+        GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2;
         gridCS.CreateGrid();
 
 
