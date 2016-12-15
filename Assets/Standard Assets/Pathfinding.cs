@@ -5,14 +5,16 @@ using System.Collections.Generic;
 public class Pathfinding : MonoBehaviour {
 
 	public Transform seeker, target;
+    public Vector3 nextPos;
 	Grid grid;
 
 	void Awake() {
 		grid = GetComponent<Grid> ();
 	}
 
-	public void FindPath_Update() {
+	public Vector3 FindPath_Update() {
 		FindPath (seeker.position, target.position);
+        return nextPos;
 	}
 
 	void FindPath(Vector3 startPos, Vector3 targetPos) {
@@ -55,7 +57,18 @@ public class Pathfinding : MonoBehaviour {
 						openSet.Add(neighbour);
 				}
 			}
+
 		}
+                //取得最近可以走得node
+        nextPos=startPos;
+        foreach (Node neighbour in grid.GetNeighbours(startNode)) {
+              if (grid.path.Contains(neighbour)){
+                  Debug.Log("i find it out!");
+                    nextPos=neighbour.worldPosition;
+                    break;
+                }
+            }
+
 	}
 
 	void RetracePath(Node startNode, Node endNode) {

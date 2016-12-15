@@ -184,9 +184,9 @@ function Update() {
         GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 + 0.5;
         GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 + 0.5;
         gridCS.CreateGrid();
-        GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
 
-        GameObject.Find("Cha_Knight_Sphere2").transform.position = gridCS.path[0].worldPosition;
+
+        GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
     }
 
     mainCamera2.transform.position = mainCamera.transform.position;
