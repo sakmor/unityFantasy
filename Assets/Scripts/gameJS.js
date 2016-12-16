@@ -126,8 +126,8 @@ function Start() {
     GameObject.Find("Astar").AddComponent(Grid);
     gridCS = GameObject.Find("Astar").GetComponent(Grid);
     gridCS.nodeRadius = 0.25;
-    gridCS.gridWorldSize.x = 32;
-    gridCS.gridWorldSize.y = 32;
+    gridCS.gridWorldSize.x = 52;
+    gridCS.gridWorldSize.y = 52;
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -174,19 +174,16 @@ function Start() {
 }
 
 function Update() {
-    if (playerBioJS.bioAction != "Wait") {
-        allBioupdate();
-        var pickPlayer: Vector2;
-        pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5);
-        pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5);
 
-        gridCS.gridWorldSizeShift = pickPlayer;
-        GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2;
-        GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2;
+    allBioupdate();
+    var pickPlayer: Vector2;
 
-    }
-    GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
+    GameObject.Find("Astar").transform.position.x = Mathf.Floor(Player.transform.position.x);
+    GameObject.Find("Astar").transform.position.z = Mathf.Floor(Player.transform.position.z);
+    gridCS.gridWorldSizeShift.x = Mathf.Floor(Player.transform.position.x);
+    gridCS.gridWorldSizeShift.y = Mathf.Floor(Player.transform.position.z);
     gridCS.CreateGrid();
+    GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
 
     mainCamera2.transform.position = mainCamera.transform.position;
     mainCamera2.transform.rotation = mainCamera.transform.rotation;
@@ -303,6 +300,7 @@ function loadGame() {
             }
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
             temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            temp.GetComponent. < Renderer > ().enabled = true;
             //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
             temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempVector2.x, Mesh);
             temp.GetComponent. < Renderer > ().enabled = true;
@@ -315,19 +313,10 @@ function loadGame() {
             temp.name = temp.transform.position.ToString("F0");
         }
     }
-    //正規化生物座標
-    var pickPlayer: Vector2;
-    pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5);
-    pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5);
 
-    gridCS.gridWorldSizeShift.x = pickPlayer.x * 2 - 0.5;
-    gridCS.gridWorldSizeShift.y = pickPlayer.y * 2 - 0.5;
-    GameObject.Find("Astar").transform.position.x = gridCS.gridWorldSizeShift.x;
-    GameObject.Find("Astar").transform.position.z = gridCS.gridWorldSizeShift.y;
-    gridCS.CreateGrid();
 
     GameObject.Find("Astar").AddComponent(Pathfinding);
-    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = Player.transform;
+    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = GameObject.Find("Cha_Knight").transform;
     GameObject.Find("Astar").GetComponent(Pathfinding).target = GameObject.Find("m101").transform;
 
 

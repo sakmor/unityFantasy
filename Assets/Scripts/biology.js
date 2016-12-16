@@ -145,8 +145,8 @@ function updateUI() {
 
 function BioUpdate() {
     if (this.name != maingameJS.Player.name) {
-        this._catchPlayer();
-        this._movment();
+        //        this._catchPlayer();
+        //        this._movment();
         this._bioStatus();
     }
     //    this._autoJump();
@@ -255,8 +255,7 @@ function _bioStatus() {
 }
 
 function _movment() {
-    Sphere2.transform.position.y = this.transform.position.y;
-    Sphere.transform.position.y = this.transform.position.y;
+
 
     //轉換sphere座標，轉換成螢幕座標(搖桿專用)
     if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate' &&
@@ -300,10 +299,9 @@ function _movment() {
 
 
         //移動生物到目標點
+        Sphere2.transform.position.y = this.transform.position.y;
+        Sphere.transform.position.y = this.transform.position.y;
 
-        //正規化Sphere2
-        Sphere2.transform.position.x = Mathf.Floor(Sphere2.transform.position.x + 0.5);
-        Sphere2.transform.position.z = Mathf.Floor(Sphere2.transform.position.z + 0.5);
         //        pickPlayer.transform.position.y = Mathf.Floor(this.transform.position.y + 0.5) + 0.5;
         this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
         //調整步伐
