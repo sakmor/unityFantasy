@@ -47,6 +47,7 @@ public class Pathfinding : MonoBehaviour {
                     break;
                 }
                     GameObject.Find("NODE_0").transform.position=startNode.worldPosition;
+                    GameObject.Find("NODE_1").transform.position=targetNode.worldPosition;
         }
 				return;
 			}

@@ -127,7 +127,7 @@ function Update() {
 
     if (this.name == maingameJS.Player.name) {
         this._catchPlayer();
-        this._movment();
+        //        this._movment();
         this._bioStatus();
     }
 }
@@ -255,7 +255,8 @@ function _bioStatus() {
 }
 
 function _movment() {
-
+    Sphere2.transform.position.y = this.transform.position.y;
+    Sphere.transform.position.y = this.transform.position.y;
 
     //轉換sphere座標，轉換成螢幕座標(搖桿專用)
     if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate' &&
@@ -299,8 +300,6 @@ function _movment() {
 
 
         //移動生物到目標點
-        Sphere2.transform.position.y = this.transform.position.y;
-        Sphere.transform.position.y = this.transform.position.y;
 
         //正規化Sphere2
         Sphere2.transform.position.x = Mathf.Floor(Sphere2.transform.position.x + 0.5);

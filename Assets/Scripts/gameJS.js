@@ -181,13 +181,14 @@ function Update() {
         pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5);
 
         gridCS.gridWorldSizeShift = pickPlayer;
-        GameObject.Find("Astar").transform.position.x = pickPlayer.x* 2;
+        GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2;
         GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2;
         gridCS.CreateGrid();
 
 
-        GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
+        //        GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
     }
+    GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
 
     mainCamera2.transform.position = mainCamera.transform.position;
     mainCamera2.transform.rotation = mainCamera.transform.rotation;
@@ -304,7 +305,6 @@ function loadGame() {
             }
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
             temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-            temp.GetComponent. < Renderer > ().enabled = true;
             //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
             temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempVector2.x, Mesh);
             temp.GetComponent. < Renderer > ().enabled = true;
@@ -319,12 +319,13 @@ function loadGame() {
     }
     //正規化生物座標
     var pickPlayer: Vector2;
-    pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5 + 0.5);
-    pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5 + 0.5);
+    pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5);
+    pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5);
 
-    gridCS.gridWorldSizeShift = pickPlayer;
-    GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 + 0.5;
-    GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 + 0.5;
+    gridCS.gridWorldSizeShift.x = Player.transform.position.x;
+    gridCS.gridWorldSizeShift.y = Player.transform.position.z;
+    GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 - 0.5;
+    GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 - 0.5;
     gridCS.CreateGrid();
 
     GameObject.Find("Astar").AddComponent(Pathfinding);
