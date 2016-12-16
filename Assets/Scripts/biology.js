@@ -127,7 +127,7 @@ function Update() {
 
     if (this.name == maingameJS.Player.name) {
         this._catchPlayer();
-        //        this._movment();
+        this._movment();
         this._bioStatus();
     }
 }

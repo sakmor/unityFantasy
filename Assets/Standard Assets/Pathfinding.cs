@@ -42,13 +42,13 @@ public class Pathfinding : MonoBehaviour {
 				RetracePath(startNode,targetNode);
                //取得最近可以走得node
                 foreach (Node neighbour in grid.GetNeighbours(startNode)) {
-                if (grid.path.Contains(neighbour)){
-                    nextPos=neighbour.worldPosition;
-                    break;
-                }
+                    if (grid.path.Contains(neighbour)){
+                        nextPos=neighbour.worldPosition;
+                        break;
+                    }
                     GameObject.Find("NODE_0").transform.position=startNode.worldPosition;
                     GameObject.Find("NODE_1").transform.position=targetNode.worldPosition;
-        }
+                }
 				return;
 			}
 

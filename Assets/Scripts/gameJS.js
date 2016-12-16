@@ -183,12 +183,10 @@ function Update() {
         gridCS.gridWorldSizeShift = pickPlayer;
         GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2;
         GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2;
-        gridCS.CreateGrid();
 
-
-        //        GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
     }
-    GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
+    GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
+    gridCS.CreateGrid();
 
     mainCamera2.transform.position = mainCamera.transform.position;
     mainCamera2.transform.rotation = mainCamera.transform.rotation;
@@ -322,10 +320,10 @@ function loadGame() {
     pickPlayer.x = Mathf.Floor(Player.transform.position.x * 0.5);
     pickPlayer.y = Mathf.Floor(Player.transform.position.z * 0.5);
 
-    gridCS.gridWorldSizeShift.x = Player.transform.position.x;
-    gridCS.gridWorldSizeShift.y = Player.transform.position.z;
-    GameObject.Find("Astar").transform.position.x = pickPlayer.x * 2 - 0.5;
-    GameObject.Find("Astar").transform.position.z = pickPlayer.y * 2 - 0.5;
+    gridCS.gridWorldSizeShift.x = pickPlayer.x * 2 - 0.5;
+    gridCS.gridWorldSizeShift.y = pickPlayer.y * 2 - 0.5;
+    GameObject.Find("Astar").transform.position.x = gridCS.gridWorldSizeShift.x;
+    GameObject.Find("Astar").transform.position.z = gridCS.gridWorldSizeShift.y;
     gridCS.CreateGrid();
 
     GameObject.Find("Astar").AddComponent(Pathfinding);
