@@ -108,7 +108,7 @@ var cameraRELtarget: Vector3;
 var playerBioJS: biology;
 var itemBagJS: itemBag;
 var PlayerPrefsX: PlayerPrefsX;
-var gridCS: Grid;
+var PathfindingCS: Pathfinding;
 
 //UnityEngine ----------------------------
 var mouseHitPlane: RaycastHit;
@@ -123,11 +123,7 @@ var camera2: Camera;
 var lastCameraPos: Vector3;
 
 function Start() {
-    GameObject.Find("Astar").AddComponent(Grid);
-    gridCS = GameObject.Find("Astar").GetComponent(Grid);
-    gridCS.nodeRadius = 0.25;
-    gridCS.gridWorldSize.x = 52;
-    gridCS.gridWorldSize.y = 52;
+
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -165,11 +161,11 @@ function Start() {
     camera2 = mainCamera2.GetComponent(Camera);
     camera1.enabled = true;
     camera2.enabled = false;
+    GameObject.Find("aStart").AddComponent(Pathfinding);
+    PathfindingCS = GameObject.Find("aStart").GetComponent(Pathfinding);
     loadResources();
     loadGame();
     mouseOrbitSet();
-    //    mainCamera.GetComponent. < Camera > ().depthTextureMode = DepthTextureMode.Depth;
-
 
 }
 
@@ -178,15 +174,10 @@ function Update() {
     allBioupdate();
     var pickPlayer: Vector2;
 
-    GameObject.Find("Astar").transform.position.x = Mathf.Floor(Player.transform.position.x);
-    GameObject.Find("Astar").transform.position.z = Mathf.Floor(Player.transform.position.z);
-    gridCS.gridWorldSizeShift.x = Mathf.Floor(Player.transform.position.x);
-    gridCS.gridWorldSizeShift.y = Mathf.Floor(Player.transform.position.z);
-    gridCS.CreateGrid();
-    GameObject.Find("Cha_Knight_Sphere2").transform.position = GameObject.Find("Astar").GetComponent(Pathfinding).FindPath_Update();
+    //    GameObject.Find("Cha_Knight_Sphere2").transform.position =
+    PathfindingCS.FindPath_Update(Player.transform, GameObject.Find("m101").transform);
 
     mainCamera2.transform.position = mainCamera.transform.position;
-    mainCamera2.transform.rotation = mainCamera.transform.rotation;
 
     mainCamera2.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
     mouseOrTouch();
@@ -284,7 +275,7 @@ function loadGame() {
         tempVector2.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[4];
         //建立目錄cubesPosDictionary
         cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
-        gridCS.cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
+        GameObject.Find("aStart").GetComponent. < Grid > ().cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
 
         //重建CUBE
         if (GameObject.Find("(" + tempVector3.x.ToString("F0") + ", " + tempVector3.y.ToString("F0") + ", " + tempVector3.z.ToString("F0") + ")") == null) {
@@ -313,13 +304,6 @@ function loadGame() {
             temp.name = temp.transform.position.ToString("F0");
         }
     }
-
-
-    GameObject.Find("Astar").AddComponent(Pathfinding);
-    GameObject.Find("Astar").GetComponent(Pathfinding).seeker = GameObject.Find("Cha_Knight").transform;
-    GameObject.Find("Astar").GetComponent(Pathfinding).target = GameObject.Find("m101").transform;
-
-
 }
 
 function saveGame() {

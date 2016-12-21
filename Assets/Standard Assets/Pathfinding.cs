@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent (typeof (Grid))]
+
 public class Pathfinding : MonoBehaviour {
 
 	public Transform seeker, target;
@@ -10,10 +12,18 @@ public class Pathfinding : MonoBehaviour {
 
 	void Awake() {
 		grid = GetComponent<Grid> ();
+        Debug.Log("wake up");
 	}
 
-	public Vector3 FindPath_Update() {
-		FindPath (seeker.position, target.position);
+	public Vector3 FindPath_Update(Transform aseeker, Transform atarget) {
+        seeker=aseeker;
+        target=atarget;
+  
+        grid.   CreateGrid();
+        transform.position = new Vector3(Mathf.Floor(aseeker.position.x),0,Mathf.Floor(atarget.position.z));
+        grid.gridWorldSizeShift= new Vector2(Mathf.Floor(aseeker.position.x),Mathf.Floor(aseeker.position.z)); 
+        grid.CreateGrid();
+		FindPath (aseeker.position, atarget.position);
         return nextPos;
 	}
 

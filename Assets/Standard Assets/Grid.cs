@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour {
 
-	public Vector2 gridWorldSize;
+	public Vector2 gridWorldSize=new Vector2(64,64);
     public Vector2 gridWorldSizeShift;
-	public float nodeRadius;
+	public float nodeRadius=0.25f;
     public  Dictionary< Vector3, Vector2> cubesPosDictionary= new Dictionary< Vector3, Vector2>();
 
 	Node[,] grid;
@@ -14,12 +14,9 @@ public class Grid : MonoBehaviour {
 	float nodeDiameter;
 	int gridSizeX, gridSizeY;
 
-	/*void Awake() {
-		nodeDiameter = nodeRadius*2;
-		gridSizeX = Mathf.RoundToInt(gridWorldSize.x/nodeDiameter);
-		gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
-		CreateGrid();
-	}*/
+	void Awake() {
+
+	}
     
 	public void CreateGrid() {
         nodeDiameter = nodeRadius*2;
