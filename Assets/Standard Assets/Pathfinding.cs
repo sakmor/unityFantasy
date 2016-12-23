@@ -20,7 +20,7 @@ public class Pathfinding : MonoBehaviour {
         target=atarget;
   
         grid.   CreateGrid();
-        transform.position = new Vector3(Mathf.Floor(aseeker.position.x),0,Mathf.Floor(atarget.position.z));
+        transform.position = new Vector3(Mathf.Floor(aseeker.position.x),0,Mathf.Floor(aseeker.position.z));
         grid.gridWorldSizeShift= new Vector2(Mathf.Floor(aseeker.position.x),Mathf.Floor(aseeker.position.z)); 
         grid.CreateGrid();
 		FindPath (aseeker.position, atarget.position);

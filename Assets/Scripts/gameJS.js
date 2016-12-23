@@ -174,8 +174,8 @@ function Update() {
     allBioupdate();
     var pickPlayer: Vector2;
 
-    //    GameObject.Find("Cha_Knight_Sphere2").transform.position =
-    PathfindingCS.FindPath_Update(Player.transform, GameObject.Find("m101").transform);
+    GameObject.Find("Cha_Knight_Sphere2").transform.position =
+        PathfindingCS.FindPath_Update(Player.transform, GameObject.Find("m101").transform);
 
     mainCamera2.transform.position = mainCamera.transform.position;
 
