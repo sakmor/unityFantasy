@@ -5,9 +5,7 @@ using System.Collections.Generic;
 [RequireComponent (typeof (Grid))]
 
 public class Pathfinding : MonoBehaviour {
-
-	public Transform seeker, target;
-    public Vector3 nextPos;
+    private  Vector3 nextPos;
 	Grid grid;
 
 	void Awake() {
@@ -16,8 +14,7 @@ public class Pathfinding : MonoBehaviour {
 	}
 
 	public Vector3 FindPath_Update(Transform aseeker, Transform atarget) {
-        seeker=aseeker;
-        target=atarget;
+
   
         grid.   CreateGrid();
         transform.position = new Vector3(Mathf.Floor(aseeker.position.x),0,Mathf.Floor(aseeker.position.z));

@@ -148,8 +148,8 @@ function updateUI() {
 
 function BioUpdate() {
     if (this.name != maingameJS.Player.name) {
-        //        this._catchPlayer();
-        //        this._movment();
+        this._catchPlayer();
+        this._movment();
         this._bioStatus();
     }
     //    this._autoJump();
@@ -263,6 +263,7 @@ function _movment() {
 
     if (this.bioAction == "Walk") {
         this.bioAction = "Wait";
+        Sphere3.GetComponent. < Renderer > ().enabled = false;
     }
 
     //如果使用者操作搖桿
@@ -272,6 +273,7 @@ function _movment() {
 
 
         this.bioAction = "Walk";
+
 
         //自搖桿取得的移動向量直
         Sphere.transform.position.x = maingameJS.mouseDragVector.x * 0.02;
@@ -288,12 +290,9 @@ function _movment() {
     }
     //如果使用者點擊螢幕操作
     else {
-
+        Sphere3.GetComponent. < Renderer > ().enabled = true;
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
-        Debug.Log(this.transform.position);
-        Debug.Log(Sphere3.transform.position);
-        if (SphereDistance > 0) {
-            Debug.Log("螢幕操作");
+        if (SphereDistance > 0.5) {
             this.bioAction = "Walk";
             Sphere2.transform.position = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
         }
@@ -375,7 +374,7 @@ function AnimationClip() {
 }
 
 function _catchPlayer() {
-    var seeMax = 5;
+    var seeMax = 10;
     var catchSpeed = 0.05;
 
     var attackCoolDown = 3000;
@@ -389,7 +388,7 @@ function _catchPlayer() {
                 maingameJS.logg(this.name + "開始追擊你了");
             }
             if (playerDistance > attackDistance) {
-                this.Sphere2.transform.position = maingameJS.Player.transform.position;
+                this.Sphere3.transform.position = maingameJS.Player.transform.position;
             }
 
             this.moveSpeedMax = catchSpeed;
@@ -398,7 +397,7 @@ function _catchPlayer() {
             if (playerDistance < attackDistance) {
                 if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
                     lastAttackTime = Time.time * 1000;
-                    this.Sphere2.transform.position = this.transform.position;
+                    this.Sphere3.transform.position = this.transform.position;
                     nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
                     bioAction = "Attack";
                     maingameJS.logg(this.name + "攻擊！");
@@ -410,7 +409,7 @@ function _catchPlayer() {
                 maingameJS.logg(this.name + "放棄追擊你");
             }
             nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
-            this.Sphere2.transform.position = this.transform.position;
+            this.Sphere3.transform.position = this.transform.position;
 
         }
 

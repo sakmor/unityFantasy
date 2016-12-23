@@ -173,6 +173,7 @@ function Update() {
 
     allBioupdate();
 
+
     mainCamera2.transform.position = mainCamera.transform.position;
 
     mainCamera2.GetComponent(Camera).fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
@@ -791,10 +792,14 @@ function checkArray(a: Vector3) {
 }
 
 
+
 function allBioupdate() {
+
     for (var thisBiology: GameObject in allBiologys) {
         thisBiology.GetComponent(biology).BioUpdate();
     }
+
+
 }
 
 function mouseOrbitSet() {
