@@ -43,6 +43,7 @@ var _backward: boolean;
 
 var Sphere: GameObject;
 var Sphere2: GameObject;
+var Sphere3: GameObject;
 var Pick: GameObject;
 var Cube: GameObject;
 var anim: Animation;
@@ -84,12 +85,14 @@ function Start() {
     Sphere = Instantiate(GameObject.Find("Sphere2"));
     Sphere.name = this.name + '_Sphere';
     Sphere.transform.parent = GameObject.Find("Biology/Items").transform;
-
-
     Sphere2 = Instantiate(GameObject.Find("Sphere2"));
     Sphere2.name = this.name + '_Sphere2';
     Sphere2.transform.parent = GameObject.Find("Biology/Items").transform;
     Sphere2.transform.position = this.transform.position;
+    Sphere3 = Instantiate(GameObject.Find("Sphere3"));
+    Sphere3.name = this.name + '_Sphere3';
+    Sphere3.transform.parent = GameObject.Find("Biology/Items").transform;
+    Sphere3.transform.position = this.transform.position;
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     pickTouch = maingameJS.pickTouch;
     Plane_touch = GameObject.Find("Plane_touch");
@@ -256,73 +259,78 @@ function _bioStatus() {
 
 function _movment() {
 
+    var SphereDistance: float;
 
-    //轉換sphere座標，轉換成螢幕座標(搖桿專用)
-    if (maingameJS.clickStart && maingameJS.hitUIObjectName == 'movePlate' &&
+    if (this.bioAction == "Walk") {
+        this.bioAction = "Wait";
+    }
+
+    //如果使用者操作搖桿
+    if (maingameJS.clickStart &&
+        maingameJS.hitUIObjectName == 'movePlate' &&
         maingameJS.Player.name == this.name) {
+
+
+        this.bioAction = "Walk";
+
+        //自搖桿取得的移動向量直
         Sphere.transform.position.x = maingameJS.mouseDragVector.x * 0.02;
         Sphere.transform.position.z = maingameJS.mouseDragVector.z * 0.02;
 
-        //var tempAngel = maingameJS.cameraAngle;
+        //將spere2依據攝影機位置做座標轉換
         var tempAngel = Vector3.Angle(maingameJS.mainCamera.transform.forward, (Sphere.transform.position - this.transform.position));
-
-        //角度轉徑度
-        //弳度=角度*pi/180
         tempAngel = -maingameJS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-        // x′=xcosθ-ysinθ,
-        //y′=xsin⁡θ+ycos⁡θ....
         Sphere2.transform.position.x = Sphere.transform.position.x * Mathf.Cos(tempAngel) - Sphere.transform.position.z * Mathf.Sin(tempAngel) + this.transform.position.x;
         Sphere2.transform.position.z = Sphere.transform.position.x * Mathf.Sin(tempAngel) + Sphere.transform.position.z * Mathf.Cos(tempAngel) + this.transform.position.z;
-
-
-    }
-
-    //將生物移動向目標
-    if (
-        Vector3.Distance(this.transform.position, Sphere2.transform.position) > 0) {
-        if (maingameJS.hitUIObjectName != 'movePlate' &&
-            maingameJS.Player.name == this.name) {
-            Sphere2.GetComponent. < Renderer > ().enabled = true;
-        }
-        moveSpeed = moveSpeedMax;
-        this.bioAction = "Walk";
-
-        //依照目標距離調整移動速度
-        if (maingameJS.hitUIObjectName ==
-            'movePlate' && Vector3.Distance(this.transform.position, Sphere2.transform.position) < 5) {
-            moveSpeed = moveSpeed * (Vector3.Distance(this.transform.position, Sphere2.transform.position) / 5);
-        }
-
-        //更新pick狀態
-        _pick();
-        dynamicCollision();
-
-
-        //移動生物到目標點
         Sphere2.transform.position.y = this.transform.position.y;
-        Sphere.transform.position.y = this.transform.position.y;
 
-        //        pickPlayer.transform.position.y = Mathf.Floor(this.transform.position.y + 0.5) + 0.5;
-        this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
-        //調整步伐
-        anim["Walk"].speed = WalkSteptweek * moveSpeed;
-
-    } else {
-        Sphere2.GetComponent. < Renderer > ().enabled = false;
-        if (this.bioAction == "Walk") {
-            this.bioAction = "Wait";
-        }
+        SphereDistance = Vector3.Distance(this.transform.position, Sphere2.transform.position);
     }
+    //如果使用者點擊螢幕操作
+    else {
 
+        SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
+        Debug.Log(this.transform.position);
+        Debug.Log(Sphere3.transform.position);
+        if (SphereDistance > 0) {
+            Debug.Log("螢幕操作");
+            this.bioAction = "Walk";
+            Sphere2.transform.position = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+        }
+
+    }
 
     //將生物轉向目標
-    if (this.bioAction == "Walk") {
-        var targetDir = Sphere2.transform.position - this.transform.position;
-        var step = rotateSpeed * Time.deltaTime;
-        var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
-        this.transform.rotation = Quaternion.LookRotation(newDir);
+    Sphere2.transform.position.y = this.transform.position.y;
+    Sphere.transform.position.y = this.transform.position.y;
+    var targetDir = Sphere2.transform.position - this.transform.position;
+    var step = rotateSpeed * Time.deltaTime;
+    var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
+    this.transform.rotation = Quaternion.LookRotation(newDir);
+
+
+    //依照目標距離調整移動速度
+    moveSpeed = moveSpeedMax;
+    if (maingameJS.hitUIObjectName ==
+        'movePlate' && SphereDistance < 5) {
+        moveSpeed = moveSpeed * (SphereDistance / 5);
     }
+
+    //更新pick狀態
+    _pick();
+    dynamicCollision();
+
+    //移動生物到目標點
+    this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2.transform.position, moveSpeed);
+
+    //調整步伐
+    anim["Walk"].speed = WalkSteptweek * moveSpeed;
+
+
 }
+
+
+
 
 function AnimationClip() {
     var nameShort: String;

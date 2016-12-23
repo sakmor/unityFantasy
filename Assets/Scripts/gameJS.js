@@ -172,10 +172,6 @@ function Start() {
 function Update() {
 
     allBioupdate();
-    var pickPlayer: Vector2;
-
-    GameObject.Find("Cha_Knight_Sphere2").transform.position =
-        PathfindingCS.FindPath_Update(Player.transform, GameObject.Find("m101").transform);
 
     mainCamera2.transform.position = mainCamera.transform.position;
 
@@ -610,6 +606,7 @@ function buttonDetect() {
             }
             if (hitUIObjectName == 'movePlate') {
                 playerBioJS.Sphere2.transform.position = playerBioJS.transform.position;
+                playerBioJS.Sphere3.transform.position = playerBioJS.transform.position;
             }
             hitUIObjectName = "";
         }
@@ -670,8 +667,8 @@ function getMousehitGroupPos() {
             if (checkArray(tempVector3) != false) {
                 var tempVector2: Vector2 = checkArray(tempVector3);
                 if (tempVector2.y == 1) {
-                    playerBioJS.Sphere2.transform.position = ray.GetPoint(rayDistance);
-                    logg("前往座標：x:" + playerBioJS.Sphere2.transform.position.x.ToString("f2") + ",y:" + playerBioJS.Sphere2.transform.position.z.ToString("f2"));
+                    playerBioJS.Sphere3.transform.position = ray.GetPoint(rayDistance);
+                    logg("前往座標：x:" + playerBioJS.Sphere3.transform.position.x.ToString("f2") + ",y:" + playerBioJS.Sphere3.transform.position.z.ToString("f2"));
                 } else {
                     logg("點擊到不可走區域了");
                 }
@@ -697,6 +694,7 @@ function getMousehitGroupPos() {
                 logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
                 //如果點擊到生物，停止移動
                 playerBioJS.Sphere2.transform.position = Player.transform.position;
+                playerBioJS.Sphere3.transform.position = Player.transform.position;
                 //如果點擊到生物，且該生物在攻擊範圍內
                 if (playerBioJS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
                     var targetDir = mouseHitPlane.transform.position - Player.transform.position;

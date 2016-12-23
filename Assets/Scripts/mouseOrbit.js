@@ -29,8 +29,10 @@ function Start() {
     y = angles.x;
 
     // Make the rigid body not change rotation
-    if (GetComponent. < Rigidbody > ())
+    if (GetComponent. < Rigidbody > ()) {
         GetComponent. < Rigidbody > ().freezeRotation = true;
+    }
+    mouseOrbitSet();
 }
 
 function LateUpdate() {
@@ -38,29 +40,32 @@ function LateUpdate() {
     if (maingameJS.touchScreen &&
         maingameJS.hitUIObjectName == "") {
 
-        x += Input.GetAxis("Mouse X") * xSpeed;
-        y -= Input.GetAxis("Mouse Y") * ySpeed;
-
-        y = ClampAngle(y, yMinLimit, yMaxLimit);
-
-        var rotation = Quaternion.Euler(y, x, 0);
-
-        distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
-
-        var hit: RaycastHit;
-        //        if (Physics.Linecast(target.position, transform.position + targetMove, hit)) {
-        //            distance -= hit.distance;
-        //        }
-
-        var position = rotation * Vector3(0.0, 0.0, -distance) + target.position + targetMove;
-
-        transform.rotation = rotation;
-        transform.position = position;
-
-        //更新攝影機與目標的相對位置
-        maingameJS.cameraRELtarget = maingameJS.mainCamera.transform.position - maingameJS.Player.transform.position;
+        mouseOrbitSet();
 
     }
+}
+
+
+
+function mouseOrbitSet() {
+    x += Input.GetAxis("Mouse X") * xSpeed;
+    y -= Input.GetAxis("Mouse Y") * ySpeed;
+
+    y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+    var rotation = Quaternion.Euler(y, x, 0);
+
+    distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
+
+    var hit: RaycastHit;
+
+    var position = rotation * Vector3(0.0, 0.0, -distance) + target.position + targetMove;
+
+    transform.rotation = rotation;
+    transform.position = position;
+
+    //更新攝影機與目標的相對位置
+    maingameJS.cameraRELtarget = maingameJS.mainCamera.transform.position - maingameJS.Player.transform.position;
 
 }
 
