@@ -6,7 +6,6 @@ script RequireComponent(Animation)
 
 @ script RequireComponent(BoxCollider)
 
-
 //class biologyInfo {
 //    public
 //    var name: String;
@@ -64,6 +63,7 @@ collisionCubes = new GameObject[28];
 
 var nametextScreenPos: Vector3;
 var targetName: String = "";
+var lastPathtime: float;
 
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
@@ -117,6 +117,7 @@ function Start() {
         collisionCubes[i].name = 'dynamicCollision_' + i;
         collisionCubes[i].AddComponent(BoxCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
+        collisionCubes[i].GetComponent. < Renderer > ().enabled = false;
     }
     //更新pick狀態
     _pick();
@@ -155,7 +156,6 @@ function BioUpdate() {
     //    this._autoJump();
 }
 
-
 function dynamicCollision() {
     //更新碰撞物狀態
     var g = 0;
@@ -171,8 +171,6 @@ function dynamicCollision() {
         }
     }
 }
-
-
 
 /*************************
  *_pick 類似DQM的操作模式
@@ -223,9 +221,6 @@ function _pick() {
         break;
     }
 
-
-
-
 }
 
 function _bioStatus() {
@@ -246,6 +241,7 @@ function _bioStatus() {
             break;
         case "Wait":
             anim.CrossFade("Wait");
+            Sphere3.GetComponent. < Renderer > ().enabled = false;
             break;
         case "Jump":
             this.GetComponent. < Rigidbody > ().velocity.y = 5;
@@ -263,7 +259,6 @@ function _movment() {
 
     if (this.bioAction == "Walk") {
         this.bioAction = "Wait";
-        Sphere3.GetComponent. < Renderer > ().enabled = false;
     }
 
     //如果使用者操作搖桿
@@ -271,9 +266,7 @@ function _movment() {
         maingameJS.hitUIObjectName == 'movePlate' &&
         maingameJS.Player.name == this.name) {
 
-
         this.bioAction = "Walk";
-
 
         //自搖桿取得的移動向量直
         Sphere.transform.position.x = maingameJS.mouseDragVector.x * 0.02;
@@ -294,7 +287,10 @@ function _movment() {
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
         if (SphereDistance > 0.5) {
             this.bioAction = "Walk";
-            Sphere2.transform.position = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+            if (Time.fixedTime - lastPathtime > 0.05) {
+                lastPathtime = Time.fixedTime;
+                Sphere2.transform.position = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+            }
         }
 
     }
@@ -306,7 +302,6 @@ function _movment() {
     var step = rotateSpeed * Time.deltaTime;
     var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0);
     this.transform.rotation = Quaternion.LookRotation(newDir);
-
 
     //依照目標距離調整移動速度
     moveSpeed = moveSpeedMax;
@@ -325,21 +320,17 @@ function _movment() {
     //調整步伐
     anim["Walk"].speed = WalkSteptweek * moveSpeed;
 
-
 }
-
-
-
 
 function AnimationClip() {
     var nameShort: String;
     var animationsName = [
-            'Attack',
-            'Damage',
-            'Dead',
-            'Wait',
-            'Walk'
-        ];
+		'Attack',
+		'Damage',
+		'Dead',
+		'Wait',
+		'Walk'
+	];
     var bioName: String = this.name;
     var bioFlodr: String;
     if (bioName[0] == 'm') {
@@ -349,7 +340,6 @@ function AnimationClip() {
         bioFlodr = 'char/' + bioName;
         nameShort = bioName;
     }
-
 
     for (var name: String in animationsName) {
         var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + nameShort + "@" + name);
@@ -414,6 +404,5 @@ function _catchPlayer() {
         }
 
     }
-
 
 }

@@ -2,8 +2,8 @@ var target: Transform;
 var targetMove: Vector3;
 var distance = 10.0;
 
-var xSpeed = 20.0;
-var ySpeed = 20.0;
+var xSpeed = 5.0;
+var ySpeed = 5.0;
 
 var yMinLimit = -20;
 var yMaxLimit = 80;
