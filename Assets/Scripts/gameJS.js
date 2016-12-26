@@ -606,7 +606,7 @@ function buttonDetect() {
                 playerBioJS.bioAction = "Create";
             }
             if (hitUIObjectName == 'movePlate') {
-                playerBioJS.Sphere2.transform.position = playerBioJS.transform.position;
+                playerBioJS.Sphere2 = playerBioJS.transform.position;
                 playerBioJS.Sphere3.transform.position = playerBioJS.transform.position;
             }
             hitUIObjectName = "";
@@ -694,7 +694,7 @@ function getMousehitGroupPos() {
             case "biology":
                 logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
                 //如果點擊到生物，停止移動
-                playerBioJS.Sphere2.transform.position = Player.transform.position;
+                playerBioJS.Sphere2 = Player.transform.position;
                 playerBioJS.Sphere3.transform.position = Player.transform.position;
                 //如果點擊到生物，且該生物在攻擊範圍內
                 if (playerBioJS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
