@@ -4,7 +4,7 @@ script RequireComponent(Animation)
 
 @ script RequireComponent(Rigidbody)
 
-@ script RequireComponent(BoxCollider)
+@ script RequireComponent(CapsuleCollider)
 
 //class biologyInfo {
 //    public
@@ -81,6 +81,7 @@ function Start() {
     Sphere3.name = this.name + '_Sphere3';
     Sphere3.transform.parent = GameObject.Find("Biology/Items").transform;
     Sphere3.transform.position = this.transform.position;
+    Sphere3.transform.position.y = 1;
     maingameJS = GameObject.Find("mainGame").GetComponent(gameJS);
     pickPlayer = Instantiate(GameObject.Find("pickPlayer"));
     pickPlayer.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -99,7 +100,7 @@ function Start() {
     for (var i = 0; i <= 27; i++) {
         collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
         collisionCubes[i].name = 'dynamicCollision_' + i;
-        collisionCubes[i].AddComponent(BoxCollider);
+        collisionCubes[i].AddComponent(CapsuleCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
         collisionCubes[i].GetComponent. < Renderer > ().enabled = false;
     }
@@ -114,7 +115,7 @@ function Start() {
 function Update() {
 
     if (this.name == maingameJS.Player.name) {
-        this._catchPlayer();
+        //        this._catchPlayer();
         this._movment();
         this._bioStatus();
     }
@@ -235,7 +236,7 @@ function _movment() {
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
         if (SphereDistance > 0.5) {
             this.bioAction = "Walk";
-            if (Time.fixedTime - lastPathtime > 0.05) {
+            if (Time.fixedTime - lastPathtime > 0.1) {
                 lastPathtime = Time.fixedTime;
                 Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
             }
@@ -300,57 +301,58 @@ function AnimationClip() {
     var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
         System.Object > ;
     this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object > )[0];
-    this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
-    this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < BoxCollider > ().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
-    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
-    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.GetComponent. < CapsuleCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
+    this.GetComponent. < CapsuleCollider > ().radius = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
+    this.GetComponent. < CapsuleCollider > ().height = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
+    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
+    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
 
     this.GetComponent. < Rigidbody > ().freezeRotation = true;
 }
 
 function _catchPlayer() {
-    var seeMax = 10;
+    var seeMax = 5;
     var catchSpeed = 0.05;
 
     var attackCoolDown = 3000;
     var playerDistance = Vector3.Distance(maingameJS.Player.transform.position, this.transform.position);
 
-    if (this.name != maingameJS.Player.name) {
-        if (playerDistance < seeMax) {
 
-            if (targetName != maingameJS.Player.name) {
-                targetName = maingameJS.Player.name;
-                maingameJS.logg(this.name + "開始追擊你了");
-            }
-            if (playerDistance > attackDistance) {
-                this.Sphere3.transform.position = maingameJS.Player.transform.position;
-            }
+    if (playerDistance < seeMax) {
 
-            this.moveSpeedMax = catchSpeed;
-            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.red;
-
-            if (playerDistance < attackDistance) {
-                if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
-                    lastAttackTime = Time.time * 1000;
-                    this.Sphere3.transform.position = this.transform.position;
-                    nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
-                    bioAction = "Attack";
-                    maingameJS.logg(this.name + "攻擊！");
-                }
-            }
-        } else {
-            if (targetName != "") {
-                targetName = "";
-                maingameJS.logg(this.name + "放棄追擊你");
-            }
-            nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
-            this.Sphere3.transform.position = this.transform.position;
-
+        if (targetName != maingameJS.Player.name) {
+            targetName = maingameJS.Player.name;
+            maingameJS.logg(this.name + "開始追擊你了");
+        }
+        if (playerDistance > attackDistance) {
+            this.Sphere3.transform.position = maingameJS.Player.transform.position;
         }
 
+        this.moveSpeedMax = catchSpeed;
+        nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.red;
+
+        if (playerDistance < attackDistance) {
+            if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
+                lastAttackTime = Time.time * 1000;
+                this.Sphere3.transform.position = this.transform.position;
+                nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
+                bioAction = "Attack";
+                maingameJS.logg(this.name + "攻擊！");
+            }
+        }
+    } else {
+        if (targetName != "") {
+            targetName = "";
+            maingameJS.logg(this.name + "放棄追擊你");
+        }
+        nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
+        //        this.Sphere3.transform.position = this.transform.position;
+        //        this.Sphere3.transform.position.y = 1;
+        //        maingameJS.logg("here");
+
     }
+
+
 
 }

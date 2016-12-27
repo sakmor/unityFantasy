@@ -796,6 +796,7 @@ function checkArray(a: Vector3) {
 function allBioupdate() {
 
     for (var thisBiology: GameObject in allBiologys) {
+        thisBiology.transform.position.y = 1;
         thisBiology.GetComponent(biology).BioUpdate();
     }
 
