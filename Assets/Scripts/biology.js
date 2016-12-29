@@ -4,7 +4,7 @@ script RequireComponent(Animation)
 
 @ script RequireComponent(Rigidbody)
 
-@ script RequireComponent(CapsuleCollider)
+@ script RequireComponent(BoxCollider)
 
 //class biologyInfo {
 //    public
@@ -100,7 +100,7 @@ function Start() {
     for (var i = 0; i <= 27; i++) {
         collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
         collisionCubes[i].name = 'dynamicCollision_' + i;
-        collisionCubes[i].AddComponent(CapsuleCollider);
+        collisionCubes[i].AddComponent(BoxCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
         collisionCubes[i].GetComponent. < Renderer > ().enabled = false;
     }
@@ -175,24 +175,24 @@ function _bioStatus() {
     //對應生物所處狀態，播放對應動作
     if (!anim.IsPlaying("Attack")) {
         switch (this.bioAction) {
-        case "Attack":
-            anim.CrossFade("Attack");
-            break;
-        case "Damage":
-            anim.CrossFade("Damage");
-            break;
-        case "Walk":
-            anim.CrossFade("Walk");
-            break;
-        case "picking":
-            break;
-        case "Wait":
-            anim.CrossFade("Wait");
-            Sphere3.GetComponent. < Renderer > ().enabled = false;
-            break;
-        case "Jump":
-            this.GetComponent. < Rigidbody > ().velocity.y = 5;
-            break;
+            case "Attack":
+                anim.CrossFade("Attack");
+                break;
+            case "Damage":
+                anim.CrossFade("Damage");
+                break;
+            case "Walk":
+                anim.CrossFade("Walk");
+                break;
+            case "picking":
+                break;
+            case "Wait":
+                anim.CrossFade("Wait");
+                Sphere3.GetComponent. < Renderer > ().enabled = false;
+                break;
+            case "Jump":
+                this.GetComponent. < Rigidbody > ().velocity.y = 5;
+                break;
         }
     }
     if (anim.IsPlaying("Wait")) {
@@ -234,12 +234,19 @@ function _movment() {
             Sphere3.GetComponent. < Renderer > ().enabled = true;
         }
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
-        if (SphereDistance > 0.5) {
+        if (SphereDistance > 0.25) {
             this.bioAction = "Walk";
-            if (Time.fixedTime - lastPathtime > 0.1) {
-                lastPathtime = Time.fixedTime;
-                Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
-            }
+            Sphere2 = Sphere3.transform.position;
+            /*
+            if (SphereDistance > 2) {
+                if (maingameJS.Player.name == this.name &&
+                    Time.fixedTime - lastPathtime > 0.1) {
+                    lastPathtime = Time.fixedTime;
+                    Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+                }
+            } else {
+                Sphere2 = Sphere3.transform.position;
+            }*/
         }
 
     }
@@ -274,12 +281,12 @@ function _movment() {
 function AnimationClip() {
     var nameShort: String;
     var animationsName = [
-		'Attack',
-		'Damage',
-		'Dead',
-		'Wait',
-		'Walk'
-	];
+        'Attack',
+        'Damage',
+        'Dead',
+        'Wait',
+        'Walk'
+    ];
     var bioName: String = this.name;
     var bioFlodr: String;
     if (bioName[0] == 'm') {
@@ -301,9 +308,10 @@ function AnimationClip() {
     var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
         System.Object > ;
     this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object > )[0];
-    this.GetComponent. < CapsuleCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
-    this.GetComponent. < CapsuleCollider > ().radius = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < CapsuleCollider > ().height = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
+    this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
+    this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
+    this.GetComponent. < BoxCollider > ().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
     this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
     this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
     this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
@@ -312,7 +320,7 @@ function AnimationClip() {
 }
 
 function _catchPlayer() {
-    var seeMax = 5;
+    var seeMax = 15;
     var catchSpeed = 0.05;
 
     var attackCoolDown = 3000;

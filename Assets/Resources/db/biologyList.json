@@ -1,22 +1,22 @@
 {
     "m101": [
-    20,
-    0.35,
-    0.3,
-    0.45,
-    2.5
-  ],
+        20,
+        0.28,
+        0.4,
+        0.55,
+        2.5
+    ],
     "Cha_Knight": [
-    40,
-    50,
-    25,
-    100,
-    0.02
-  ]
+        40,
+        41,
+        25,
+        80,
+        0.02
+    ]
 }
 
-//[0]	WalkStep;
-//[1]	CapsuleCollider.center.Y
-//[2]	CapsuleCollider.Radius
-//[3]	CapsuleCollider.Height
-//[4]	bodyScale
+//[0]   WalkStep;
+//[1]   boxCollider.center.Y
+//[2]   boxCollider.size.XZ
+//[3]   boxCollider.size.Y
+//[4]   bodyScale

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(LineRenderer))]
 public class Bezier : MonoBehaviour
 {
-       public Renderer rend;
+    public Renderer rend;
     public Transform[] controlPoints;
     public LineRenderer lineRenderer;
 

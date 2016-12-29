@@ -279,12 +279,12 @@ function loadGame() {
 
             var temp = Instantiate(Cube);
             switch (tempVector2.y) {
-            case 0:
-                temp.tag = "Cube";
-                break;
-            case 1:
-                temp.tag = "Cube_WalkSMP";
-                break;
+                case 0:
+                    temp.tag = "Cube";
+                    break;
+                case 1:
+                    temp.tag = "Cube_WalkSMP";
+                    break;
             }
             temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
             temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
@@ -678,7 +678,6 @@ function getMousehitGroupPos() {
 
 
 
-
         //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
         if (Physics.Raycast(ray, mouseHitPlane) &&
             !EventSystem.current.IsPointerOverGameObject() &&
@@ -687,23 +686,23 @@ function getMousehitGroupPos() {
         ) {
 
 
-            Debug.Log('' + mouseHitPlane.transform.tag);
+            // Debug.Log('' + mouseHitPlane.transform.tag);
             switch (mouseHitPlane.transform.tag) {
-            case "Cube":
-                break;
-            case "biology":
-                logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
-                //如果點擊到生物，停止移動
-                playerBioJS.Sphere2 = Player.transform.position;
-                playerBioJS.Sphere3.transform.position = Player.transform.position;
-                //如果點擊到生物，且該生物在攻擊範圍內
-                if (playerBioJS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
-                    var targetDir = mouseHitPlane.transform.position - Player.transform.position;
-                    var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
-                    Player.transform.rotation = Quaternion.LookRotation(newDir);
-                    playerBioJS.bioAction = "Attack";
-                }
-                break;
+                case "Cube":
+                    break;
+                case "biology":
+                    logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
+                    //如果點擊到生物，停止移動
+                    playerBioJS.Sphere2 = Player.transform.position;
+                    playerBioJS.Sphere3.transform.position = Player.transform.position;
+                    //如果點擊到生物，且該生物在攻擊範圍內
+                    if (playerBioJS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position)) {
+                        var targetDir = mouseHitPlane.transform.position - Player.transform.position;
+                        var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
+                        Player.transform.rotation = Quaternion.LookRotation(newDir);
+                        playerBioJS.bioAction = "Attack";
+                    }
+                    break;
             }
         }
 
@@ -796,7 +795,6 @@ function checkArray(a: Vector3) {
 function allBioupdate() {
 
     for (var thisBiology: GameObject in allBiologys) {
-        thisBiology.transform.position.y = 1;
         thisBiology.GetComponent(biology).BioUpdate();
     }
 
