@@ -2,9 +2,9 @@
 @
 script RequireComponent(Animation)
 
-@ script RequireComponent(Rigidbody)
+@script RequireComponent(Rigidbody)
 
-@ script RequireComponent(BoxCollider)
+@script RequireComponent(BoxCollider)
 
 //class biologyInfo {
 //    public
@@ -71,9 +71,9 @@ function Start() {
     nameText.name = this.name + "_nameText";
     nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
 
-    nameText.GetComponent. < UnityEngine.UI.Text > ().text = this.name;
+    nameText.GetComponent. < UnityEngine.UI.Text>().text = this.name;
 
-    anim = GetComponent. < Animation > ();
+    anim = GetComponent. < Animation>();
     bioAction = "Wait";
     handCube = 0;
     mainGame = GameObject.Find("mainGame");
@@ -102,7 +102,7 @@ function Start() {
         collisionCubes[i].name = 'dynamicCollision_' + i;
         collisionCubes[i].AddComponent(BoxCollider);
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
-        collisionCubes[i].GetComponent. < Renderer > ().enabled = false;
+        collisionCubes[i].GetComponent. < Renderer>().enabled = false;
     }
     //更新pick狀態
     _pick();
@@ -188,10 +188,10 @@ function _bioStatus() {
                 break;
             case "Wait":
                 anim.CrossFade("Wait");
-                Sphere3.GetComponent. < Renderer > ().enabled = false;
+                Sphere3.GetComponent. < Renderer>().enabled = false;
                 break;
             case "Jump":
-                this.GetComponent. < Rigidbody > ().velocity.y = 5;
+                this.GetComponent. < Rigidbody>().velocity.y = 5;
                 break;
         }
     }
@@ -231,7 +231,7 @@ function _movment() {
     //如果使用者點擊螢幕操作
     else {
         if (maingameJS.Player.name == this.name) {
-            Sphere3.GetComponent. < Renderer > ().enabled = true;
+            Sphere3.GetComponent. < Renderer>().enabled = true;
         }
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
         if (SphereDistance > 0.25) {
@@ -271,7 +271,7 @@ function _movment() {
     dynamicCollision();
 
     //移動生物到目標點
-    this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed);
+    this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
 
     //調整步伐
     anim["Walk"].speed = WalkSteptweek * moveSpeed;
@@ -299,24 +299,24 @@ function AnimationClip() {
 
     for (var name: String in animationsName) {
         var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + nameShort + "@" + name);
-        var anim: Animation = this.GetComponent. < Animation > ();
-        var aClip = mdl.GetComponent. < Animation > ().clip;
+        var anim: Animation = this.GetComponent. < Animation>();
+        var aClip = mdl.GetComponent. < Animation>().clip;
         anim.AddClip(aClip, name);
     }
 
     //讀取生物清單表
     var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
-        System.Object > ;
-    this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object > )[0];
-    this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[1];
-    this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[3];
-    this.GetComponent. < BoxCollider > ().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[2];
-    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
-    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
-    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object > )[4];
+        System.Object>;
+    this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object>)[0];
+    this.GetComponent. < BoxCollider>().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object>)[1];
+    this.GetComponent. < BoxCollider>().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object>)[2];
+    this.GetComponent. < BoxCollider>().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object>)[3];
+    this.GetComponent. < BoxCollider>().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object>)[2];
+    this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object>)[4];
+    this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object>)[4];
+    this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object>)[4];
 
-    this.GetComponent. < Rigidbody > ().freezeRotation = true;
+    this.GetComponent. < Rigidbody>().freezeRotation = true;
 }
 
 function _catchPlayer() {
@@ -338,13 +338,13 @@ function _catchPlayer() {
         }
 
         this.moveSpeedMax = catchSpeed;
-        nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.red;
+        nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.red;
 
         if (playerDistance < attackDistance) {
             if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
                 lastAttackTime = Time.time * 1000;
                 this.Sphere3.transform.position = this.transform.position;
-                nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.yellow;
+                nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.yellow;
                 bioAction = "Attack";
                 maingameJS.logg(this.name + "攻擊！");
             }
@@ -354,7 +354,7 @@ function _catchPlayer() {
             targetName = "";
             maingameJS.logg(this.name + "放棄追擊你");
         }
-        nameText.GetComponent. < UnityEngine.UI.Text > ().color = Color.white;
+        nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.white;
         //        this.Sphere3.transform.position = this.transform.position;
         //        this.Sphere3.transform.position.y = 1;
         //        maingameJS.logg("here");
