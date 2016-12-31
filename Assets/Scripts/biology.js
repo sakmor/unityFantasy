@@ -88,7 +88,7 @@ function Start() {
     pickPlayer.name = this.name + 'pickPlayer';
     _backward = false;
     WalkSteptweek = WalkSteptweek || 40;
-    moveSpeed = moveSpeed || 0.07;
+    moveSpeed = moveSpeed || 0.03;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
 
@@ -188,6 +188,7 @@ function _bioStatus() {
                 break;
             case "Wait":
                 anim.CrossFade("Wait");
+                Sphere2 = this.transform.position;
                 Sphere3.GetComponent. < Renderer>().enabled = false;
                 break;
             case "Jump":
@@ -231,22 +232,19 @@ function _movment() {
     //如果使用者點擊螢幕操作
     else {
         if (maingameJS.Player.name == this.name) {
-            Sphere3.GetComponent. < Renderer>().enabled = true;
+            // Sphere3.GetComponent. < Renderer>().enabled = true;
         }
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
-        if (SphereDistance > 0.25) {
+        var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
+        if (SphereDistance > 1) {
             this.bioAction = "Walk";
+            if (Sphere2Distance < 3) {
+                Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+                GameObject.Find("Sphere2").transform.position = Sphere2;
+                GameObject.Find("Sphere2").transform.position.y = 1;
+            }
+        } else {
             Sphere2 = Sphere3.transform.position;
-            /*
-            if (SphereDistance > 2) {
-                if (maingameJS.Player.name == this.name &&
-                    Time.fixedTime - lastPathtime > 0.1) {
-                    lastPathtime = Time.fixedTime;
-                    Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
-                }
-            } else {
-                Sphere2 = Sphere3.transform.position;
-            }*/
         }
 
     }

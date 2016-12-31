@@ -85,8 +85,8 @@ var logText: GameObject;
 //Dictionary、Array----------------------------
 var array3d = new Array();
 var cubeArrayTxt = new Array();
-var cubesPosDictionary: Dictionary. < Vector3, Vector2 > = new Dictionary. < Vector3,
-    Vector2 > ();
+var cubesPosDictionary: Dictionary. < Vector3, Vector2> = new Dictionary. < Vector3,
+    Vector2>();
 
 //boolean----------------------------
 var cammeraPlatein2out: boolean = false;
@@ -124,6 +124,14 @@ var lastCameraPos: Vector3;
 
 function Start() {
 
+    Debug.Log(Mathf.Atan2(0, 1) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(1, 1) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(1, 0) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(-1, 1) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(-1, 0) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(-1, -1) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(-1, 0) * Mathf.Rad2Deg);
+    Debug.Log(Mathf.Atan2(1, -1) * Mathf.Rad2Deg);
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -191,15 +199,15 @@ function clearCube() {
 
     var arrayText: TextAsset = Resources.Load("scene/s999");
     var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
-        System.Object > ;
+        System.Object>;
     var tempi: int = array3dLoadJson["length"];
     for (var i = 1; i < tempi; i++) {
         var temp: Vector3;
         var tempColor: Color;
-        tempColor.r = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
-        tempColor.g = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
-        tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
-        tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
+        tempColor.r = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[0];
+        tempColor.g = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[1];
+        tempColor.b = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[2];
+        tempColor.a = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[3];
         temp.x = tempColor.r;
         temp.y = tempColor.g;
         temp.z = tempColor.b;
@@ -259,20 +267,20 @@ function loadResources() {
 function loadGame() {
     var arrayText: TextAsset = Resources.Load("scene/s999");
     var array3dLoadJson = Json.Deserialize(arrayText.text) as Dictionary. < String,
-        System.Object > ;
+        System.Object>;
     var Cube: GameObject = GameObject.Find("Cube");
     var tempi: int = array3dLoadJson["length"];
     for (var i = 1; i < tempi; i++) {
         var tempVector3: Vector3;
         var tempVector2: Vector2;
-        tempVector3.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[0];
-        tempVector3.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[1];
-        tempVector3.z = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[2];
-        tempVector2.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[3];
-        tempVector2.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object > )[4];
+        tempVector3.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[0];
+        tempVector3.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[1];
+        tempVector3.z = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[2];
+        tempVector2.x = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[3];
+        tempVector2.y = ((array3dLoadJson[i.ToString()]) as List. < System.Object>)[4];
         //建立目錄cubesPosDictionary
         cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
-        GameObject.Find("aStart").GetComponent. < Grid > ().cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
+        GameObject.Find("aStart").GetComponent. < Grid>().cubesPosDictionary[Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = tempVector2;
 
         //重建CUBE
         if (GameObject.Find("(" + tempVector3.x.ToString("F0") + ", " + tempVector3.y.ToString("F0") + ", " + tempVector3.z.ToString("F0") + ")") == null) {
@@ -286,12 +294,12 @@ function loadGame() {
                     temp.tag = "Cube_WalkSMP";
                     break;
             }
-            temp.GetComponent. < MeshRenderer > ().receiveShadows = true;
-            temp.GetComponent. < Renderer > ().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-            temp.GetComponent. < Renderer > ().enabled = true;
+            temp.GetComponent. < MeshRenderer>().receiveShadows = true;
+            temp.GetComponent. < Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            temp.GetComponent. < Renderer>().enabled = true;
             //        temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + Path.GetFileNameWithoutExtension(cubeArrayTxt[array3dLoadJson[i][3]]), Mesh);
-            temp.GetComponent. < MeshFilter > ().mesh = Resources.Load('item/model/CUBE/' + tempVector2.x, Mesh);
-            temp.GetComponent. < Renderer > ().enabled = true;
+            temp.GetComponent. < MeshFilter>().mesh = Resources.Load('item/model/CUBE/' + tempVector2.x, Mesh);
+            temp.GetComponent. < Renderer>().enabled = true;
             //temp.AddComponent(BoxCollider);
             //temp.name = "(" + array3dLoadJson[i][0] + ", " + array3dLoadJson[i][1]  + ", " + array3dLoadJson[i][2] + ")";
 
@@ -392,11 +400,11 @@ var loggLineMax: int = 10;
 
 function logg(n: String) {
     if (loggLine == loggLineMax) {
-        logText.GetComponent. < UI.Text > ().text += '\n';
-        logText.GetComponent. < UI.Text > ().text += n;
+        logText.GetComponent. < UI.Text>().text += '\n';
+        logText.GetComponent. < UI.Text>().text += n;
         var firstLine: int;
-        var tempString: String = logText.GetComponent. < UI.Text > ().text;
-        logText.GetComponent. < UI.Text > ().text = "";
+        var tempString: String = logText.GetComponent. < UI.Text>().text;
+        logText.GetComponent. < UI.Text>().text = "";
         for (var i = 0; i < tempString.length; i++) {
             if (tempString[i] == '\n') {
                 firstLine = i + 1;
@@ -404,12 +412,12 @@ function logg(n: String) {
             }
         }
         for (; firstLine < tempString.length; firstLine++) {
-            logText.GetComponent. < UI.Text > ().text += tempString[firstLine];
+            logText.GetComponent. < UI.Text>().text += tempString[firstLine];
         }
 
     } else {
-        logText.GetComponent. < UI.Text > ().text += '\n';
-        logText.GetComponent. < UI.Text > ().text += n;
+        logText.GetComponent. < UI.Text>().text += '\n';
+        logText.GetComponent. < UI.Text>().text += n;
         loggLine++;
     }
 }
@@ -444,11 +452,11 @@ function buttonDetect() {
         }
         //如果點選到了攝影機搖桿
         if (hitUIObjectName == 'cammeraPlate') {
-            var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
-            var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+            var _sprite = hitUIObject.GetComponent. < UI.Image>().sprite;
+            var _rect = hitUIObject.GetComponent. < RectTransform>().rect;
             var temp: Vector2;
             var UIObjectRGB: Color;
-            var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
+            var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform>().localScale;
 
 
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
@@ -485,9 +493,9 @@ function buttonDetect() {
                     mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
                 }
             } else
-            if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160) {
-                mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
-            }
+                if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160) {
+                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                }
 
             //更新攝影機與目標的相對位置
             cameraRELtarget = mainCamera.transform.position - Player.transform.position;
@@ -496,9 +504,9 @@ function buttonDetect() {
         //如果點選到了移動搖桿
         if (hitUIObjectName == 'movePlate') {
 
-            _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
-            _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
-            imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+            _sprite = hitUIObject.GetComponent. < UI.Image>().sprite;
+            _rect = hitUIObject.GetComponent. < RectTransform>().rect;
+            imageScale = hitUIObject.GetComponent. < RectTransform>().localScale;
 
 
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
@@ -532,9 +540,9 @@ function buttonDetect() {
             } else {
                 itemBagJS.itemBagON = true;
             }
-            _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
-            _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
-            imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+            _sprite = hitUIObject.GetComponent. < UI.Image>().sprite;
+            _rect = hitUIObject.GetComponent. < RectTransform>().rect;
+            imageScale = hitUIObject.GetComponent. < RectTransform>().localScale;
 
 
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
@@ -549,16 +557,16 @@ function buttonDetect() {
             } else if (cubePlatein2out) {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍
                 cubePlateMouse.transform.position = cubePlate.transform.position;
-                cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+                cubePlateMouse.GetComponent. < UI.Graphic>().color.a = 0.55;
                 cubePlateTimer.transform.localScale = Vector3(0, 0, 0);
             }
         }
 
         //如果點選到了CUBE按鈕
         if (hitUIObjectName == 'cubePlate') {
-            _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
-            _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
-            imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+            _sprite = hitUIObject.GetComponent. < UI.Image>().sprite;
+            _rect = hitUIObject.GetComponent. < RectTransform>().rect;
+            imageScale = hitUIObject.GetComponent. < RectTransform>().localScale;
 
 
             //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
@@ -573,7 +581,7 @@ function buttonDetect() {
             } else if (cubePlatein2out) {
                 //如果拖拉滑鼠盤脫離搖桿盤的範圍
                 cubePlateMouse.transform.position = cubePlate.transform.position;
-                cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+                cubePlateMouse.GetComponent. < UI.Graphic>().color.a = 0.55;
                 //                itemBag.GetComponent. < UI.RawImage > ().color.a = 0.0;
             }
         }
@@ -590,7 +598,7 @@ function buttonDetect() {
         }
     } else {
 
-        cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
+        cubePlateMouse.GetComponent. < UI.Graphic>().color.a = 1.0;
         cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
         cubePlateMouse.transform.position = cubePlate.transform.position;
         movePlateMouse.transform.position = movePlate.transform.position;
@@ -730,9 +738,9 @@ function lineDecte() {
         tempPick2.y = Mathf.Floor(tempPick.y) + 0.5;
 
         if (checkArray(Vector3(
-                tempPick2.x,
-                tempPick2.y,
-                tempPick2.z)) != false) {
+            tempPick2.x,
+            tempPick2.y,
+            tempPick2.z)) != false) {
             mainCamera2.transform.position = tempPick;
             camera2.enabled = true;
             camera1.enabled = false;
@@ -765,9 +773,9 @@ function mouseLineDecte() {
 
 
                 if (checkArray(Vector3(
-                        tempPick2.x,
-                        tempPick2.y,
-                        tempPick2.z))) {
+                    tempPick2.x,
+                    tempPick2.y,
+                    tempPick2.z))) {
 
                     groundPlane.Set3Points(
                         Vector3(1.0, tempPick.y + 0.5, 0.0),
