@@ -124,15 +124,6 @@ var lastCameraPos: Vector3;
 
 function Start() {
 
-    Debug.Log(Mathf.Atan2(0, 1) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(1, 1) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(1, 0) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(-1, 1) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(-1, 0) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(-1, -1) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(-1, 0) * Mathf.Rad2Deg);
-    Debug.Log(Mathf.Atan2(1, -1) * Mathf.Rad2Deg);
-
     //把所有旗標是biology的物件都加biology.js
 
     allBiologys = GameObject.FindGameObjectsWithTag("biology");

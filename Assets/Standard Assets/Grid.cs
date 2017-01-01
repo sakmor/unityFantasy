@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Grid : MonoBehaviour
 {
 
-    public Vector2 gridWorldSize = new Vector2(32, 32);
+    public Vector2 gridWorldSize = new Vector2(24, 24);
     public Vector2 gridWorldSizeShift;
     public float nodeRadius = 0.25f;
     public Dictionary<Vector3, Vector2> cubesPosDictionary = new Dictionary<Vector3, Vector2>();
@@ -89,20 +89,20 @@ public class Grid : MonoBehaviour
     }
 
     public List<Node> path;
-    void OnDrawGizmos()
-    {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
-        if (grid != null)
-        {
-            foreach (Node n in grid)
-            {
-                Gizmos.color = (n.walkable) ? Color.white : Color.red;
-                if (path != null)
-                    if (path.Contains(n))
-                        Gizmos.color = Color.black;
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
-            }
-        }
-    }
+    //     if (grid != null)
+    //     {
+    //         foreach (Node n in grid)
+    //         {
+    //             Gizmos.color = (n.walkable) ? Color.white : Color.red;
+    //             if (path != null)
+    //                 if (path.Contains(n))
+    //                     Gizmos.color = Color.black;
+    //             Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+    //         }
+    //     }
+    // }
 }

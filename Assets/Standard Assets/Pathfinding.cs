@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+// using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Grid))]
@@ -14,13 +14,10 @@ public class Pathfinding : MonoBehaviour
     void Awake()
     {
         grid = GetComponent<Grid>();
-        Debug.Log("wake up");
     }
 
     public Vector3 FindPath_Update(Transform aseeker, Transform atarget)
     {
-
-        Debug.Log("尋路中");
         grid.CreateGrid();
         transform.position = new Vector3(Mathf.Floor(aseeker.position.x), 0, Mathf.Floor(aseeker.position.z));
         grid.gridWorldSizeShift = new Vector2(Mathf.Floor(aseeker.position.x), Mathf.Floor(aseeker.position.z));
@@ -29,19 +26,24 @@ public class Pathfinding : MonoBehaviour
         return nextPos;
     }
 
-    Vector3 redo(Node nowNode, float angel, Grid grid)
+    Vector3 redo(Node nowNode, Node lastNode, float angel)
     {
         foreach (Node neighbour in grid.GetNeighbours(nowNode))
         {
-            if (grid.path.Contains(neighbour) &&
-                neighbour != nowNode)
+            if (grid.path.Contains(neighbour))
             {
                 Vector2 nowVec = new Vector2(nowNode.gridX, nowNode.gridY) - new Vector2(neighbour.gridX, neighbour.gridY);
-                float nowAngel = Mathf.Atan2(nowVec.y, nowVec.x) * Mathf.Rad2Deg;
+                float nowAngel = Mathf.Atan2(nowVec.y, nowVec.x);
                 //如果方向一致，遞迴函數找下一個
-                if (nowAngel - angel == 0)
+                if (nowAngel == angel)
                 {
-                    return redo(neighbour, nowAngel, grid);
+                    return redo(neighbour, nowNode, nowAngel);
+                }
+                else if
+                //如果現在這個節點就是上一個節點
+                 (neighbour == lastNode)
+                {
+                    continue;
                 }
                 else
                 //如果方向不同，結束遞迴狀態
@@ -90,8 +92,12 @@ public class Pathfinding : MonoBehaviour
                     if (grid.path.Contains(neighbour))
                     {
                         Vector2 nowVec = new Vector2(startNode.gridX, startNode.gridY) - new Vector2(neighbour.gridX, neighbour.gridY);
-                        float nowAngel = Mathf.Atan2(nowVec.y, nowVec.x) * Mathf.Rad2Deg;
-                        nextPos = redo(startNode, nowAngel, grid);
+                        float nowAngel = Mathf.Atan2(nowVec.y, nowVec.x);
+                        nextPos = redo(startNode, startNode, nowAngel);
+                        if (nextPos == new Vector3(0, 0, 0))
+                        {
+                            nextPos = targetPos;
+                        }
                         break;
                     }
                 }

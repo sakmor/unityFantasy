@@ -1,5 +1,5 @@
 // 將您的設定放入此檔案中以覆寫預設值和使用者設定。
 {
-      "editor.fontFamily": "SF Mono, 'Courier New', monospace",
+      "editor.fontFamily": "'SF Mono','蘋方-繁', 'Courier New', monospace",
       "editor.mouseWheelZoom": true
 }

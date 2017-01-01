@@ -88,7 +88,7 @@ function Start() {
     pickPlayer.name = this.name + 'pickPlayer';
     _backward = false;
     WalkSteptweek = WalkSteptweek || 40;
-    moveSpeed = moveSpeed || 0.03;
+    moveSpeed = moveSpeed || 0.09;
     moveSpeedMax = moveSpeed;
     rotateSpeed = rotateSpeed || 10;
 
@@ -236,17 +236,20 @@ function _movment() {
         }
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
         var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
-        if (SphereDistance > 1) {
+        if (SphereDistance > 0.05   ) {
             this.bioAction = "Walk";
-            if (Sphere2Distance < 3) {
-                Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
-                GameObject.Find("Sphere2").transform.position = Sphere2;
-                GameObject.Find("Sphere2").transform.position.y = 1;
-            }
-        } else {
-            Sphere2 = Sphere3.transform.position;
-        }
+            if (SphereDistance < 1) {
+                Sphere2 = Sphere3.transform.position;
+            } else {
+                if (Sphere2Distance < 1) {
+                    // Debug.Log("PathfindingCS");
+                    Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+                    GameObject.Find("Sphere2").transform.position = Sphere2;
+                    GameObject.Find("Sphere2").transform.position.y = 1;
+                }
 
+            }
+        }
     }
 
     //將生物轉向目標
