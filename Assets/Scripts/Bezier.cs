@@ -3,14 +3,13 @@ using System.Collections.Generic;
 [RequireComponent(typeof(LineRenderer))]
 public class Bezier : MonoBehaviour
 {
-    public Renderer rend;
     public Transform[] controlPoints;
     public LineRenderer lineRenderer;
 
     private int curveCount = 0;
     private int layerOrder = 0;
     private int SEGMENT_COUNT = 50;
-     public float linepapa=0.99993f;
+    public float linepapa = 0.99993f;
 
 
     void Start()
@@ -20,36 +19,34 @@ public class Bezier : MonoBehaviour
             lineRenderer = GetComponent<LineRenderer>();
         }
         lineRenderer.sortingLayerID = layerOrder;
-        print(controlPoints.Length);
         curveCount = (int)controlPoints.Length / 3;
-
-               rend = GetComponent<Renderer>();
-//        rend.material.shader = Shader.Find("SoftParticlesFactor");
     }
 
     void Update()
     {
-//        Color shininess = new Color(1.0F, 1.0F, 1.0F,1-linepapa);
-//      rend.material.SetColor("_TintColor", shininess);
+        // print(Time.deltaTime);
         DrawCurve();
+
     }
 
     void DrawCurve()
     {
-        for (int j = 0; j <curveCount; j++)
+        for (int j = 0; j < curveCount; j++)
         {
             for (int i = 1; i <= SEGMENT_COUNT; i++)
             {
                 float t = i / (float)SEGMENT_COUNT;
 
-                linepapa= Time.time% 1;
-
-//                if(t>linepapa){
-//                    t=linepapa;
-//                }
-
+                linepapa = Time.time % 1;
+                //                if(linepapa>1){
+                //                    linepapa=0.01f;
+                //                }
+                if (t > linepapa)
+                {
+                    t = linepapa;
+                }
                 int nodeIndex = j * 3;
-                Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints [nodeIndex].position, controlPoints [nodeIndex + 1].position, controlPoints [nodeIndex + 2].position, controlPoints [nodeIndex + 3].position);
+                Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints[nodeIndex].position, controlPoints[nodeIndex + 1].position, controlPoints[nodeIndex + 2].position, controlPoints[nodeIndex + 3].position);
                 lineRenderer.SetVertexCount(((j * SEGMENT_COUNT) + i));
                 lineRenderer.SetPosition((j * SEGMENT_COUNT) + (i - 1), pixel);
             }

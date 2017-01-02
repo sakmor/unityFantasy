@@ -59,7 +59,7 @@ collisionCubes = new GameObject[28];
 var nametextScreenPos: Vector3;
 var targetName: String = "";
 var startPos: Vector3;
-
+var targetLine: GameObject;
 
 //-------------------
 //與AI相關的參數
@@ -88,6 +88,8 @@ function Start() {
     bioAction = "Wait";
     handCube = 0;
     mainGame = GameObject.Find("mainGame");
+    targetLine = Instantiate(GameObject.Find("targetLine"));
+    targetLine.transform.parent = this.transform;
     Sphere3 = Instantiate(GameObject.Find("Sphere3"));
     Sphere3.name = this.name + '_Sphere3';
     Sphere3.transform.parent = GameObject.Find("Biology/Items").transform;
