@@ -236,7 +236,7 @@ function _movment() {
         }
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
         var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
-        if (SphereDistance > 0.05   ) {
+        if (SphereDistance > 0.05) {
             this.bioAction = "Walk";
             if (SphereDistance < 1) {
                 Sphere2 = Sphere3.transform.position;
@@ -244,6 +244,11 @@ function _movment() {
                 if (Sphere2Distance < 1) {
                     // Debug.Log("PathfindingCS");
                     Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+                    if (Sphere2 == Vector3(-999, -999, -999)) {
+                        maingameJS.logg("目前無法移動至該處");
+                        Sphere2 = this.transform.position;
+                        Sphere3.transform.position = this.transform.position;
+                    }
                     GameObject.Find("Sphere2").transform.position = Sphere2;
                     GameObject.Find("Sphere2").transform.position.y = 1;
                 }

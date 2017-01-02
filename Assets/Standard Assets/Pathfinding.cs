@@ -13,12 +13,13 @@ public class Pathfinding : MonoBehaviour
 
     void Awake()
     {
+
         grid = GetComponent<Grid>();
+        grid.CreateGrid();
     }
 
     public Vector3 FindPath_Update(Transform aseeker, Transform atarget)
     {
-        grid.CreateGrid();
         transform.position = new Vector3(Mathf.Floor(aseeker.position.x), 0, Mathf.Floor(aseeker.position.z));
         grid.gridWorldSizeShift = new Vector2(Mathf.Floor(aseeker.position.x), Mathf.Floor(aseeker.position.z));
         grid.CreateGrid();
@@ -84,8 +85,6 @@ public class Pathfinding : MonoBehaviour
             if (node == targetNode)
             {
                 RetracePath(startNode, targetNode);
-
-
                 //取得最近可以走得node
                 foreach (Node neighbour in grid.GetNeighbours(startNode))
                 {
@@ -100,10 +99,13 @@ public class Pathfinding : MonoBehaviour
                         }
                         break;
                     }
+
                 }
+
                 return;
 
             }
+
 
             foreach (Node neighbour in grid.GetNeighbours(node))
             {
@@ -125,6 +127,8 @@ public class Pathfinding : MonoBehaviour
             }
 
         }
+        nextPos = new Vector3(-999, -999, -999);
+        return;
     }
 
     void RetracePath(Node startNode, Node endNode)
