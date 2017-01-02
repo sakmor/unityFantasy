@@ -58,15 +58,26 @@ collisionCubes = new GameObject[28];
 
 var nametextScreenPos: Vector3;
 var targetName: String = "";
-var lastPathtime: float;
+var startPos: Vector3;
 
+
+//-------------------
+//與AI相關的參數
+var runBackDist = 15;
+var runBack = false;
+var seeMax = 10;
+var catchSpeed = 0.05;
+var attackCoolDown = 3000;
+var dectefrequency = 1.00;
+var bais: Number;
+//-------------------
 //Pick           --在玩家面前的選取框
 //PickPlayer     --玩家所在的位置
 //PickTouch      --滑鼠點選地面位置,或是點擊的Cube選取框
 
 
 function Start() {
-
+    bais = Mathf.Floor(Random.value * 10);
     nameText = Instantiate(GameObject.Find("nameText"));
     nameText.name = this.name + "_nameText";
     nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
@@ -104,6 +115,7 @@ function Start() {
         collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
         collisionCubes[i].GetComponent. < Renderer>().enabled = false;
     }
+    startPos = this.transform.position;
     //更新pick狀態
     _pick();
     //抓取動作檔案
@@ -134,7 +146,7 @@ function updateUI() {
 
 function BioUpdate() {
     if (this.name != maingameJS.Player.name) {
-        this._catchPlayer();
+        this._catchPlayer(5 + bais);
         this._movment();
         this._bioStatus();
     }
@@ -188,6 +200,7 @@ function _bioStatus() {
                 break;
             case "Wait":
                 anim.CrossFade("Wait");
+                runBack = false;
                 Sphere2 = this.transform.position;
                 Sphere3.GetComponent. < Renderer>().enabled = false;
                 break;
@@ -325,48 +338,54 @@ function AnimationClip() {
     this.GetComponent. < Rigidbody>().freezeRotation = true;
 }
 
-function _catchPlayer() {
-    var seeMax = 15;
-    var catchSpeed = 0.05;
+function _catchPlayer(n: float) {
+    if (10 * Time.fixedTime % n < 0.05) {
+        var playerDistance = Vector3.Distance(maingameJS.Player.transform.position, this.transform.position);
+        var startPosDis = Vector3.Distance(this.transform.position, startPos);
 
-    var attackCoolDown = 3000;
-    var playerDistance = Vector3.Distance(maingameJS.Player.transform.position, this.transform.position);
-
-
-    if (playerDistance < seeMax) {
-
-        if (targetName != maingameJS.Player.name) {
-            targetName = maingameJS.Player.name;
-            maingameJS.logg(this.name + "開始追擊你了");
+        if (startPosDis > runBackDist) {
+            _runback();
         }
-        if (playerDistance > attackDistance) {
-            this.Sphere3.transform.position = maingameJS.Player.transform.position;
-        }
+        if (playerDistance < seeMax && !runBack) {
 
-        this.moveSpeedMax = catchSpeed;
-        nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.red;
-
-        if (playerDistance < attackDistance) {
-            if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
-                lastAttackTime = Time.time * 1000;
-                this.Sphere3.transform.position = this.transform.position;
-                nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.yellow;
-                bioAction = "Attack";
-                maingameJS.logg(this.name + "攻擊！");
+            if (targetName != maingameJS.Player.name) {
+                targetName = maingameJS.Player.name;
+                maingameJS.logg(this.name + "開始追擊你了");
             }
+            if (playerDistance > attackDistance) {
+                this.Sphere3.transform.position = maingameJS.Player.transform.position;
+            }
+
+            this.moveSpeedMax = catchSpeed;
+            nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.red;
+
+            if (playerDistance < attackDistance) {
+                if (Time.time * 1000 - lastAttackTime > attackCoolDown) {
+                    lastAttackTime = Time.time * 1000;
+                    this.Sphere3.transform.position = this.transform.position;
+                    nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.yellow;
+                    bioAction = "Attack";
+                    maingameJS.logg(this.name + "攻擊！");
+                }
+            }
+        } else {
+            if (targetName != "") {
+                targetName = "";
+                maingameJS.logg(this.name + "放棄追擊你");
+                _runback();
+            }
+            nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.white;
+            //        this.Sphere3.transform.position = this.transform.position;
+            //        this.Sphere3.transform.position.y = 1;
+            //        maingameJS.logg("here");
+
         }
-    } else {
-        if (targetName != "") {
-            targetName = "";
-            maingameJS.logg(this.name + "放棄追擊你");
-        }
-        nameText.GetComponent. < UnityEngine.UI.Text>().color = Color.white;
-        //        this.Sphere3.transform.position = this.transform.position;
-        //        this.Sphere3.transform.position.y = 1;
-        //        maingameJS.logg("here");
+
 
     }
+}
 
-
-
+function _runback() {
+    runBack = true;
+    this.Sphere3.transform.position = startPos;
 }

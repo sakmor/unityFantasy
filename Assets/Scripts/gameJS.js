@@ -123,6 +123,7 @@ var camera2: Camera;
 var lastCameraPos: Vector3;
 
 function Start() {
+    Debug.Log(Mathf.Floor(Random.value * 10));
 
     //把所有旗標是biology的物件都加biology.js
 
@@ -171,7 +172,7 @@ function Start() {
 
 function Update() {
 
-    allBioupdate();
+    allBioupdate(1);
 
 
     mainCamera2.transform.position = mainCamera.transform.position;
@@ -792,12 +793,11 @@ function checkArray(a: Vector3) {
 
 
 
-function allBioupdate() {
+function allBioupdate(n: float) {
 
     for (var thisBiology: GameObject in allBiologys) {
         thisBiology.GetComponent(biology).BioUpdate();
     }
-
 
 }
 
