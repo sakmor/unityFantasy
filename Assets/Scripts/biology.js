@@ -82,14 +82,11 @@ function Start() {
     nameText.name = this.name + "_nameText";
     nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
 
-    nameText.GetComponent. < UnityEngine.UI.Text>().text = this.name;
 
-    anim = GetComponent. < Animation>();
     bioAction = "Wait";
     handCube = 0;
     mainGame = GameObject.Find("mainGame");
-    targetLine = Instantiate(GameObject.Find("targetLine"));
-    targetLine.transform.parent = this.transform;
+
     Sphere3 = Instantiate(GameObject.Find("Sphere3"));
     Sphere3.name = this.name + '_Sphere3';
     Sphere3.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -118,12 +115,18 @@ function Start() {
         collisionCubes[i].GetComponent. < Renderer>().enabled = false;
     }
     startPos = this.transform.position;
+
+    targetLine = Instantiate(GameObject.Find("targetLine"));
+    targetLine.transform.parent = this.transform;
+    // targetLine.GetComponent. < Bezier>().Size = 4;
+
     //更新pick狀態
     _pick();
     //抓取動作檔案
     AnimationClip();
     dynamicCollision();
-
+    nameText.GetComponent. < UnityEngine.UI.Text>().text = this.name;
+    anim = GetComponent. < Animation>();
 }
 
 function Update() {
