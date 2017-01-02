@@ -232,7 +232,7 @@ function _movment() {
     //如果使用者點擊螢幕操作
     else {
         if (maingameJS.Player.name == this.name) {
-            // Sphere3.GetComponent. < Renderer>().enabled = true;
+            Sphere3.GetComponent. < Renderer>().enabled = true;
         }
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3.transform.position);
         var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
@@ -249,8 +249,8 @@ function _movment() {
                         Sphere2 = this.transform.position;
                         Sphere3.transform.position = this.transform.position;
                     }
-                    GameObject.Find("Sphere2").transform.position = Sphere2;
-                    GameObject.Find("Sphere2").transform.position.y = 1;
+                    // GameObject.Find("Sphere2").transform.position = Sphere2;
+                    // GameObject.Find("Sphere2").transform.position.y = 1;
                 }
 
             }

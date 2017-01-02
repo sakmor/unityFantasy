@@ -13,16 +13,14 @@ public class Pathfinding : MonoBehaviour
 
     void Awake()
     {
-
         grid = GetComponent<Grid>();
-        grid.CreateGrid();
     }
 
     public Vector3 FindPath_Update(Transform aseeker, Transform atarget)
     {
         transform.position = new Vector3(Mathf.Floor(aseeker.position.x), 0, Mathf.Floor(aseeker.position.z));
-        grid.gridWorldSizeShift = new Vector2(Mathf.Floor(aseeker.position.x), Mathf.Floor(aseeker.position.z));
-        grid.CreateGrid();
+        // grid.gridWorldSizeShift = new Vector2(Mathf.Floor(aseeker.position.x), Mathf.Floor(aseeker.position.z));
+        grid.gridWorldSizeShift = new Vector3(0, 0, 0);
         FindPath(aseeker.position, atarget.position);
         return nextPos;
     }

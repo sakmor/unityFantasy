@@ -165,6 +165,7 @@ function Start() {
     loadResources();
     loadGame();
     mouseOrbitSet();
+    GameObject.Find("aStart").GetComponent(Grid).CreateGrid();
 
 }
 
