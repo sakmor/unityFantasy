@@ -136,9 +136,9 @@ public class editorMenuCS : MonoBehaviour
             {
                 Vector3 temp;
                 temp = respawn.transform.position;
-                temp.x = Mathf.Floor(temp.x + 0.5f);
-                temp.z = Mathf.Floor(temp.z + 0.5f);
-                temp.y = Mathf.Floor(temp.y + 0.5f);
+                temp.x = Mathf.Floor(temp.x );
+                temp.z = Mathf.Floor(temp.z );
+                temp.y = Mathf.Floor(temp.y )+ 0.5f;
                 respawn.transform.position = temp;
                 respawn.transform.eulerAngles = new Vector3(-90, 0, 0);
                 respawn.name = respawn.transform.position.ToString("F0");
@@ -164,7 +164,39 @@ public class editorMenuCS : MonoBehaviour
         UnityEditor.EditorUtility.DisplayDialog("Normalized End ", " --=== Normalized End ===--", "OK");
         Debug.Log("Normalized:" + step);
         Debug.Log("DestroyImmediate:" + ss);
+    }
+    [MenuItem("[Menu]/show|hide-SMP")]
+    static void showHideSmp()
+    {
 
+        GameObject[] smps;
+        smps = GameObject.FindGameObjectsWithTag("SMP");
+
+        if (smps.Length > 0)
+        {
+            Debug.Log("hided");
+            //hide
+            foreach (GameObject smp in smps)
+            {
+                DestroyImmediate(smp);
+            }
+        }
+        else
+        {
+            Debug.Log("showed");
+            //show
+            GameObject[] respawns;
+            respawns = GameObject.FindGameObjectsWithTag("Cube_WalkSMP");
+            foreach (GameObject respawn in respawns)
+            {
+                GameObject temp = Instantiate(GameObject.Find("tempPick2"));
+                temp.transform.parent = GameObject.Find("WalkSMP").transform;
+                temp.tag = ("SMP");
+                temp.transform.position = respawn.transform.position;
+                temp.name = respawn.name + "_SMP";
+                respawns = Selection.gameObjects;
+            }
+        }
     }
 
 }

@@ -1,8 +1,8 @@
 // 將您的設定放入此檔案中以覆寫預設值和使用者設定。
 {
-      "editor.fontFamily": "'SF Mono','蘋方-繁', 'Courier New', monospace",
-      "editor.mouseWheelZoom": true,
-       "files.exclude": {
+    "editor.fontFamily": "'SF Mono','蘋方-繁', 'Courier New', monospace",
+    "editor.mouseWheelZoom": true,
+    "files.exclude": {
         "**/.git": true,
         "**/.DS_Store": true,
         "**/*.meta": true,
@@ -17,7 +17,13 @@
         "**/**.prefab": true,
         "**/Library": true,
         "**/ProjectSettings": true,
-        "**/Temp": true
+        "**/Temp": true,
+        "formatOnSave.on": true,
+        "formatOnSave.extensions": [
+            "js",
+            "java",
+            "php",
+            "CS"
+        ]
     }
 }
-
