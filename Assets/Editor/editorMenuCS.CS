@@ -136,9 +136,9 @@ public class editorMenuCS : MonoBehaviour
             {
                 Vector3 temp;
                 temp = respawn.transform.position;
-                temp.x = Mathf.Floor(temp.x );
-                temp.z = Mathf.Floor(temp.z );
-                temp.y = Mathf.Floor(temp.y )+ 0.5f;
+                temp.x = Mathf.Floor(temp.x);
+                temp.z = Mathf.Floor(temp.z);
+                temp.y = Mathf.Floor(temp.y) + 0.5f;
                 respawn.transform.position = temp;
                 respawn.transform.eulerAngles = new Vector3(-90, 0, 0);
                 respawn.name = respawn.transform.position.ToString("F0");
