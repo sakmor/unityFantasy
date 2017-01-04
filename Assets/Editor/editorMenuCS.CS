@@ -120,4 +120,51 @@ public class editorMenuCS : MonoBehaviour
         }
     }
 
+    [MenuItem("[Menu]/Normalized")]
+    static void Normalized()
+    {
+        GameObject[] respawns;
+        respawns = Selection.gameObjects;
+        if (respawns.Length == 1)
+        {
+            UnityEditor.EditorUtility.DisplayDialog("oh,Come on ?", " Select GameObject First!", "OK");
+        }
+        var step = 0;
+        foreach (GameObject respawn in respawns)
+        {
+            if (respawn.tag == "Cube" || respawn.tag == "Cube_WalkSMP")
+            {
+                Vector3 temp;
+                temp = respawn.transform.position;
+                temp.x = Mathf.Floor(temp.x + 0.5f);
+                temp.z = Mathf.Floor(temp.z + 0.5f);
+                temp.y = Mathf.Floor(temp.y + 0.5f);
+                respawn.transform.position = temp;
+                respawn.transform.eulerAngles = new Vector3(-90, 0, 0);
+                respawn.name = respawn.transform.position.ToString("F0");
+            }
+        }
+        int ss = 0;
+        respawns = Selection.gameObjects;
+        foreach (GameObject respawnA in respawns)
+        {
+            foreach (GameObject respawnB in respawns)
+            {
+                if (respawnB != respawnA)
+                {
+                    if (respawnB.name == respawnA.name)
+                    {
+                        DestroyImmediate(respawnB);
+                        ss++;
+                    }
+                }
+            }
+        }
+
+        UnityEditor.EditorUtility.DisplayDialog("Normalized End ", " --=== Normalized End ===--", "OK");
+        Debug.Log("Normalized:" + step);
+        Debug.Log("DestroyImmediate:" + ss);
+
+    }
+
 }
