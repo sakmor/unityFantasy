@@ -28,14 +28,15 @@ public class editorMenuCS : MonoBehaviour
         {
             GameObject temp = Instantiate(GameObject.Find("Cube"));//todo:Cube可以不需要用Find的方式
             Vector3 tempVector3 = new Vector3(scene.cubeArray[i], scene.cubeArray[i + 1], scene.cubeArray[i + 2]);
+            temp.transform.parent = Cubes.transform;
             temp.transform.position = tempVector3;
-
+            temp.name = temp.transform.position.ToString("F0");
             temp.GetComponent<MeshRenderer>().receiveShadows = true;
             temp.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent<Renderer>().enabled = true;
 
-            //fixme:目前這版沒辦法指定正確mesh
-            temp.GetComponent<MeshFilter>().mesh = Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3]) as Mesh;
+            Mesh mesh = (Mesh)Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3], typeof(Mesh));
+            temp.GetComponent<MeshFilter>().mesh = mesh;
 
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
