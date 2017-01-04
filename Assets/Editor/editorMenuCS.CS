@@ -102,4 +102,22 @@ public class editorMenuCS : MonoBehaviour
 
     }
 
+    [MenuItem("[Menu]/clearMap")]
+    static void clearMap()
+    {
+        //讀取json檔案
+        TextAsset json = Resources.Load("scene/s998") as TextAsset;
+        scene scene = new scene();
+        scene = JsonUtility.FromJson<scene>(json.text);
+
+        for (var i = 0; i < scene.cubeArray.Count; i += 5)
+        {
+            Vector3 temp;
+            temp.x = scene.cubeArray[i];
+            temp.y = scene.cubeArray[i + 1];
+            temp.z = scene.cubeArray[i + 2];
+            DestroyImmediate(GameObject.Find(temp.ToString("F0")));
+        }
+    }
+
 }
