@@ -5,7 +5,11 @@ using System.Collections.Generic;
 
 public class editorMenuCS : MonoBehaviour
 {
-
+    public class biologyList
+    {
+        public List<string> drawNumber = new List<string>();
+        public List<float> biodata = new List<float>();
+    }
     // [Serializable]
     public class scene
     {
@@ -123,6 +127,10 @@ public class editorMenuCS : MonoBehaviour
     [MenuItem("[Menu]/Normalized")]
     static void Normalized()
     {
+        TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
+        biologyList biologyList = JsonUtility.FromJson<biologyList>(json.text);
+        Debug.Log(biologyList.drawNumber[0]);
+
         GameObject[] respawns;
         respawns = Selection.gameObjects;
         if (respawns.Length == 1)

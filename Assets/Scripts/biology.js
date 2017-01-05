@@ -261,7 +261,7 @@ function _movment() {
             } else {
                 if (Sphere2Distance < 1) {
                     // Debug.Log("PathfindingCS");
-                    Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
+                    // Sphere2 = maingameJS.PathfindingCS.FindPath_Update(this.transform, Sphere3.transform);
                     if (Sphere2 == Vector3(-999, -999, -999)) {
                         maingameJS.logg("目前無法移動至該處");
                         Sphere2 = this.transform.position;

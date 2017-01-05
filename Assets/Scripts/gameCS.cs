@@ -12,7 +12,7 @@ public class gameCS : MonoBehaviour
     GameObject cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText;
 
     //Dictionary、Array----------------------------
-    List<int> cubeArrayTxt;
+    List<string> cubeArrayTxt;
     GameObject[] allBiologys;
     Dictionary<Vector3, Vector2> cubesPosDictionary =
                new Dictionary<Vector3, Vector2>();
@@ -79,8 +79,166 @@ public class gameCS : MonoBehaviour
         fellowPlayerCameraMove();
         fellowPlayerCameraContorl();
         lineDecte();
-        // buttonDetect();
+        buttonDetect();
     }
+
+    void buttonDetect()
+    {
+
+        if (touchScreen)
+        {
+            lineDecte();
+            //取得按壓的物件名稱
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                hitUIObject = EventSystem.current.currentSelectedGameObject;
+                if (hitUIObject)
+                {
+                    hitUIObjectName = hitUIObject.name;
+                }
+            }
+            else if (EventSystem.current.IsPointerOverGameObject(0))
+            {
+                hitUIObject = EventSystem.current.currentSelectedGameObject;
+                if (hitUIObject)
+                {
+                    hitUIObjectName = hitUIObject.name;
+                }
+            }
+
+            //取得首次點擊座標
+            if (!clickStart)
+            {
+                clickStart = true;
+                mouseStartPOS = myIputPostion;
+            }
+            //如果點選到了攝影機搖桿
+            if (hitUIObjectName == "cammeraPlate")
+            {
+                Sprite _sprite = hitUIObject.GetComponent<Image>().sprite;
+                Rect _rect = hitUIObject.GetComponentInParent<RectTransform>().rect;
+                Vector2 temp;
+                Color UIObjectRGB;
+                Vector2 imageScale = hitUIObject.GetComponent<RectTransform>().localScale;
+
+
+                //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5f;
+                temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5f;
+
+                UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
+                {
+                    cammeraPlatein2out = true;
+                    cammeraPlateMouse.transform.position = myIputPostion;
+                }
+                else if (cammeraPlatein2out)
+                {
+                    //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                    Vector2 a = new Vector2(myIputPostion.x, myIputPostion.y);
+                    Vector2 b = new Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                    Vector3 c = new Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5f);
+                    Vector2 x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                    cammeraPlateMouse.transform.position = new Vector3(x.x, x.y, 0);
+                }
+
+                //控制攝影機--香菇頭左右
+                mainCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
+
+                //控制攝影機--香菇頭上下
+                var camera2PlayerVector = mainCamera.transform.position - Player.transform.position;
+                var tempVector = camera2PlayerVector;
+                tempVector.y = 0;
+                tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
+
+                //限制攝影機上下移動的角度
+                if (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y < 0)
+                {
+                    if (Vector3.Angle(camera2PlayerVector, Vector3.up) >= 10)
+                    {
+                        mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                    }
+                }
+                else
+                    if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
+                {
+                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                }
+
+                //更新攝影機與目標的相對位置
+                cameraRELtarget = mainCamera.transform.position - Player.transform.position;
+
+            }
+            //如果點選到了移動搖桿
+            if (hitUIObjectName == "movePlate")
+            {
+
+                Sprite _sprite = hitUIObject.GetComponent<Image>().sprite;
+                Rect _rect = hitUIObject.GetComponent<RectTransform>().rect;
+                Vector3 imageScale = hitUIObject.GetComponent<RectTransform>().localScale;
+
+                Vector2 temp;
+                //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5f;
+                temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5f;
+                Color UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
+                {
+                    movePlatein2out = true;
+                    movePlateMouse.transform.position = myIputPostion;
+                }
+                else if (movePlatein2out)
+                {
+                    //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                    Vector2 a = new Vector2(myIputPostion.x, myIputPostion.y);
+                    Vector2 b = new Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                    Vector3 c = new Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5f);
+                    Vector2 x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                    cammeraPlateMouse.transform.position = new Vector3(x.x, x.y, 0);
+                }
+
+                //控制生物移動
+                if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0)
+                {
+                    mouseDragVector.x = (myIputPostion.x - mouseStartPOS.x) * 2.5f;
+                    mouseDragVector.z = (myIputPostion.y - mouseStartPOS.y) * 2.5f;
+                }
+            }
+
+        }
+        else
+        {
+            cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
+            movePlateMouse.transform.position = movePlate.transform.position;
+            hitUIObject = null;
+            //放開滑鼠時...如果前一個按鍵removePlate，則移除
+            //放開滑鼠時...如果前一個按鍵cubePlate，則新增
+            if (hitUIObjectName != "")
+            {
+                if (hitUIObjectName == "removePlate")
+                {
+                    playerBioCS.bioAction = "Action";
+                }
+                if (hitUIObjectName == "cubePlate")
+                {
+                    playerBioCS.bioAction = "Create";
+                }
+                if (hitUIObjectName == "movePlate")
+                {
+                    playerBioCS.Sphere2 = playerBioCS.transform.position;
+                    playerBioCS.Sphere3 = playerBioCS.transform.position;
+                }
+                hitUIObjectName = "";
+            }
+            clickStart = false;
+            cammeraPlatein2out = false;
+            movePlatein2out = false;
+        }
+
+    }
+
     //todo:要在角色或攝影機有移動時才徵測
     void lineDecte()
     {
@@ -215,15 +373,15 @@ public class gameCS : MonoBehaviour
         Mesh tempMesh = new Mesh();
 
         //todo：之後要讀設定檔
-        cubeArrayTxt.Add(10001);
-        cubeArrayTxt.Add(10002);
-        cubeArrayTxt.Add(10003);
-        cubeArrayTxt.Add(10004);
-        cubeArrayTxt.Add(10005);
-        cubeArrayTxt.Add(10017);
-        cubeArrayTxt.Add(10020);
-        cubeArrayTxt.Add(10045);
-        cubeArrayTxt.Add(10098);
+        // cubeArrayTxt.Add("10001");
+        // cubeArrayTxt.Add("10002");
+        // cubeArrayTxt.Add("10003");
+        // cubeArrayTxt.Add("10004");
+        // cubeArrayTxt.Add("10005");
+        // cubeArrayTxt.Add("10017");
+        // cubeArrayTxt.Add("10020");
+        // cubeArrayTxt.Add("10045");
+        // cubeArrayTxt.Add("10098");
 
     }
     void setBio()
@@ -236,7 +394,7 @@ public class gameCS : MonoBehaviour
 
         TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
         biologyList = JsonUtility.FromJson<biologyList>(json.text);
-
+        Debug.Log(biologyList.drawNumber[0]);
     }
 
     void loadGame()
@@ -388,6 +546,72 @@ public class gameCS : MonoBehaviour
         temp.z = Mathf.Floor(pos.z + 0.5f);
         temp.y = Mathf.Floor(pos.y + 0.5f) + 0.5f;
         return temp;
+    }
+    Vector2 getIntersections(float ax, float ay, float bx, float by, float cx, float cy, float cz)
+    {
+        float[] a = { ax, ay }, b = { bx, by }, c = { cx, cy, cz };
+        // Calculate the euclidean distance between a & b
+        float eDistAtoB = Mathf.Sqrt(Mathf.Pow(b[0] - a[0], 2) + Mathf.Pow(b[1] - a[1], 2));
+
+
+        // compute the direction vector d from a to b
+        float[] d = { (b[0] - a[0]) / eDistAtoB, (b[1] - a[1]) / eDistAtoB };
+
+
+        // Now the line equation is x = dx*t + ax, y = dy*t + ay with 0 <= t <= 1.
+
+        // compute the value t of the closest point to the circle center (cx, cy)
+        var t = (d[0] * (c[0] - a[0])) + (d[1] * (c[1] - a[1]));
+
+
+        // compute the coordinates of the point e on line and closest to c
+        var ecoords0 = (t * d[0]) + a[0];
+        var ecoords1 = (t * d[1]) + a[1];
+
+        // Calculate the euclidean distance between c & e
+        var eDistCtoE = Mathf.Sqrt(Mathf.Pow(ecoords0 - c[0], 2) + Mathf.Pow(ecoords1 - c[1], 2));
+
+        // test if the line intersects the circle
+        if (eDistCtoE < c[2])
+        {
+            // compute distance from t to circle intersection point
+            var dt = Mathf.Sqrt(Mathf.Pow(c[2], 2) - Mathf.Pow(eDistCtoE, 2));
+
+            // compute first intersection point
+            var fcoords0 = ((t - dt) * d[0]) + a[0];
+            var fcoords1 = ((t - dt) * d[1]) + a[1];
+            // check if f lies on the line
+            //        f.onLine = is_on(a, b, f.coords);
+
+            // compute second intersection point
+            var gcoords0 = ((t + dt) * d[0]) + a[0];
+            var gcoords1 = ((t + dt) * d[1]) + a[1];
+            Vector2 finalAnswer = new Vector2(fcoords0, fcoords1);
+
+            // check if g lies on the line
+            return (finalAnswer);
+
+
+        }
+        return (new Vector2());
+        /*
+        else if ((int)(eDistCtoE) == (int)(c[2]))
+        {
+            // console.log("Only one intersection");
+            // return {
+            //            points: false,
+            //            pointOnLine: e
+            // };
+        }
+        else
+        {
+            // console.log("No intersection");
+            // return {
+            //            points: false,
+            //            pointOnLine: e
+            // };
+        }
+        */
     }
 }
 public class scene

@@ -4,28 +4,15 @@
         "Cha_Knight"
     ],
     "biodata": [
-        20, //--m101
+        20.0,
         0.28,
         0.4,
         0.55,
         2.5,
-        40, //--Cha_Knight
-        41,
-        25,
-        80,
+        40.0,
+        41.0,
+        25.0,
+        80.0,
         0.02
     ]
 }
-/*
-    public class biologyList
-    {
-        public string[] drawNumber;
-        public float[] biodata;
-    }
-
-    [0]   WalkStep;
-    [1]   boxCollider.center.Y
-    [2]   boxCollider.size.XZ
-    [3]   boxCollider.size.Y
-    [4]   bodyScale'
-*/
