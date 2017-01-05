@@ -18,34 +18,28 @@ public class gameCS : MonoBehaviour
 
     //boolean----------------------------
     public bool touchScreen;
-    bool cammeraPlatein2out, movePlatein2out, clickStart;
+    public bool cammeraPlatein2out, movePlatein2out, clickStart;
 
     //String----------------------------
     public string hitUIObjectName = "";
 
     //Vector2、Vector3----------------------------
-    Vector2 myIputPostion;
-    public Vector3 cameraRELtarget;
-    Vector3 lastCameraPos, mouseStartPOS, mouseDragVector;
+    public Vector2 myIputPostion;
+    public Vector3 cameraRELtarget, mouseDragVector;
+    Vector3 lastCameraPos, mouseStartPOS;
 
     //Script 自定義----------------------------
-    Pathfinding PathfindingCS;
+    public Pathfinding PathfindingCS;
     biologyCS playerBioCS;
-    TextAsset biologyList;
+    public biologyList biologyList;
 
     //UnityEngine ----------------------------
     Camera camera1, camera2;
     // Use this for initialization
     void Start()
     {
-        //將所有生物套上biologyCS;
-        allBiologys = GameObject.FindGameObjectsWithTag("biology");
-        foreach (GameObject thisBiology in allBiologys)
-        {
-            thisBiology.AddComponent<biologyCS>();
-        }
+        setBio();
 
-        biologyList = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
         logText = GameObject.Find("logText");
         logg("This Device is:" + SystemInfo.deviceType);
 
@@ -77,7 +71,7 @@ public class gameCS : MonoBehaviour
     {
         // allBioupdate(1);
         mainCamera2.transform.position = mainCamera.transform.position;
-        mainCamera2.GetComponent<Camera>().fieldOfView = mainCamera.GetComponent(Camera).fieldOfView;
+        mainCamera2.GetComponent<Camera>().fieldOfView = mainCamera.GetComponent<Camera>().fieldOfView;
         mouseOrTouch();
         inputHitScene();
         // isCameraPosMove();
@@ -88,7 +82,7 @@ public class gameCS : MonoBehaviour
     int loggLine = 0;
     int loggLineMax = 10;
 
-    void logg(string n)
+    public void logg(string n)
     {
         if (loggLine == loggLineMax)
         {
@@ -134,6 +128,18 @@ public class gameCS : MonoBehaviour
         cubeArrayTxt.Add(10020);
         cubeArrayTxt.Add(10045);
         cubeArrayTxt.Add(10098);
+
+    }
+    void setBio()
+    {        //將所有生物套上biologyCS;
+        allBiologys = GameObject.FindGameObjectsWithTag("biology");
+        foreach (GameObject thisBiology in allBiologys)
+        {
+            thisBiology.AddComponent<biologyCS>();
+        }
+
+        TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
+        biologyList = JsonUtility.FromJson<biologyList>(json.text);
 
     }
 
@@ -204,37 +210,36 @@ public class gameCS : MonoBehaviour
     }
     void inputHitScene()
     {
-        /*
+        Plane groundPlane = new Plane();
+
         //點螢幕移動
         if (Input.GetMouseButtonUp(0))
         {
-            playerBioJS._pick();
-
             groundPlane.Set3Points(
-                Vector3(1.0, Player.transform.position.y, 0.0),
-                Vector3(0.0, Player.transform.position.y, 1.0),
-                Vector3(1.0, Player.transform.position.y, 1.0));
+               new Vector3(1.0f, Player.transform.position.y, 0.0f),
+               new Vector3(0.0f, Player.transform.position.y, 1.0f),
+               new Vector3(1.0f, Player.transform.position.y, 1.0f));
             //        mouseLineDecte();
 
             //滑鼠點擊取得做標點
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var rayDistance: float;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            float rayDistance;      //todo:這裡沒有指定距離真的沒問題？
             if (hitUIObjectName == "" &&
                 5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
-                groundPlane.Raycast(ray, rayDistance))
+                groundPlane.Raycast(ray, out rayDistance))
             {
                 var tempVector3 = ray.GetPoint(rayDistance);
-                tempVector3.x = Mathf.Floor(tempVector3.x + 0.5);
-                tempVector3.z = Mathf.Floor(tempVector3.z + 0.5);
-                tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5;
+                tempVector3.x = Mathf.Floor(tempVector3.x + 0.5f);
+                tempVector3.z = Mathf.Floor(tempVector3.z + 0.5f);
+                tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5f;
 
                 if (checkArray(tempVector3) != false)
                 {
                     var tempVector2: Vector2 = checkArray(tempVector3);
                     if (tempVector2.y == 1)
                     {
-                        playerBioJS.Sphere3.transform.position = ray.GetPoint(rayDistance);
-                        logg("前往座標：x:" + playerBioJS.Sphere3.transform.position.x.ToString("f2") + ",y:" + playerBioJS.Sphere3.transform.position.z.ToString("f2"));
+                        playerBioCS.Sphere3.transform.position = ray.GetPoint(rayDistance);
+                        logg("前往座標：x:" + playerBioCS.Sphere3.transform.position.x.ToString("f2") + ",y:" + playerBioCS.Sphere3.transform.position.z.ToString("f2"));
                     }
                     else
                     {
@@ -262,21 +267,21 @@ public class gameCS : MonoBehaviour
                     case "biology":
                         logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
                         //如果點擊到生物，停止移動
-                        playerBioJS.Sphere2 = Player.transform.position;
-                        playerBioJS.Sphere3.transform.position = Player.transform.position;
+                        playerBioCS.Sphere2 = Player.transform.position;
+                        playerBioCS.Sphere3.transform.position = Player.transform.position;
                         //如果點擊到生物，且該生物在攻擊範圍內
-                        if (playerBioJS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position))
+                        if (playerBioCS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position))
                         {
                             var targetDir = mouseHitPlane.transform.position - Player.transform.position;
                             var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
                             Player.transform.rotation = Quaternion.LookRotation(newDir);
-                            playerBioJS.bioAction = "Attack";
+                            playerBioCS.bioAction = "Attack";
                         }
                         break;
                 }
             }
 
-        }*/
+        }
     }
 }
 public class scene
@@ -286,3 +291,8 @@ public class scene
     public List<float> cubeArray = new List<float>();
 }
 
+public class biologyList
+{
+    public string[] drawNumber;
+    public float[] biodata;
+}
