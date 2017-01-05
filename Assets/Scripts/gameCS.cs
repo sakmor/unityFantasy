@@ -78,8 +78,77 @@ public class gameCS : MonoBehaviour
         isCameraPosMove();
         fellowPlayerCameraMove();
         fellowPlayerCameraContorl();
+        lineDecte();
         // buttonDetect();
     }
+    //todo:要在角色或攝影機有移動時才徵測
+    void lineDecte()
+    {
+        float yScaleUP = 1.25f;
+        Vector3 target = Player.transform.position;
+        target.y += yScaleUP;
+
+        Vector3 tempPick;
+        Vector3 tempPick2;
+        tempPick = target;
+        Vector3 myVector = target - mainCamera.transform.position;
+        float mylength = Mathf.Round(Vector3.Distance(target, mainCamera.transform.position));
+        Debug.DrawLine(target, mainCamera.transform.position);
+
+        for (var i = 0; i < mylength; i++)
+        {
+            tempPick = target - myVector.normalized * i;
+            tempPick2.x = Mathf.Floor(tempPick.x + 0.5f);
+            tempPick2.z = Mathf.Floor(tempPick.z + 0.5f);
+            tempPick2.y = Mathf.Floor(tempPick.y) + 0.5f;
+
+            if (GameObject.Find(tempPick.ToString("F0")) != false)
+            {
+                mainCamera2.transform.position = tempPick;
+                camera2.enabled = true;
+                camera1.enabled = false;
+                break;
+            }
+            else
+            {
+                camera1.enabled = true;
+                camera2.enabled = false;
+            }
+
+        }
+    }
+    //todo:好像沒用到了
+    // void mouseLineDecte()
+    // {
+    //     if (Input.GetMouseButtonUp(0))
+    //     {
+    //         Vector3 tempPick, tempPick2;
+    //         //滑鼠點擊取得做標點
+    //         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //         if (hitUIObjectName == "" &&
+    //             5.0f > Vector2.Distance(mouseStartPOS, Input.mousePosition))
+    //         {
+    //             for (var i = 0; i < Mathf.Floor(mainCamera.transform.position.y); i++)
+    //             {
+    //                 tempPick = ray.GetPoint(i);
+    //                 tempPick2.x = Mathf.Floor(tempPick.x + 0.5f);
+    //                 tempPick2.z = Mathf.Floor(tempPick.z + 0.5f);
+    //                 tempPick2.y = Mathf.Floor(tempPick.y) + 0.5f;
+
+    //                 if (GameObject.Find(tempPick2.ToString("F0")))
+    //                 {
+    //                     groundPlane.Set3Points(
+    //                         new Vector3(1.0f, tempPick.y + 0.5f, 0.0f),
+    //                         new Vector3(0.0f, tempPick.y + 0.5f, 1.0f),
+    //                         new Vector3(1.0f, tempPick.y + 0.5f, 1.0f));
+    //                     break;
+    //                 }
+    //             }
+    //         }
+
+
+    //     }
+    // }
 
     void fellowPlayerCameraContorl()
     {
