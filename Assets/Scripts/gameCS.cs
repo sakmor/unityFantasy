@@ -1,4 +1,5 @@
 ﻿using UnityEngine.EventSystems;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -111,27 +112,22 @@ public class gameCS : MonoBehaviour
         }
 
     }
-    int loggLine = 0;
-
-
     public void logg(string n)
     {
+        string tempString = logText.GetComponent<Text>().text;
+        string strReplace = tempString.Replace(System.Environment.NewLine, "");
+        int loggLine = tempString.Length - strReplace.Length;
+
         int loggLineMax = 10;
         if (loggLine == loggLineMax)
         {
             logText.GetComponent<Text>().text += '\n';
             logText.GetComponent<Text>().text += n;
             int firstLine = 0;
-            string tempString = logText.GetComponent<Text>().text;
+
             logText.GetComponent<Text>().text = "";
-            for (var i = 0; i < tempString.Length; i++)
-            {
-                if (tempString[i] == '\n')
-                {
-                    firstLine = i + 1;
-                    break;
-                }
-            }
+            firstLine = tempString.IndexOf('\n');
+
             for (; firstLine < tempString.Length; firstLine++)
             {
                 logText.GetComponent<Text>().text += tempString[firstLine];
@@ -142,9 +138,7 @@ public class gameCS : MonoBehaviour
         {
             logText.GetComponent<Text>().text += '\n';
             logText.GetComponent<Text>().text += n;
-            loggLine++;
         }
-
     }
     void loadResources()
     {
