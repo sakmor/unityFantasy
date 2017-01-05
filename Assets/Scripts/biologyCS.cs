@@ -61,7 +61,10 @@ public class biologyCS : MonoBehaviour
         bioAction = "Wait";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         Sphere3 = this.transform.position;
+
         setCollisionCubes();
+        dynamicCollision();
+        AnimationClip();
     }
     void setCollisionCubes()
     {
@@ -90,10 +93,11 @@ public class biologyCS : MonoBehaviour
                 for (int z = -1; z < 2; z++)
                 {
                     g++;
-                    // if (maingameCS.checkArray(Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z)) != false)
-                    // {
-                    //     collisionCubes[g].transform.position = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                    // }
+                    Vector3 temp = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
+                    if (GameObject.Find(temp.ToString("F0")))
+                    {
+                        collisionCubes[g].transform.position = temp;
+                    }
                 }
             }
         }
@@ -112,5 +116,45 @@ public class biologyCS : MonoBehaviour
         temp.z = Mathf.Floor(pos.z + 0.5f);
         temp.y = Mathf.Floor(pos.y + 0.5f) + 0.5f;
         return temp;
+    }
+
+    void AnimationClip()
+    {
+        string nameShort;
+        string[] animationsName = new string [] { "Attack", "Damage", "Dead", "Wait", "Walk" };
+        var bioName: String = this.name;
+        var bioFlodr: String;
+        if (bioName[0] == 'm')
+        {
+            bioFlodr = 'Biology';
+            nameShort = '' + bioName[0] + bioName[1] + bioName[2] + bioName[3];
+        }
+        else if (bioName[0] == 'C')
+        {
+            bioFlodr = 'char/' + bioName;
+            nameShort = bioName;
+        }
+
+        for (var name: String in animationsName)
+        {
+            var mdl: GameObject = Resources.Load(bioFlodr + "/Animation/" + nameShort + "@" + name);
+            var anim: Animation = this.GetComponent. < Animation > ();
+            var aClip = mdl.GetComponent. < Animation > ().clip;
+            anim.AddClip(aClip, name);
+        }
+
+        //讀取生物清單表
+        var array3dLoadJson = Json.Deserialize(maingameJS.biologyList.text) as Dictionary. < String,
+            System.Object >;
+        this.WalkSteptweek = ((array3dLoadJson[nameShort]) as List. < System.Object >)[0];
+        this.GetComponent. < BoxCollider > ().center.y = ((array3dLoadJson[nameShort]) as List. < System.Object >)[1];
+        this.GetComponent. < BoxCollider > ().size.x = ((array3dLoadJson[nameShort]) as List. < System.Object >)[2];
+        this.GetComponent. < BoxCollider > ().size.y = ((array3dLoadJson[nameShort]) as List. < System.Object >)[3];
+        this.GetComponent. < BoxCollider > ().size.z = ((array3dLoadJson[nameShort]) as List. < System.Object >)[2];
+        this.transform.localScale.x = ((array3dLoadJson[nameShort]) as List. < System.Object >)[4];
+        this.transform.localScale.y = ((array3dLoadJson[nameShort]) as List. < System.Object >)[4];
+        this.transform.localScale.z = ((array3dLoadJson[nameShort]) as List. < System.Object >)[4];
+
+        this.GetComponent. < Rigidbody > ().freezeRotation = true;
     }
 }
