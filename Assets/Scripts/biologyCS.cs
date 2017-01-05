@@ -38,15 +38,16 @@ public class biologyCS : MonoBehaviour
 	 * WalkSteptweek	生物步伐()
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
-    float lastActionTime, attackDistance, runBackDist, moveSpeedMax, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    public float WalkSteptweek;
-    Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3, nametextScreenPo;
+    float lastActionTime, runBackDist, moveSpeedMax, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+
+    public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
+    public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3, nametextScreenPo;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
     GameObject nameText;
     gameCS maingameCS;
 
-    string bioAction, targetName;
+    public string bioAction, targetName;
 
     Animation anim;
 
@@ -276,7 +277,247 @@ public class biologyCS : MonoBehaviour
 
     }
 
-    void updateUI()
+    void buttonDetect()
+    {
+
+        if (touchScreen)
+        {
+            lineDecte();
+            //取得按壓的物件名稱
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                hitUIObject = EventSystem.current.currentSelectedGameObject;
+                if (hitUIObject)
+                {
+                    hitUIObjectName = hitUIObject.name;
+                }
+            }
+            else if (EventSystem.current.IsPointerOverGameObject(0))
+            {
+                hitUIObject = EventSystem.current.currentSelectedGameObject;
+                if (hitUIObject)
+                {
+                    hitUIObjectName = hitUIObject.name;
+                }
+            }
+
+            //取得首次點擊座標
+            if (!clickStart)
+            {
+                clickStart = true;
+                mouseStartPOS = myIputPostion;
+            }
+            //如果點選到了攝影機搖桿
+            if (hitUIObjectName == 'cammeraPlate')
+            {
+                var _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+                var _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+                var temp: Vector2;
+                var UIObjectRGB: Color;
+                var imageScale: Vector2 = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+
+                //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+                temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+
+                UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
+                {
+                    cammeraPlatein2out = true;
+                    cammeraPlateMouse.transform.position = myIputPostion;
+                }
+                else if (cammeraPlatein2out)
+                {
+                    //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                    var a: Vector2 = Vector2(myIputPostion.x, myIputPostion.y);
+                    var b: Vector2 = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                    var c: Vector3 = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
+                    var x: Vector2 = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                    cammeraPlateMouse.transform.position.x = x.x;
+                    cammeraPlateMouse.transform.position.y = x.y;
+                }
+
+                //控制攝影機--香菇頭左右
+                mainCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
+
+                //控制攝影機--香菇頭上下
+                var camera2PlayerVector = mainCamera.transform.position - Player.transform.position;
+                var tempVector = camera2PlayerVector;
+                tempVector.y = 0;
+                tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
+
+                //限制攝影機上下移動的角度
+                if (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y < 0)
+                {
+                    if (Vector3.Angle(camera2PlayerVector, Vector3.up) >= 10)
+                    {
+                        mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                    }
+                }
+                else
+                    if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
+                {
+                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                }
+
+                //更新攝影機與目標的相對位置
+                cameraRELtarget = mainCamera.transform.position - Player.transform.position;
+
+            }
+            //如果點選到了移動搖桿
+            if (hitUIObjectName == 'movePlate')
+            {
+
+                _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+                _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+                imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+
+                //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+                temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+                UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
+                {
+                    movePlatein2out = true;
+                    movePlateMouse.transform.position = myIputPostion;
+                }
+                else if (movePlatein2out)
+                {
+                    //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
+                    a = Vector2(myIputPostion.x, myIputPostion.y);
+                    b = Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
+                    c = Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5);
+                    x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
+                    movePlateMouse.transform.position.x = x.x;
+                    movePlateMouse.transform.position.y = x.y;
+                }
+
+                //控制生物移動
+                if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0)
+                {
+                    mouseDragVector.x = (myIputPostion.x - mouseStartPOS.x) * 2.5;
+                    mouseDragVector.z = (myIputPostion.y - mouseStartPOS.y) * 2.5;
+                }
+            }
+            //如果點選到了CUBE按鈕
+            if (hitUIObjectName == 'cubePlate')
+            {
+                if (cubePlateTimer.transform.localScale.x < 0.95)
+                {
+                    cubePlateTimer.transform.localScale = Vector3.MoveTowards(cubePlateTimer.transform.localScale, Vector3(1, 1, 1), 0.05);
+                }
+                else
+                {
+                    itemBagJS.itemBagON = true;
+                }
+                _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+                _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+                imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+
+                //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+                temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+                UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
+                {
+                    cubePlatein2out = true;
+                    cubePlateMouse.transform.position = myIputPostion;
+                    pickTouchSide.transform.position = Vector3(-100, -100, 0.5);
+                }
+                else if (cubePlatein2out)
+                {
+                    //如果拖拉滑鼠盤脫離搖桿盤的範圍
+                    cubePlateMouse.transform.position = cubePlate.transform.position;
+                    cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+                    cubePlateTimer.transform.localScale = Vector3(0, 0, 0);
+                }
+            }
+
+            //如果點選到了CUBE按鈕
+            if (hitUIObjectName == 'cubePlate')
+            {
+                _sprite = hitUIObject.GetComponent. < UI.Image > ().sprite;
+                _rect = hitUIObject.GetComponent. < RectTransform > ().rect;
+                imageScale = hitUIObject.GetComponent. < RectTransform > ().localScale;
+
+
+                //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
+                temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5;
+                temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5;
+                UIObjectRGB = _sprite.texture.GetPixel(Mathf.FloorToInt(temp.x * _sprite.texture.width / (_rect.width * imageScale.x)), Mathf.FloorToInt(temp.y * _sprite.texture.height / (_rect.height * imageScale.y)));
+
+                if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
+                {
+                    cubePlatein2out = true;
+                    cubePlateMouse.transform.position = myIputPostion;
+                    pickTouchSide.transform.position = Vector3(-100, -100, 0.5);
+                }
+                else if (cubePlatein2out)
+                {
+                    //如果拖拉滑鼠盤脫離搖桿盤的範圍
+                    cubePlateMouse.transform.position = cubePlate.transform.position;
+                    cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 0.55;
+                    //                itemBag.GetComponent. < UI.RawImage > ().color.a = 0.0;
+                }
+            }
+            //如果點選到了itemBag介面
+            if (hitUIObjectName == 'itemBag')
+            {
+                itemBagJS.drag(mouseStartPOS, myIputPostion);
+            }
+
+            //如果點選到了itemBag介面
+            if (hitUIObjectName == '')
+            {
+                if (itemBagJS.itemBagON)
+                {
+                    itemBagJS.itemBagON = false;
+                }
+            }
+        }
+        else
+        {
+
+            cubePlateMouse.GetComponent. < UI.Graphic > ().color.a = 1.0;
+            cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
+            cubePlateMouse.transform.position = cubePlate.transform.position;
+            movePlateMouse.transform.position = movePlate.transform.position;
+            hitUIObject = null;
+            cubePlateTimer.transform.localScale = Vector3(0.0, 0.0, 1);
+            //放開滑鼠時...如果前一個按鍵removePlate，則移除
+            //放開滑鼠時...如果前一個按鍵cubePlate，則新增
+            if (hitUIObjectName != "")
+            {
+                if (hitUIObjectName == 'removePlate')
+                {
+                    playerBioJS.bioAction = "Action";
+                }
+                if (hitUIObjectName == 'cubePlate')
+                {
+                    playerBioJS.bioAction = "Create";
+                }
+                if (hitUIObjectName == 'movePlate')
+                {
+                    playerBioJS.Sphere2 = playerBioJS.transform.position;
+                    playerBioJS.Sphere3.transform.position = playerBioJS.transform.position;
+                }
+                hitUIObjectName = "";
+            }
+            clickStart = false;
+            cammeraPlatein2out = false;
+            cubePlatein2out = false;
+            movePlatein2out = false;
+        }
+
+    }
+
+    public void updateUI()
     {
         nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
             this.transform.position.x,
@@ -304,7 +545,7 @@ public class biologyCS : MonoBehaviour
     {
         //更新碰撞物狀態
         var g = 0;
-        Vector3 tempVector3 = normalized(this.transform.position);
+        Vector3 tempVector3 = maingameCS.normalized(this.transform.position);
         for (int x = -1; x < 2; x++)
         {
             for (int y = -1; y < 2; y++)
@@ -323,15 +564,7 @@ public class biologyCS : MonoBehaviour
     }
 
 
-    Vector3 normalized(Vector3 pos)
-    {
-        Vector3 temp;
-        //正規化生物座標
-        temp.x = Mathf.Floor(pos.x + 0.5f);
-        temp.z = Mathf.Floor(pos.z + 0.5f);
-        temp.y = Mathf.Floor(pos.y + 0.5f) + 0.5f;
-        return temp;
-    }
+
 
     void loadAnimation()
     {

@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using UnityEngine.EventSystems;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using MiniJSON;
 
 public class gameCS : MonoBehaviour
 {
@@ -47,7 +47,7 @@ public class gameCS : MonoBehaviour
         movePlateMouse = GameObject.Find("movePlateMouse");
         movePlate = GameObject.Find("movePlate");
         Cube = GameObject.Find("Cube");
-        Player = GameObject.Find("Cha_Knight");
+        Player = GameObject.Find("Cha_Knight");//todo:玩家不一定是用Cha_Knight
         mainCamera = GameObject.Find("mainCamera");
         mainCamera2 = GameObject.Find("mainCamera2");
         playerBioCS = Player.GetComponent<biologyCS>();
@@ -74,16 +74,49 @@ public class gameCS : MonoBehaviour
         mainCamera2.GetComponent<Camera>().fieldOfView = mainCamera.GetComponent<Camera>().fieldOfView;
         mouseOrTouch();
         inputHitScene();
-        // isCameraPosMove();
-        // fellowPlayerCameraMove();
-        // fellowPlayerCameraContorl();
+        isCameraPosMove();
+        fellowPlayerCameraMove();
+        fellowPlayerCameraContorl();
         // buttonDetect();
     }
+
+    void fellowPlayerCameraContorl()
+    {
+        //滑鼠滾輪縮放攝影機
+        if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
+        {
+            if (Camera.main.fieldOfView > 1)
+                Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView - 1, 60);
+        }
+        if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
+        {
+            Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
+        }
+    }
+    void fellowPlayerCameraMove()
+    {
+        mainCamera.transform.position = cameraRELtarget + Player.transform.position;
+        mainCamera.transform.LookAt(new Vector3(Player.transform.position.x, Player.transform.position.y + 2.0f, Player.transform.position.z));
+
+    }
+    void isCameraPosMove()
+    {
+        if (lastCameraPos != mainCamera.transform.position)
+        {
+            foreach (GameObject thisBiology in allBiologys)
+            {
+                thisBiology.GetComponent<biologyCS>().updateUI();
+            }
+            lastCameraPos = mainCamera.transform.position;
+        }
+
+    }
     int loggLine = 0;
-    int loggLineMax = 10;
+
 
     public void logg(string n)
     {
+        int loggLineMax = 10;
         if (loggLine == loggLineMax)
         {
             logText.GetComponent<Text>().text += '\n';
@@ -229,17 +262,19 @@ public class gameCS : MonoBehaviour
                 groundPlane.Raycast(ray, out rayDistance))
             {
                 var tempVector3 = ray.GetPoint(rayDistance);
-                tempVector3.x = Mathf.Floor(tempVector3.x + 0.5f);
-                tempVector3.z = Mathf.Floor(tempVector3.z + 0.5f);
-                tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5f;
+                tempVector3 = normalized(tempVector3);
+                //todo:留者參考用，沒問題可刪除
+                //tempVector3.x = Mathf.Floor(tempVector3.x + 0.5f);
+                //tempVector3.z = Mathf.Floor(tempVector3.z + 0.5f);
+                //tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5f;
 
-                if (checkArray(tempVector3) != false)
+                if (GameObject.Find(tempVector3.ToString("F0")))
                 {
-                    var tempVector2: Vector2 = checkArray(tempVector3);
-                    if (tempVector2.y == 1)
+                    string tag = GameObject.Find(tempVector3.ToString("F0")).tag;
+                    if (tag == "Cube_walkSMP")
                     {
-                        playerBioCS.Sphere3.transform.position = ray.GetPoint(rayDistance);
-                        logg("前往座標：x:" + playerBioCS.Sphere3.transform.position.x.ToString("f2") + ",y:" + playerBioCS.Sphere3.transform.position.z.ToString("f2"));
+                        playerBioCS.Sphere3 = ray.GetPoint(rayDistance);//todo:Sphere3應該要用安全的方式存取
+                        logg("前往座標：x:" + playerBioCS.Sphere3.x.ToString("f2") + ",y:" + playerBioCS.Sphere3.z.ToString("f2"));
                     }
                     else
                     {
@@ -248,10 +283,9 @@ public class gameCS : MonoBehaviour
                 }
             }
 
-
-
+            RaycastHit mouseHitPlane;
             //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
-            if (Physics.Raycast(ray, mouseHitPlane) &&
+            if (Physics.Raycast(ray, out mouseHitPlane) &&
                 !EventSystem.current.IsPointerOverGameObject() &&
                 hitUIObjectName != "cammeraPlate" &&
                 hitUIObjectName != "movePlate"
@@ -268,12 +302,12 @@ public class gameCS : MonoBehaviour
                         logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
                         //如果點擊到生物，停止移動
                         playerBioCS.Sphere2 = Player.transform.position;
-                        playerBioCS.Sphere3.transform.position = Player.transform.position;
+                        playerBioCS.Sphere3 = Player.transform.position;
                         //如果點擊到生物，且該生物在攻擊範圍內
                         if (playerBioCS.attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position))
                         {
                             var targetDir = mouseHitPlane.transform.position - Player.transform.position;
-                            var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0);
+                            var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0f);
                             Player.transform.rotation = Quaternion.LookRotation(newDir);
                             playerBioCS.bioAction = "Attack";
                         }
@@ -282,6 +316,15 @@ public class gameCS : MonoBehaviour
             }
 
         }
+    }
+    public Vector3 normalized(Vector3 pos)
+    {
+        Vector3 temp;
+        //正規化生物座標
+        temp.x = Mathf.Floor(pos.x + 0.5f);
+        temp.z = Mathf.Floor(pos.z + 0.5f);
+        temp.y = Mathf.Floor(pos.y + 0.5f) + 0.5f;
+        return temp;
     }
 }
 public class scene
