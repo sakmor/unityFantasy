@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class gameCS : MonoBehaviour
 {
+    public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
+     Vector2>();
+
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
     GameObject cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText;
@@ -247,7 +250,6 @@ public class gameCS : MonoBehaviour
         target.y += yScaleUP;
 
         Vector3 tempPick;
-        Vector3 tempPick2;
         tempPick = target;
         Vector3 myVector = target - mainCamera.transform.position;
         float mylength = Mathf.Round(Vector3.Distance(target, mainCamera.transform.position));
@@ -256,11 +258,9 @@ public class gameCS : MonoBehaviour
         for (var i = 0; i < mylength; i++)
         {
             tempPick = target - myVector.normalized * i;
-            tempPick2.x = Mathf.Floor(tempPick.x + 0.5f);
-            tempPick2.z = Mathf.Floor(tempPick.z + 0.5f);
-            tempPick2.y = Mathf.Floor(tempPick.y) + 0.5f;
 
-            if (GameObject.Find(tempPick.ToString("F0")) != false)
+
+            if (cubesDictionary.ContainsKey(tempPick.normalized))
             {
                 mainCamera2.transform.position = tempPick;
                 camera2.enabled = true;
@@ -422,6 +422,7 @@ public class gameCS : MonoBehaviour
                 }
             }
 
+            //新增CUBE
             GameObject temp = Instantiate(GameObject.Find("Cube"));//todo:Cube可以不需要用Find的方式
             temp.transform.parent = Cubes.transform;
             temp.transform.position = tempVector3;
@@ -432,13 +433,18 @@ public class gameCS : MonoBehaviour
             Mesh mesh = (Mesh)Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3], typeof(Mesh));
             temp.GetComponent<MeshFilter>().mesh = mesh;
 
+
+
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
                 case 0:
                     temp.tag = "Cube";
+                    //建立目錄cubesPosDictionary
+                    cubesDictionary[new Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = new Vector2(float.Parse(mesh.name), 0);
                     break;
                 case 1:
                     temp.tag = "Cube_WalkSMP";
+                    cubesDictionary[new Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = new Vector2(float.Parse(mesh.name), 1);
                     break;
             }
 
@@ -489,7 +495,7 @@ public class gameCS : MonoBehaviour
                 //tempVector3.z = Mathf.Floor(tempVector3.z + 0.5f);
                 //tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5f;
 
-                if (GameObject.Find(tempVector3.ToString("F0")))
+                if (cubesDictionary.ContainsKey(tempVector3.normalized))
                 {
                     string tag = GameObject.Find(tempVector3.ToString("F0")).tag;
                     if (tag == "Cube_walkSMP")

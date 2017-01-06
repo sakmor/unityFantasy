@@ -314,7 +314,7 @@ public class biologyCS : MonoBehaviour
                 {
                     g++;
                     Vector3 temp = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                    if (GameObject.Find(temp.ToString("F0")))
+                    if (maingameCS.cubesDictionary.ContainsKey(temp.normalized))
                     {
                         collisionCubes[g].transform.position = temp;
                     }
@@ -357,11 +357,11 @@ public class biologyCS : MonoBehaviour
         float[] biologyListData = new float[5];
         string[] drawNumbers = maingameCS.biologyList.drawNumber;
         int biologyNumber = Array.FindIndex(drawNumbers, n => n.Contains(this.name));
-        biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length];     //walkSteptweek
-        biologyListData[1] = maingameCS.biologyList.biodata[biologyNumber + 1 + biologyNumber * biologyListData.Length]; //center.y
-        biologyListData[2] = maingameCS.biologyList.biodata[biologyNumber + 2 + biologyNumber * biologyListData.Length]; //size.x
-        biologyListData[3] = maingameCS.biologyList.biodata[biologyNumber + 3 + biologyNumber * biologyListData.Length]; //size.y
-        biologyListData[4] = maingameCS.biologyList.biodata[biologyNumber + 4 + biologyNumber * biologyListData.Length]; //size.z
+        biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length - biologyNumber];     //walkSteptweek
+        biologyListData[1] = maingameCS.biologyList.biodata[biologyNumber + 1 + biologyNumber * biologyListData.Length - biologyNumber]; //center.y
+        biologyListData[2] = maingameCS.biologyList.biodata[biologyNumber + 2 + biologyNumber * biologyListData.Length - biologyNumber]; //size.x
+        biologyListData[3] = maingameCS.biologyList.biodata[biologyNumber + 3 + biologyNumber * biologyListData.Length - biologyNumber]; //size.y
+        biologyListData[4] = maingameCS.biologyList.biodata[biologyNumber + 4 + biologyNumber * biologyListData.Length - biologyNumber]; //size.z
 
         this.WalkSteptweek = biologyListData[0];
         BoxCollider collider = this.GetComponent<BoxCollider>() as BoxCollider;
