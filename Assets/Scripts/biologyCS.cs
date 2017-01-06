@@ -314,9 +314,9 @@ public class biologyCS : MonoBehaviour
                 {
                     g++;
                     Vector3 temp = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                    if (maingameCS.cubesDictionary.ContainsKey(temp.normalized))
+                    if (maingameCS.cubesDictionary.ContainsKey(maingameCS.normalized(temp)))
                     {
-                        collisionCubes[g].transform.position = temp;
+                        collisionCubes[g].transform.position = new Vector3(temp.x, temp.y+1.0f, temp.z);
                     }
                 }
             }

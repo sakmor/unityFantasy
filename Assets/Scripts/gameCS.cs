@@ -260,7 +260,7 @@ public class gameCS : MonoBehaviour
             tempPick = target - myVector.normalized * i;
 
 
-            if (cubesDictionary.ContainsKey(tempPick.normalized))
+            if (cubesDictionary.ContainsKey(normalized(tempPick)))
             {
                 mainCamera2.transform.position = tempPick;
                 camera2.enabled = true;
@@ -495,7 +495,7 @@ public class gameCS : MonoBehaviour
                 //tempVector3.z = Mathf.Floor(tempVector3.z + 0.5f);
                 //tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5f;
 
-                if (cubesDictionary.ContainsKey(tempVector3.normalized))
+                if (cubesDictionary.ContainsKey(normalized(tempVector3)))
                 {
                     string tag = GameObject.Find(tempVector3.ToString("F0")).tag;
                     if (tag == "Cube_walkSMP")
