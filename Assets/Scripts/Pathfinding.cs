@@ -24,7 +24,7 @@ public class Pathfinding : MonoBehaviour
         FindPath(aseeker, atarget);
         return nextPos;
     }
-
+    //找出第一個轉彎點
     Vector3 redo(Node nowNode, Node lastNode, float angel)
     {
         foreach (Node neighbour in grid.GetNeighbours(nowNode))

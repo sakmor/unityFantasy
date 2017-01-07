@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class gameCS : MonoBehaviour
 {
-    public Dictionary   <Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
-     Vector2>() ;
+    public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
+     Vector2>();
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
@@ -17,8 +17,6 @@ public class gameCS : MonoBehaviour
     //Dictionary、Array----------------------------
     List<string> cubeArrayTxt;
     GameObject[] allBiologys;
-    Dictionary<Vector3, Vector2> cubesPosDictionary =
-               new Dictionary<Vector3, Vector2>();
 
     //boolean----------------------------
     public bool touchScreen;
@@ -63,8 +61,6 @@ public class gameCS : MonoBehaviour
         camera1.enabled = true;
         camera2.enabled = false;
 
-        GameObject.Find("aStart").AddComponent<Pathfinding>();
-        PathfindingCS = GameObject.Find("aStart").GetComponent<Pathfinding>();
         loadResources();
         loadGame();
         mouseOrbitSet();
@@ -74,8 +70,7 @@ public class gameCS : MonoBehaviour
     void Update()
     {
         // allBioupdate(1);
-        mainCamera2.transform.position = mainCamera.transform.position;
-        mainCamera2.GetComponent<Camera>().fieldOfView = mainCamera.GetComponent<Camera>().fieldOfView;
+        cameraUpdate();
         mouseOrTouch();
         inputHitScene();
         isCameraPosMove();
@@ -83,6 +78,14 @@ public class gameCS : MonoBehaviour
         fellowPlayerCameraContorl();
         lineDecte();
         buttonDetect();
+        GameObject.Find("Sphere3").transform.position = new Vector3(playerBioCS.Sphere2.x, 1, playerBioCS.Sphere2.z);
+
+    }
+    void cameraUpdate()
+    {
+        mainCamera2.transform.position = mainCamera.transform.position;
+        mainCamera2.GetComponent<Camera>().fieldOfView = mainCamera.GetComponent<Camera>().fieldOfView;
+        mainCamera2.transform.rotation = mainCamera.transform.rotation;
     }
 
     void buttonDetect()
@@ -342,8 +345,7 @@ public class gameCS : MonoBehaviour
     public void logg(string n)
     {
         string tempString = logText.GetComponent<Text>().text;
-        string strReplace = tempString.Replace(System.Environment.NewLine, "");
-        int loggLine = tempString.Length - strReplace.Length;
+        int loggLine = tempString.Split('\n').Length - 1;
 
         int loggLineMax = 10;
         if (loggLine == loggLineMax)
@@ -439,7 +441,7 @@ public class gameCS : MonoBehaviour
             {
                 case 0:
                     temp.tag = "Cube";
-                    //建立目錄cubesPosDictionary
+                    //建立目錄cubesDictionary
                     cubesDictionary[new Vector3(tempVector3.x, tempVector3.y, tempVector3.z)] = new Vector2(float.Parse(mesh.name), 0);
                     break;
                 case 1:
@@ -449,6 +451,8 @@ public class gameCS : MonoBehaviour
             }
 
         }
+        GameObject.Find("aStart").AddComponent<Pathfinding>();
+        PathfindingCS = GameObject.Find("aStart").GetComponent<Pathfinding>();
     }
     void mouseOrbitSet()
     {
@@ -497,8 +501,8 @@ public class gameCS : MonoBehaviour
 
                 if (cubesDictionary.ContainsKey(normalized(tempVector3)))
                 {
-                    string tag = GameObject.Find(tempVector3.ToString("F0")).tag;
-                    if (tag == "Cube_walkSMP")
+                    float tag = cubesDictionary[tempVector3].y;
+                    if (tag == 1)
                     {
                         playerBioCS.Sphere3 = ray.GetPoint(rayDistance);//todo:Sphere3應該要用安全的方式存取
                         logg("前往座標：x:" + playerBioCS.Sphere3.x.ToString("f2") + ",y:" + playerBioCS.Sphere3.z.ToString("f2"));
@@ -548,9 +552,9 @@ public class gameCS : MonoBehaviour
     {
         Vector3 temp;
         //正規化生物座標
-        temp.x = Mathf.Floor(pos.x + 0.5f);
-        temp.z = Mathf.Floor(pos.z + 0.5f);
-        temp.y = Mathf.Floor(pos.y + 0.5f) + 0.5f;
+        temp.x = Mathf.Floor(pos.x);
+        temp.z = Mathf.Floor(pos.z);
+        temp.y = Mathf.Floor(pos.y);
         return temp;
     }
     Vector2 getIntersections(float ax, float ay, float bx, float by, float cx, float cy, float cz)

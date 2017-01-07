@@ -38,7 +38,8 @@ public class biologyCS : MonoBehaviour
 	 * WalkSteptweek	生物步伐()
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
-    float lastActionTime, runBackDist, moveSpeedMax, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    public float moveSpeedMax;//todo:測試用改成Public
+    float lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
 
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3, nametextScreenPo;
@@ -295,7 +296,7 @@ public class biologyCS : MonoBehaviour
         collisionCubeOBJ.transform.parent = GameObject.Find("Biology/Items").transform;
         for (var i = 0; i <= 27; i++)
         {
-            collisionCubes[i] = Instantiate(GameObject.Find("pickPlayer"));
+            collisionCubes[i] = Instantiate(GameObject.Find("collisionCube"));
             collisionCubes[i].name = "dynamicCollision_" + i;
             collisionCubes[i].AddComponent<BoxCollider>();
             collisionCubes[i].transform.parent = collisionCubeOBJ.transform;
@@ -316,10 +317,9 @@ public class biologyCS : MonoBehaviour
                 {
                     g++;
                     Vector3 temp = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                    Debug.Log(maingameCS.normalized(temp));
                     if (maingameCS.cubesDictionary.ContainsKey(maingameCS.normalized(temp)))
                     {
-                        collisionCubes[g].transform.position = new Vector3(temp.x, temp.y + 1.0f, temp.z);
+                        collisionCubes[g].transform.position = new Vector3(temp.x, temp.y, temp.z);
                     }
                 }
             }
