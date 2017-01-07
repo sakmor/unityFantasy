@@ -34,7 +34,7 @@ public class editorMenuCS : MonoBehaviour
             Vector3 tempVector3 = new Vector3(scene.cubeArray[i], scene.cubeArray[i + 1], scene.cubeArray[i + 2]);
             temp.transform.parent = Cubes.transform;
             temp.transform.position = tempVector3;
-            temp.name = temp.transform.position.ToString("F0");
+            temp.name = temp.transform.position.ToString("F1");
             temp.GetComponent<MeshRenderer>().receiveShadows = true;
             temp.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent<Renderer>().enabled = true;
@@ -120,16 +120,13 @@ public class editorMenuCS : MonoBehaviour
             temp.x = scene.cubeArray[i];
             temp.y = scene.cubeArray[i + 1];
             temp.z = scene.cubeArray[i + 2];
-            DestroyImmediate(GameObject.Find(temp.ToString("F0")));
+            DestroyImmediate(GameObject.Find(temp.ToString("F1")));
         }
     }
 
     [MenuItem("[Menu]/Normalized")]
     static void Normalized()
     {
-        TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
-        biologyList biologyList = JsonUtility.FromJson<biologyList>(json.text);
-        Debug.Log(biologyList.drawNumber[0]);
 
         GameObject[] respawns;
         respawns = Selection.gameObjects;
@@ -144,12 +141,14 @@ public class editorMenuCS : MonoBehaviour
             {
                 Vector3 temp;
                 temp = respawn.transform.position;
+                Debug.Log(respawn.transform.position);
                 temp.x = Mathf.Floor(temp.x);
                 temp.z = Mathf.Floor(temp.z);
-                temp.y = Mathf.Floor(temp.y) + 0.5f;
+                temp.y = Mathf.Floor(temp.y);
                 respawn.transform.position = temp;
                 respawn.transform.eulerAngles = new Vector3(-90, 0, 0);
-                respawn.name = respawn.transform.position.ToString("F0");
+
+                respawn.name = temp.ToString("F1");
             }
         }
         int ss = 0;

@@ -250,31 +250,33 @@ public class biologyCS : MonoBehaviour
             }
         }
 
-        //將生物轉向目標
-        Sphere2.y = this.transform.position.y;
-        Sphere.y = this.transform.position.y;
-        Vector3 targetDir = Sphere2 - this.transform.position;
-        float step = rotateSpeed * Time.deltaTime;
-        Vector3 newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0f);
-        this.transform.rotation = Quaternion.LookRotation(newDir);
-
-        //依照目標距離調整移動速度
-        moveSpeed = moveSpeedMax;
-        if (maingameCS.hitUIObjectName ==
-            "movePlate" && SphereDistance < 5)
+        if (this.bioAction == "Walk")
         {
-            moveSpeed = moveSpeed * (SphereDistance / 5);
+            //將生物轉向目標
+            Sphere2.y = this.transform.position.y;
+            Sphere.y = this.transform.position.y;
+            Vector3 targetDir = Sphere2 - this.transform.position;
+            float step = rotateSpeed * Time.deltaTime;
+            Vector3 newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0f);
+            this.transform.rotation = Quaternion.LookRotation(newDir);
+
+            //依照目標距離調整移動速度
+            moveSpeed = moveSpeedMax;
+            if (maingameCS.hitUIObjectName ==
+                "movePlate" && SphereDistance < 5)
+            {
+                moveSpeed = moveSpeed * (SphereDistance / 5);
+            }
+
+            //更新動態碰撞物
+            dynamicCollision();
+
+            //移動生物到目標點
+            this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
+
+            //調整步伐
+            anim["Walk"].speed = WalkSteptweek * moveSpeed;
         }
-
-        //更新動態碰撞物
-        dynamicCollision();
-
-        //移動生物到目標點
-        this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
-
-        //調整步伐
-        anim["Walk"].speed = WalkSteptweek * moveSpeed;
-
     }
 
     public void updateUI()
@@ -314,6 +316,7 @@ public class biologyCS : MonoBehaviour
                 {
                     g++;
                     Vector3 temp = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
+                    Debug.Log(maingameCS.normalized(temp));
                     if (maingameCS.cubesDictionary.ContainsKey(maingameCS.normalized(temp)))
                     {
                         collisionCubes[g].transform.position = new Vector3(temp.x, temp.y + 1.0f, temp.z);

@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class gameCS : MonoBehaviour
 {
-    public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
-     Vector2>();
+    public Dictionary   <Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
+     Vector2>() ;
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
