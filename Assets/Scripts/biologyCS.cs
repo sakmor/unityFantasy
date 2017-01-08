@@ -227,7 +227,10 @@ public class biologyCS : MonoBehaviour
             if (SphereDistance > 0.05f)
             {
                 this.bioAction = "Walk";
-                if (SphereDistance < 1)
+
+                //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
+                if (SphereDistance < 1 ||
+                maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
                 {
                     Sphere2 = Sphere3;
                 }
@@ -243,8 +246,6 @@ public class biologyCS : MonoBehaviour
                             Sphere2 = this.transform.position;
                             Sphere3 = this.transform.position;
                         }
-                        // GameObject.Find("Sphere2").transform.position = Sphere2;
-                        // GameObject.Find("Sphere2").transform.position.y = 1;
                     }
 
                 }

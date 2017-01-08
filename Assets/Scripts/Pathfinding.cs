@@ -24,6 +24,32 @@ public class Pathfinding : MonoBehaviour
         FindPath(aseeker, atarget);
         return nextPos;
     }
+    public bool decteBetween(Vector3 start, Vector3 target)
+    {
+        Vector3 pp = start;
+        float xx = target.x - start.x;
+        float zz = target.z - start.z;
+
+        pp.x += xx * 0.20f;
+        pp.z += zz * 0.20f;
+        Node now = grid.NodeFromWorldPoint(pp);
+        if (!grid.walkable(now)) return false;
+        pp.x += xx * 0.20f;
+        pp.z += zz * 0.20f;
+        now = grid.NodeFromWorldPoint(pp);
+        if (!grid.walkable(now)) return false;
+        pp.x += xx * 0.20f;
+        pp.z += zz * 0.20f;
+        now = grid.NodeFromWorldPoint(pp);
+        if (!grid.walkable(now)) return false;
+        pp.x += xx * 0.20f;
+        pp.z += zz * 0.20f;
+        now = grid.NodeFromWorldPoint(pp);
+        if (!grid.walkable(now)) return false;
+
+        return true;
+
+    }
     //找出第一個轉彎點
     Vector3 redo(Node nowNode, Node lastNode, float angel)
     {

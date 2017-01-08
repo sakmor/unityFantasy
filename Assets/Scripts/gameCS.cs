@@ -80,6 +80,7 @@ public class gameCS : MonoBehaviour
         buttonDetect();
         GameObject.Find("Sphere3").transform.position = new Vector3(playerBioCS.Sphere2.x, 1, playerBioCS.Sphere2.z);
 
+
     }
     void cameraUpdate()
     {

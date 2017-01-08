@@ -12,7 +12,7 @@ public class Grid : MonoBehaviour
     public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
     Vector2>();
 
-    Node[,] grid;
+    public Node[,] grid;
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
@@ -21,6 +21,17 @@ public class Grid : MonoBehaviour
     {
         cubesDictionary = GameObject.Find("mainGame").GetComponent<gameCS>().cubesDictionary;
         CreateGrid();
+    }
+    public bool walkable(Node n)
+    {
+        if (grid[n.gridX, n.gridY].walkable)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void CreateGrid()
@@ -89,7 +100,7 @@ public class Grid : MonoBehaviour
     }
 
     public List<Node> path;
-    void OnDrawGizmos()
+    void OnDrawGizmosAA()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
