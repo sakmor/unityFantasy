@@ -203,7 +203,7 @@ public class gameCS : MonoBehaviour
                     Vector2 b = new Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
                     Vector3 c = new Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5f);
                     Vector2 x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
-                    cammeraPlateMouse.transform.position = new Vector3(x.x, x.y, 0);
+                    movePlateMouse.transform.position = new Vector3(x.x, x.y, 0);
                 }
 
                 //控制生物移動
@@ -262,7 +262,6 @@ public class gameCS : MonoBehaviour
         for (var i = 0; i < mylength; i++)
         {
             tempPick = target - myVector.normalized * i;
-
 
             if (cubesDictionary.ContainsKey(normalized(tempPick)))
             {
@@ -604,6 +603,7 @@ public class gameCS : MonoBehaviour
 
 
         }
+
         return (new Vector2());
         /*
         else if ((int)(eDistCtoE) == (int)(c[2]))
