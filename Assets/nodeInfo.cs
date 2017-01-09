@@ -8,6 +8,8 @@ public class nodeInfo : MonoBehaviour
     // Use this for initialization
     public bool walkable;
     public Vector3 worldPosition;
+
+    public Vector3 mPosition;
     public int gridX;
     public int gridY;
 
@@ -27,6 +29,7 @@ public class nodeInfo : MonoBehaviour
         gridY = grid.NodeFromWorldPoint(this.transform.position).gridY;
         walkable = grid.NodeFromWorldPoint(this.transform.position).walkable;
         worldPosition = grid.NodeFromWorldPoint(this.transform.position).worldPosition;
+        mPosition = GameObject.Find("mainGame").GetComponent<gameCS>().normalized(worldPosition);
 
     }
 }

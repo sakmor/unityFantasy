@@ -399,10 +399,8 @@ public class gameCS : MonoBehaviour
         {
             thisBiology.AddComponent<biologyCS>();
         }
-
         TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
         biologyList = JsonUtility.FromJson<biologyList>(json.text);
-        Debug.Log(biologyList.drawNumber[0]);
     }
 
     void loadGame()

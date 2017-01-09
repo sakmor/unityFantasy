@@ -56,13 +56,21 @@ public class biologyCS : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        rotateSpeed = 10;
+        runBack = false;
+
         WalkSteptweek = 40;         //todo:應該記錄在biologyList.json
         moveSpeed = 0.09f;          //todo:應該記錄在c_ai.json
-        rotateSpeed = 10;
+        runBackDist = 50f;           //todo:應該記錄在c_ai.json
+        seeMax = 15f;               //todo:應該記錄在c_ai.json
+        attackDistance = 2;         //todo:應該記錄在c_ai.json
+        catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
+
         moveSpeedMax = moveSpeed;
         startPos = this.transform.position;
 
         bais = Mathf.Floor(UnityEngine.Random.value * 10) - 5; //-5~5
+
         nameText = Instantiate(GameObject.Find("nameText"));
         nameText.name = this.name + "_nameText";
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
@@ -244,7 +252,7 @@ public class biologyCS : MonoBehaviour
                         Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
                         if (Sphere2 == new Vector3(-999, -999, -999))
                         {
-                            maingameCS.logg(this.name + "<b>目前無法移動至該處</b>");
+                            maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
                             Sphere2 = this.transform.position;
                             Sphere3 = this.transform.position;
                         }
@@ -362,7 +370,7 @@ public class biologyCS : MonoBehaviour
 
         float[] biologyListData = new float[5];
         string[] drawNumbers = maingameCS.biologyList.drawNumber;
-        int biologyNumber = Array.FindIndex(drawNumbers, n => n.Contains(this.name));
+        int biologyNumber = Array.FindIndex(drawNumbers, n => n.Contains(nameShort));
         biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length - biologyNumber];     //walkSteptweek
         biologyListData[1] = maingameCS.biologyList.biodata[biologyNumber + 1 + biologyNumber * biologyListData.Length - biologyNumber]; //center.y
         biologyListData[2] = maingameCS.biologyList.biodata[biologyNumber + 2 + biologyNumber * biologyListData.Length - biologyNumber]; //size.x
