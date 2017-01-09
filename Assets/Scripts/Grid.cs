@@ -7,7 +7,7 @@ public class Grid : MonoBehaviour
 
     public Vector2 gridWorldSize = new Vector2(32, 32);
     public Vector2 gridWorldSizeShift;
-    public float nodeRadius = 0.5f;
+    public float nodeRadius = 0.25f;
 
     public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
     Vector2>();
@@ -41,7 +41,7 @@ public class Grid : MonoBehaviour
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
         grid = new Node[gridSizeX, gridSizeY];
-        Vector3 worldBottomLeft = new Vector3(0.5f, 0.5f, 0.5f) + transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+        Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
 
         for (int x = 0; x < gridSizeX; x++)
         {
@@ -100,7 +100,7 @@ public class Grid : MonoBehaviour
     }
 
     public List<Node> path;
-    void OnDrawGizmosAA()
+    void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 

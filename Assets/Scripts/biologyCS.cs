@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using System;
 
@@ -65,6 +66,7 @@ public class biologyCS : MonoBehaviour
         nameText = Instantiate(GameObject.Find("nameText"));
         nameText.name = this.name + "_nameText";
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
+        nameText.GetComponent<Text>().text = this.name;
         bioAction = "Wait";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         Sphere3 = this.transform.position;
@@ -242,7 +244,7 @@ public class biologyCS : MonoBehaviour
                         Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
                         if (Sphere2 == new Vector3(-999, -999, -999))
                         {
-                            maingameCS.logg("目前無法移動至該處");
+                            maingameCS.logg(this.name + "<b>目前無法移動至該處</b>");
                             Sphere2 = this.transform.position;
                             Sphere3 = this.transform.position;
                         }

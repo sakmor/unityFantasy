@@ -515,7 +515,7 @@ public class gameCS : MonoBehaviour
                     }
                     else
                     {
-                        logg("點擊到不可走區域了");
+                        logg("<color=red>點擊到不可走區域了</color>");
                     }
                 }
             }

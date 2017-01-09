@@ -18,9 +18,6 @@ public class Pathfinding : MonoBehaviour
 
     public Vector3 FindPath_Update(Vector3 aseeker, Vector3 atarget)
     {
-        transform.position = new Vector3(Mathf.Floor(aseeker.x), 0, Mathf.Floor(aseeker.z));
-        // grid.gridWorldSizeShift = new Vector2(Mathf.Floor(aseeker.position.x), Mathf.Floor(aseeker.position.z));
-        grid.gridWorldSizeShift = new Vector3(0, 0, 0);
         FindPath(aseeker, atarget);
         return nextPos;
     }
