@@ -79,7 +79,7 @@ public class gameCS : MonoBehaviour
         fellowPlayerCameraContorl();
         lineDecte();
         buttonDetect();
-        GameObject.Find("Sphere3").transform.position = new Vector3(playerBioCS.Sphere2.x, 1, playerBioCS.Sphere2.z);
+        GameObject.Find("Sphere3").transform.position = new Vector3(playerBioCS.Sphere3.x, 1, playerBioCS.Sphere3.z);
 
 
     }
