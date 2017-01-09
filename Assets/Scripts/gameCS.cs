@@ -64,6 +64,7 @@ public class gameCS : MonoBehaviour
         loadResources();
         loadGame();
         mouseOrbitSet();
+        // GameObject.Find("nodeInfo").AddComponent<nodeInfo>();
     }
 
     // Update is called once per frame
@@ -249,7 +250,7 @@ public class gameCS : MonoBehaviour
     //todo:要在角色或攝影機有移動時才徵測
     void lineDecte()
     {
-        float yScaleUP = 1.25f;
+        float yScaleUP = mainCamera.GetComponent<mouseOrbit>().targetMove.y;
         Vector3 target = Player.transform.position;
         target.y += yScaleUP;
 
@@ -346,22 +347,27 @@ public class gameCS : MonoBehaviour
     {
         string tempString = logText.GetComponent<Text>().text;
         int loggLine = tempString.Split('\n').Length - 1;
-
         int loggLineMax = 10;
-        if (loggLine == loggLineMax)
+        if (loggLine >= loggLineMax)
         {
             logText.GetComponent<Text>().text += '\n';
             logText.GetComponent<Text>().text += n;
             int firstLine = 0;
-
+            tempString = logText.GetComponent<Text>().text;
             logText.GetComponent<Text>().text = "";
             firstLine = tempString.IndexOf('\n');
-
+            for (int i = 0; i < tempString.Length; i++)
+            {
+                if (tempString[i] == '\n')
+                {
+                    firstLine = i + 1;
+                    break;
+                }
+            }
             for (; firstLine < tempString.Length; firstLine++)
             {
                 logText.GetComponent<Text>().text += tempString[firstLine];
             }
-
         }
         else
         {
