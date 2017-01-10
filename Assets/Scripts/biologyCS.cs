@@ -66,7 +66,7 @@ public class biologyCS : MonoBehaviour
 
         WalkSteptweek = 40;         //todo:應該記錄在biologyList.json
         moveSpeed = 0.09f;          //todo:應該記錄在c_ai.json
-        runBackDist = 20f;           //todo:應該記錄在c_ai.json
+        runBackDist = 10f;           //todo:應該記錄在c_ai.json
         seeMax = 15f;               //todo:應該記錄在c_ai.json
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
@@ -423,19 +423,11 @@ public class biologyCS : MonoBehaviour
     {
         if (target != this.transform)
         {
-            targeLine.GetComponent<Bezier>().drawIt = true;
-            targeLine.GetComponent<Bezier>().enabled = true;
-            targeLine.GetComponent<LineRenderer>().enabled = true;
-            targeLine.GetComponent<Bezier>().linepapa = 0;
-            targeLine.GetComponent<Bezier>().controlPoints[2] = target;
-            targeLine.GetComponent<Bezier>().controlPoints[3] = target;
-
+            targeLine.GetComponent<Bezier>().line2target(target);
         }
         else
         {
-            targeLine.GetComponent<Bezier>().drawIt = false;
-            targeLine.GetComponent<Bezier>().enabled = false;
-            targeLine.GetComponent<LineRenderer>().enabled = false;
+            targeLine.GetComponent<Bezier>().closeLine();
 
         }
     }

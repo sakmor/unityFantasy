@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
+
 [RequireComponent(typeof(LineRenderer))]
 public class Bezier : MonoBehaviour
 {
@@ -11,22 +11,44 @@ public class Bezier : MonoBehaviour
     private int layerOrder = 0;
     private int SEGMENT_COUNT = 50;
     public float linepapa;
+    public float a, b, c, l, startTime, fadeOut;
 
-    public float a, b, c, l, startTime, thistime;
-
-
+    Renderer rend;
     void Awake()
     {
         // Debug.Log("Awake");
     }
+    public void line2target(Transform target)
+    {
+        if (this.controlPoints[2] == this.transform.parent.transform)
+        {
+            this.controlPoints[2] = target;
+            this.controlPoints[3] = target;
+            drawIt = true;
+            linepapa = 0;
+            startTime = Time.time;
+            rend.material.SetColor("_Color", new Color(1, 1, 1, 1));
+        }
+    }
+    public void closeLine()
+    {
+        this.controlPoints[2] = this.transform.parent.transform;
+        this.controlPoints[3] = this.transform.parent.transform;
+        drawIt = false;
 
+    }
     void Start()
     {
+        rend = GetComponent<Renderer>();
+        rend.material = new Material(Shader.Find("Custom/UnlitAlphaWithFade"));
+        rend.material.SetColor("_Color", new Color(1, 1, 1, 1f));
+        rend.material.mainTexture = Resources.Load("texture/linebeam") as Texture;
+
         linepapa = 0;
         a = 10;
-        b = 1.25f;
+        b = 2.5f;
         c = 1;
-        l = 10f;
+        l = 2f;
         if (!lineRenderer)
         {
             lineRenderer = GetComponent<LineRenderer>();
@@ -48,14 +70,14 @@ public class Bezier : MonoBehaviour
 
     void DrawCurve()
     {
-        thistime = Time.time;
+
         for (int j = 0; j < curveCount; j++)
         {
             for (int i = 1; i <= SEGMENT_COUNT; i++)
             {
                 float t = i / (float)SEGMENT_COUNT;
 
-                if (linepapa <= 1)
+                if (linepapa <= 0.9)
                 {
                     // y=ax^b+cx
                     float x = (Time.time - startTime) / l;
@@ -68,6 +90,15 @@ public class Bezier : MonoBehaviour
                     if (t > linepapa)
                     {
                         t = linepapa;
+                    }
+                    fadeOut = 1;
+                }
+                else
+                {
+                    fadeOut -= Time.deltaTime * 0.03f;
+                    if (fadeOut > 0)
+                    {
+                        rend.material.SetColor("_Color", new Color(1, 1, 1, fadeOut));
                     }
                 }
                 int nodeIndex = j * 3;
