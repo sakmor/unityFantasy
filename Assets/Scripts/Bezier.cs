@@ -41,10 +41,10 @@ public class Bezier : MonoBehaviour
                 //                if(linepapa>1){
                 //                    linepapa=0.01f;
                 //                }
-                if (t > linepapa)
-                {
-                    t = linepapa;
-                }
+                // if (t > linepapa)
+                // {
+                //     t = linepapa;
+                // }
                 int nodeIndex = j * 3;
                 Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints[nodeIndex].position, controlPoints[nodeIndex + 1].position, controlPoints[nodeIndex + 2].position, controlPoints[nodeIndex + 3].position);
                 lineRenderer.SetVertexCount(((j * SEGMENT_COUNT) + i));

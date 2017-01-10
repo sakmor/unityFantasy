@@ -33,6 +33,7 @@ public class biologyCS : MonoBehaviour
 	 * [生物狀態變數]
 	 * startPos			出生位置
 	 * targetName		追擊目標的名字
+     * targt   追擊目標的資訊
 	 * bioAction		生物狀態
 	 *
 	 * [生物清單相關變數]
@@ -43,13 +44,14 @@ public class biologyCS : MonoBehaviour
     float lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
 
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
-    public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3, nametextScreenPo;
+    public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
     GameObject nameText, bioCollider, targeLine;
     gameCS maingameCS;
 
-    public string bioAction, targetName, nameShort, bioDataPath;
+    public string bioAction, nameShort, bioDataPath;
+    public Transform target;
 
     float[] biologyListData = new float[5];
 
@@ -58,12 +60,13 @@ public class biologyCS : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        target = this.transform;
         rotateSpeed = 10;
         runBack = false;
 
         WalkSteptweek = 40;         //todo:應該記錄在biologyList.json
         moveSpeed = 0.09f;          //todo:應該記錄在c_ai.json
-        runBackDist = 50f;           //todo:應該記錄在c_ai.json
+        runBackDist = 20f;           //todo:應該記錄在c_ai.json
         seeMax = 15f;               //todo:應該記錄在c_ai.json
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
@@ -97,12 +100,14 @@ public class biologyCS : MonoBehaviour
             //        this._catchPlayer(); todo:玩家也要追擊
             this._movment();
             this._bioStatus();
+            this._targeLineUpdate();
         }
         else
         {
             this._catchPlayer(5 + bais);
             this._movment();
             this._bioStatus();
+            this._targeLineUpdate();
         }
 
     }
@@ -119,11 +124,11 @@ public class biologyCS : MonoBehaviour
             }
             if (playerDistance < seeMax && !runBack)
             {
-
-                if (targetName != maingameCS.Player.name)
+                if (target != maingameCS.Player.transform)
                 {
-                    targetName = maingameCS.Player.name;
+                    target = maingameCS.Player.transform;
                     maingameCS.logg(this.name + "開始追擊你了");
+
                 }
                 if (playerDistance > attackDistance)
                 {
@@ -147,9 +152,9 @@ public class biologyCS : MonoBehaviour
             }
             else
             {
-                if (targetName != "")
+                if (target != this.transform)
                 {
-                    targetName = "";
+                    target = this.transform;
                     maingameCS.logg(this.name + "放棄追擊你");
                     _runback();
                 }
@@ -408,10 +413,28 @@ public class biologyCS : MonoBehaviour
         targeLine.transform.parent = this.transform;
         targeLine.GetComponent<Bezier>().controlPoints[0] = this.transform;
         targeLine.GetComponent<Bezier>().controlPoints[1] = targeLine.transform.Find("p0");
-        targeLine.GetComponent<Bezier>().controlPoints[2] = targeLine.transform.Find("p1");
-        targeLine.GetComponent<Bezier>().controlPoints[3] = GameObject.Find("Cha_Knight").transform;
-        targeLine.transform.Find("p1").position = new Vector3(this.transform.position.x, this.transform.position.y + 2.0f, this.transform.position.z);
+        targeLine.GetComponent<Bezier>().controlPoints[2] = this.transform;
+        targeLine.GetComponent<Bezier>().controlPoints[3] = this.transform;
+        targeLine.transform.Find("p0").position = new Vector3(this.transform.position.x, this.transform.position.y + 10.0f, this.transform.position.z);
 
+
+    }
+    void _targeLineUpdate()
+    {
+        if (target != this.transform)
+        {
+            targeLine.GetComponent<Bezier>().enabled = true;
+            targeLine.GetComponent<LineRenderer>().enabled = true;
+            targeLine.GetComponent<Bezier>().controlPoints[2] = target;
+            targeLine.GetComponent<Bezier>().controlPoints[3] = target;
+
+        }
+        else
+        {
+            targeLine.GetComponent<Bezier>().enabled = false;
+            targeLine.GetComponent<LineRenderer>().enabled = false;
+
+        }
     }
 
 }
