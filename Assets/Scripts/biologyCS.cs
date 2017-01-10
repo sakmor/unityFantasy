@@ -6,7 +6,7 @@ using System;
 
 [RequireComponent(typeof(Animation))]
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(BoxCollider))]
+// [RequireComponent(typeof(BoxCollider))]
 
 /*******
  *
@@ -46,10 +46,12 @@ public class biologyCS : MonoBehaviour
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3, nametextScreenPo;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
-    GameObject nameText;
+    GameObject nameText, bioCollider;
     gameCS maingameCS;
 
-    public string bioAction, targetName;
+    public string bioAction, targetName, nameShort, bioDataPath;
+
+    float[] biologyListData = new float[5];
 
     Animation anim;
 
@@ -68,8 +70,8 @@ public class biologyCS : MonoBehaviour
 
         moveSpeedMax = moveSpeed;
         startPos = this.transform.position;
-
         bais = Mathf.Floor(UnityEngine.Random.value * 10) - 5; //-5~5
+
 
         nameText = Instantiate(GameObject.Find("nameText"));
         nameText.name = this.name + "_nameText";
@@ -79,6 +81,7 @@ public class biologyCS : MonoBehaviour
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         Sphere3 = this.transform.position;
 
+        loadBiologyList();
         setCollisionCubes();
         dynamicCollision();
         loadAnimation();
@@ -302,6 +305,20 @@ public class biologyCS : MonoBehaviour
 
     void setCollisionCubes()
     {
+
+        bioCollider = Instantiate(GameObject.Find("GameObject"));
+        bioCollider.name = "bioCollider";
+        bioCollider.transform.parent = this.transform;
+        bioCollider.transform.localScale = new Vector3(1, 1, 1);
+        bioCollider.transform.localPosition = new Vector3(0, 0, 0);
+        bioCollider.transform.eulerAngles = new Vector3(0, 45, 0);
+        bioCollider.AddComponent<BoxCollider>();
+
+        BoxCollider collider = bioCollider.GetComponent<BoxCollider>() as BoxCollider;
+        collider.center = new Vector3(0, biologyListData[1], 0);
+        collider.size = new Vector3(biologyListData[2], biologyListData[3], biologyListData[2]);
+        this.GetComponent<Rigidbody>().freezeRotation = true;
+
         GameObject collisionCubeOBJ;
         collisionCubeOBJ = new GameObject(this + "_collisionCubeOBJ");
         collisionCubeOBJ.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -343,9 +360,21 @@ public class biologyCS : MonoBehaviour
     void loadAnimation()
     {
         anim = this.GetComponent<Animation>();
+        string[] animationsName = new string[] { "Attack", "Damage", "Dead", "Wait", "Walk" }; //todo:應該記錄在biologyList
+        foreach (string name in animationsName)
+        {
+            GameObject mdl = Resources.Load(bioDataPath + "/Animation/" + nameShort + "@" + name) as GameObject;
+            Animation anim = this.GetComponent<Animation>();
+            AnimationClip aClip = mdl.GetComponent<Animation>().clip;
+            anim.AddClip(aClip, name);
+        }
+
+
+
+    }
+    void loadBiologyList()
+    {
         string bioName = this.name;
-        string nameShort = "";
-        string bioDataPath = "";
         if (bioName[0] == 'm')  //todo:生物角色有可能不是C開的
         {
             bioDataPath = "Biology";
@@ -356,19 +385,7 @@ public class biologyCS : MonoBehaviour
             bioDataPath = "char/" + bioName;
             nameShort = bioName;
         }
-
-        string[] animationsName = new string[] { "Attack", "Damage", "Dead", "Wait", "Walk" }; //todo:應該記錄在biologyList
-        foreach (string name in animationsName)
-        {
-            GameObject mdl = Resources.Load(bioDataPath + "/Animation/" + nameShort + "@" + name) as GameObject;
-            Animation anim = this.GetComponent<Animation>();
-            AnimationClip aClip = mdl.GetComponent<Animation>().clip;
-            anim.AddClip(aClip, name);
-        }
-
         //讀取生物清單表
-
-        float[] biologyListData = new float[5];
         string[] drawNumbers = maingameCS.biologyList.drawNumber;
         int biologyNumber = Array.FindIndex(drawNumbers, n => n.Contains(nameShort));
         biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length - biologyNumber];     //walkSteptweek
@@ -377,12 +394,9 @@ public class biologyCS : MonoBehaviour
         biologyListData[3] = maingameCS.biologyList.biodata[biologyNumber + 3 + biologyNumber * biologyListData.Length - biologyNumber]; //size.y
         biologyListData[4] = maingameCS.biologyList.biodata[biologyNumber + 4 + biologyNumber * biologyListData.Length - biologyNumber]; //size.z
 
+        //調整生物縮放值
+        transform.localScale = new Vector3(biologyListData[4], biologyListData[4], biologyListData[4]);
         this.WalkSteptweek = biologyListData[0];
-        BoxCollider collider = this.GetComponent<BoxCollider>() as BoxCollider;
-        collider.center = new Vector3(0, biologyListData[1], 0);
-        collider.size = new Vector3(biologyListData[2], biologyListData[3], biologyListData[2]);
-        collider.transform.localScale = new Vector3(biologyListData[4], biologyListData[4], biologyListData[4]);
-        this.GetComponent<Rigidbody>().freezeRotation = true;
     }
 
 }
