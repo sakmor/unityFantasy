@@ -58,7 +58,6 @@ public class Bezier : MonoBehaviour
                 if (linepapa <= 1)
                 {
                     // y=ax^b+cx
-                    Debug.Log("linepapa");
                     float x = (Time.time - startTime) / l;
                     float y = Mathf.Pow(a * x, b) + c * x;
                     linepapa = y / (a + b);
