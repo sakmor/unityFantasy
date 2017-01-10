@@ -24,9 +24,9 @@ public class Bezier : MonoBehaviour
     {
         linepapa = 0;
         a = 10;
-        b = 6;
+        b = 1.25f;
         c = 1;
-        l = 5f;
+        l = 10f;
         if (!lineRenderer)
         {
             lineRenderer = GetComponent<LineRenderer>();
