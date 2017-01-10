@@ -46,7 +46,7 @@ public class biologyCS : MonoBehaviour
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3, nametextScreenPo;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
-    GameObject nameText, bioCollider;
+    GameObject nameText, bioCollider, targeLine;
     gameCS maingameCS;
 
     public string bioAction, targetName, nameShort, bioDataPath;
@@ -77,10 +77,13 @@ public class biologyCS : MonoBehaviour
         nameText.name = this.name + "_nameText";
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
         nameText.GetComponent<Text>().text = this.name;
+
         bioAction = "Wait";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+
         Sphere3 = this.transform.position;
 
+        setTargeLine();
         loadBiologyList();
         setCollisionCubes();
         dynamicCollision();
@@ -397,6 +400,18 @@ public class biologyCS : MonoBehaviour
         //調整生物縮放值
         transform.localScale = new Vector3(biologyListData[4], biologyListData[4], biologyListData[4]);
         this.WalkSteptweek = biologyListData[0];
+    }
+    void setTargeLine()
+    {
+        targeLine = Instantiate(GameObject.Find("targetLine"));
+        targeLine.name = "targetLine";
+        targeLine.transform.parent = this.transform;
+        targeLine.GetComponent<Bezier>().controlPoints[0] = this.transform;
+        targeLine.GetComponent<Bezier>().controlPoints[1] = targeLine.transform.Find("p0");
+        targeLine.GetComponent<Bezier>().controlPoints[2] = targeLine.transform.Find("p1");
+        targeLine.GetComponent<Bezier>().controlPoints[3] = GameObject.Find("Cha_Knight").transform;
+        targeLine.transform.Find("p1").position = new Vector3(this.transform.position.x, this.transform.position.y + 2.0f, this.transform.position.z);
+
     }
 
 }
