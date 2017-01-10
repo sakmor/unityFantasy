@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Grid : MonoBehaviour
 {
 
-    public Vector2 gridWorldSize = new Vector2(128, 128);
+    public Vector2 gridWorldSize = new Vector2(64, 64);
     public Vector2 gridWorldSizeShift;
     public float nodeRadius = 1f;
 

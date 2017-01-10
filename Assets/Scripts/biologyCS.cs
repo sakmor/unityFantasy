@@ -113,7 +113,7 @@ public class biologyCS : MonoBehaviour
     }
     void _catchPlayer(float n)
     {
-        if (10 * Time.fixedTime % n < 0.05)
+        if (10 * Time.fixedTime % n < 0.1)
         {
             var playerDistance = Vector3.Distance(maingameCS.Player.transform.position, this.transform.position);
             var startPosDis = Vector3.Distance(this.transform.position, startPos);
@@ -415,7 +415,7 @@ public class biologyCS : MonoBehaviour
         targeLine.GetComponent<Bezier>().controlPoints[1] = targeLine.transform.Find("p0");
         targeLine.GetComponent<Bezier>().controlPoints[2] = this.transform;
         targeLine.GetComponent<Bezier>().controlPoints[3] = this.transform;
-        targeLine.transform.Find("p0").position = new Vector3(this.transform.position.x, this.transform.position.y + 10.0f, this.transform.position.z);
+        targeLine.transform.Find("p0").position = new Vector3(this.transform.position.x, this.transform.position.y + 5.0f, this.transform.position.z);
 
 
     }
@@ -423,14 +423,17 @@ public class biologyCS : MonoBehaviour
     {
         if (target != this.transform)
         {
+            targeLine.GetComponent<Bezier>().drawIt = true;
             targeLine.GetComponent<Bezier>().enabled = true;
             targeLine.GetComponent<LineRenderer>().enabled = true;
+            targeLine.GetComponent<Bezier>().linepapa = 0;
             targeLine.GetComponent<Bezier>().controlPoints[2] = target;
             targeLine.GetComponent<Bezier>().controlPoints[3] = target;
 
         }
         else
         {
+            targeLine.GetComponent<Bezier>().drawIt = false;
             targeLine.GetComponent<Bezier>().enabled = false;
             targeLine.GetComponent<LineRenderer>().enabled = false;
 
