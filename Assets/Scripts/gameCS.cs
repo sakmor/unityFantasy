@@ -12,7 +12,7 @@ public class gameCS : MonoBehaviour
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
-    GameObject cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText;
+    GameObject cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText, fpsText;
 
     //Dictionary、Array----------------------------
     List<string> cubeArrayTxt;
@@ -43,6 +43,8 @@ public class gameCS : MonoBehaviour
         setBio();
 
         logText = GameObject.Find("logText");
+        fpsText = GameObject.Find("fpsText");
+        fpsText.AddComponent<FramesPerSecond>();
         logg("This Device is:" + SystemInfo.deviceType);
 
         cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
@@ -64,6 +66,7 @@ public class gameCS : MonoBehaviour
         loadResources();
         loadGame();
         mouseOrbitSet();
+        setUIpos();
         // GameObject.Find("nodeInfo").AddComponent<nodeInfo>();
     }
 
@@ -81,6 +84,14 @@ public class gameCS : MonoBehaviour
         buttonDetect();
         GameObject.Find("Sphere3").transform.position = new Vector3(playerBioCS.Sphere3.x, 1, playerBioCS.Sphere3.z);
 
+
+    }
+    void setUIpos()
+    {
+        movePlate.transform.position = new Vector3(movePlate.GetComponent<RectTransform>().sizeDelta.x, movePlate.GetComponent<RectTransform>().sizeDelta.y, 0);
+        fpsText.transform.position = new Vector3(fpsText.GetComponent<RectTransform>().sizeDelta.x * 0.5f + 15, UnityEngine.Screen.height - 15, 0);
+        logText.transform.position = new Vector3(UnityEngine.Screen.width - 30, 400, 0);
+        GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width * 0.5f, 15, 0);
 
     }
     void cameraUpdate()
