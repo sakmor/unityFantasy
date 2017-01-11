@@ -6,7 +6,7 @@ public class changeN : MonoBehaviour
     public bool go = true;
     public float targNU, starNU, result;
     float _targNU;
-    float startTime, duration = 0.5f;
+    float startTime, duration = 1.5f;
     void start()
     {
         starNU = float.Parse(gameObject.GetComponent<Text>().text);
@@ -25,10 +25,20 @@ public class changeN : MonoBehaviour
                 _targNU = targNU;
             }
             float t = (Time.time - startTime) / duration;
-            result = Mathf.Lerp(starNU, _targNU, t);
-            GetComponent<Text>().text = result.ToString("F0");
-            if (result >= _targNU)
+            result = Mathf.SmoothStep(starNU, _targNU, t);
+            if (_targNU > starNU)
             {
+                GetComponent<Text>().color = Color.green;
+            }
+            else
+            {
+                GetComponent<Text>().color = Color.red;
+            }
+
+            GetComponent<Text>().text = result.ToString("F0");
+            if (result == _targNU)
+            {
+                GetComponent<Text>().color = Color.yellow;
                 go = true;
             }
         }
