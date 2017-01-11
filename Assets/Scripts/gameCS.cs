@@ -13,6 +13,7 @@ public class gameCS : MonoBehaviour
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
     GameObject cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText, fpsText;
+    GameObject[] players = new GameObject[2];
 
     //Dictionary、Array----------------------------
     List<string> cubeArrayTxt;
@@ -51,7 +52,9 @@ public class gameCS : MonoBehaviour
         movePlateMouse = GameObject.Find("movePlateMouse");
         movePlate = GameObject.Find("movePlate");
         Cube = GameObject.Find("Cube");
+
         Player = GameObject.Find("Cha_Knight");//todo:玩家不一定是用Cha_Knight
+
         mainCamera = GameObject.Find("mainCamera");
         mainCamera2 = GameObject.Find("mainCamera2");
         playerBioCS = Player.GetComponent<biologyCS>();
@@ -90,8 +93,8 @@ public class gameCS : MonoBehaviour
     {
         movePlate.transform.position = new Vector3(movePlate.GetComponent<RectTransform>().sizeDelta.x, movePlate.GetComponent<RectTransform>().sizeDelta.y, 0);
         fpsText.transform.position = new Vector3(fpsText.GetComponent<RectTransform>().sizeDelta.x * 0.5f + 15, UnityEngine.Screen.height - 15, 0);
-        logText.transform.position = new Vector3(UnityEngine.Screen.width - 30, 400, 0);
-        GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width * 0.5f, 15, 0);
+        logText.transform.position = new Vector3(logText.GetComponent<RectTransform>().sizeDelta.x + 10, 370, 0);
+        GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
 
     }
     void cameraUpdate()
@@ -429,15 +432,15 @@ public class gameCS : MonoBehaviour
             string name = tempVector3.ToString("F0");
 
             //檢查是否已經存在於unity scene中
-            if (GameObject.Find("name"))
-            {
-                string meshname = GameObject.Find("name").GetComponent<MeshFilter>().sharedMesh.name;
-                if (meshname == scene.cubeArray[i + 3].ToString("F0"))
-                {
-                    Debug.Log("break");
-                    break;
-                }
-            }
+            // if (GameObject.Find(name))
+            // {
+            //     string meshname = GameObject.Find(name).GetComponent<MeshFilter>().sharedMesh.name;
+            //     if (meshname == scene.cubeArray[i + 3].ToString("F0"))
+            //     {
+            //         Debug.Log("break");
+            //         break;
+            //     }
+            // }
 
             //新增CUBE
             GameObject temp = Instantiate(GameObject.Find("Cube"));//todo:Cube可以不需要用Find的方式

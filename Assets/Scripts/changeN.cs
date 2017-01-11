@@ -3,18 +3,17 @@ using UnityEngine.UI;
 
 public class changeN : MonoBehaviour
 {
-    public bool go = true;
-    public float targNU, starNU, result;
-    float _targNU;
-    float startTime, duration = 1.5f;
-    void start()
+    public bool go = false;
+    public float targNU, starNU, result, duration = 1.5f;
+    private float _targNU, startTime;
+
+    void Start()
     {
-        starNU = float.Parse(gameObject.GetComponent<Text>().text);
-        startTime = Time.time;
-        _targNU = targNU;
+        starNU = float.Parse(GetComponent<Text>().text);
+        targNU = _targNU = starNU;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (go)
         {
@@ -39,7 +38,7 @@ public class changeN : MonoBehaviour
             if (result == _targNU)
             {
                 GetComponent<Text>().color = Color.yellow;
-                go = true;
+                go = false;
             }
         }
     }

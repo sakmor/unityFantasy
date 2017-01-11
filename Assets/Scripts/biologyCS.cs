@@ -25,7 +25,17 @@ public class biologyCS : MonoBehaviour
 	 * moveSpeedMax		最大移動速度
      * attackDistance   攻擊距離
      * lastActionTime   上次行動時間
-	 *
+	 *	 
+     * [戰鬥相關變數]
+     * LV               現在等級
+     * EXP              現在經驗值(全部)
+     * HP               現在血量 
+     * HPMAX            血量最大值
+     * MP               現在魔法值
+     * MPMAX            魔法最大值
+     * 
+     * 
+     * 
 	 * [系統相關變數]
 	 * dectefrequency	偵測頻率
 	 * bais				偵測頻率乖離變數
@@ -41,7 +51,7 @@ public class biologyCS : MonoBehaviour
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
     public float moveSpeedMax;//todo:測試用改成Public
-    float lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    float HP, HPMAX, MP, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
 
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3;
@@ -70,6 +80,18 @@ public class biologyCS : MonoBehaviour
         seeMax = 15f;               //todo:應該記錄在c_ai.json
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
+
+        LV = 15;
+        EXP = 900;
+        HPMAX = 800;
+        HP = 800;
+        MPMAX = 15;
+        MP = 15;
+
+        GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
+        GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
+        GameObject.Find("playerINFO/P3/HP").GetComponent<Text>().text = HP.ToString("F0");
+        GameObject.Find("playerINFO/P3/MP").GetComponent<Text>().text = MPMAX.ToString("F0");
 
         moveSpeedMax = moveSpeed;
         startPos = this.transform.position;
