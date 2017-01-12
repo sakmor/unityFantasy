@@ -27,6 +27,11 @@ public class biologyCS : MonoBehaviour
      * lastActionTime   上次行動時間
 	 *
      * [戰鬥相關變數]
+     * 
+     * bioType          生物型態 0=玩家 1=小怪 2=菁英 3=王怪
+     * hpPlus           血量值調整
+     * aTimes           可被同等級小怪或玩家的素體攻擊幾次
+     *
      * LV               現在等級
      * EXP              現在經驗值(全部)
      * HP               現在血量        (STR/2) + 50
@@ -34,12 +39,9 @@ public class biologyCS : MonoBehaviour
      * HPMAX            血量最大值
      * MP               現在魔法值
      * MPMAX            魔法最大值
-     * STR              力量  Strength
-     * DEX              敏捷  Dexterity
-     * int              智力  Intelligence
-     * Hitpoint         攻擊力
-     *
-     *
+     * DEF              防禦值
+     * DAMAGE           傷害值(遭受)
+     * Attack
      *
      *
 
@@ -47,11 +49,13 @@ public class biologyCS : MonoBehaviour
 	 * [系統相關變數]
 	 * dectefrequency	偵測頻率
 	 * bais				偵測頻率乖離變數
+     * players          使用哪個顯示器  0=怪物不使用 1=p1  2=p2 3=p3;
+     *
 	 *
 	 * [生物狀態變數]
 	 * startPos			出生位置
 	 * targetName		追擊目標的名字
-     * targt   追擊目標的資訊
+     * targt            追擊目標的資訊
 	 * bioAction		生物狀態
 	 *
 	 * [生物清單相關變數]
@@ -59,13 +63,13 @@ public class biologyCS : MonoBehaviour
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
     public float moveSpeedMax;//todo:測試用改成Public
-    float HP, HPMAX, MP, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-
+    private float ATTAKCK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    private int bioType, players;
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
-    GameObject nameText, bioCollider, targeLine;
+    GameObject nameText, bioCollider, targeLine, HID;
     gameCS maingameCS;
 
     public string bioAction, nameShort, bioDataPath;
@@ -78,6 +82,8 @@ public class biologyCS : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        attackCoolDown = 5;
+        players = 3;
         target = this.transform;
         rotateSpeed = 10;
         runBack = false;
@@ -88,13 +94,9 @@ public class biologyCS : MonoBehaviour
         seeMax = 15f;               //todo:應該記錄在c_ai.json
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
-
-        LV = 15;
-        EXP = 900;
-        HPMAX = 800;
-        HP = 800;
-        MPMAX = 15;
-        MP = 15;
+        LV = 50;
+        bioType = 1;
+        bioTypeSet();
 
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
@@ -141,6 +143,58 @@ public class biologyCS : MonoBehaviour
         }
 
     }
+    public void giveDAMAGE(float n)
+    {
+        HP -= n - DEF;
+        HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
+        HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
+    }
+
+    void bioTypeSet()
+    {
+        switch (bioType)
+        {
+            case 0:
+                hpPlus = 2;
+                aTimes = 35;
+                break;
+            case 1:
+                hpPlus = 1;
+                aTimes = 10;
+                break;
+            case 2:
+                hpPlus = 3;
+                aTimes = 30;
+                break;
+            case 3:
+                hpPlus = 5;
+                aTimes = 300;
+                break;
+        }
+        switch (players)
+        {
+            case 0:
+                break;
+            case 1:
+                HID = GameObject.Find("playerINFO").gameObject.transform.FindChild("P1").gameObject;
+                break;
+            case 2:
+                HID = GameObject.Find("playerINFO").gameObject.transform.FindChild("P2").gameObject;
+                break;
+            case 3:
+                HID = GameObject.Find("playerINFO").gameObject.transform.FindChild("P3").gameObject;
+                break;
+        }
+        NumCalculate();
+        HP = HPMAX;
+    }
+    void NumCalculate()
+    {
+        HPMAX = Mathf.Pow(LV * 5, 1.5f) + 50 * hpPlus;
+        ATTAKCK = HP * 0.5f;
+        DEF = ATTAKCK - (HPMAX / aTimes);
+
+    }
     void _catchPlayer(float n)
     {
         if (10 * Time.fixedTime % n < 1)
@@ -170,13 +224,18 @@ public class biologyCS : MonoBehaviour
 
                 if (playerDistance < attackDistance)
                 {
-                    if (Time.time * 1000 - lastActionTime > attackCoolDown)
+                    if (Time.time - lastActionTime > attackCoolDown)
                     {
-                        lastActionTime = Time.time * 1000;
+                        lastActionTime = Time.time;
                         Sphere3 = this.transform.position;
                         nameText.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
                         bioAction = "Attack";
                         maingameCS.logg(this.name + "攻擊！");
+                        target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTAKCK);
+                    }
+                    else
+                    {
+                        bioAction = "Wait";
                     }
                 }
             }
