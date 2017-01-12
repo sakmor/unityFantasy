@@ -1,4 +1,5 @@
 using UnityEngine;
+using myMath;
 
 [RequireComponent(typeof(LineRenderer))]
 public class Bezier : MonoBehaviour
@@ -10,8 +11,8 @@ public class Bezier : MonoBehaviour
     private int curveCount = 0;
     private int layerOrder = 0;
     private int SEGMENT_COUNT = 50;
-    public float linepapa;
-    public float a, b, c, l, startTime, fadeOut;
+    private float startTime;
+    public float duration, linepapa, fadeOut;
 
     Renderer rend;
     void Awake()
@@ -45,10 +46,7 @@ public class Bezier : MonoBehaviour
         rend.material.mainTexture = Resources.Load("texture/linebeam") as Texture;
 
         linepapa = 0;
-        a = 10;
-        b = 2.5f;
-        c = 1;
-        l = 2f;
+        duration = 1f;
         if (!lineRenderer)
         {
             lineRenderer = GetComponent<LineRenderer>();
@@ -80,9 +78,7 @@ public class Bezier : MonoBehaviour
                 if (linepapa <= 0.9)
                 {
                     // y=ax^b+cx
-                    float x = (Time.time - startTime) / l;
-                    float y = Mathf.Pow(a * x, b) + c * x;
-                    linepapa = y / (a + b);
+                    linepapa = MathS.easeInQuad(Time.time - startTime, 0, 1, duration);
                     // if (linepapa > 1)
                     // {
                     //     linepapa = 0.01f;

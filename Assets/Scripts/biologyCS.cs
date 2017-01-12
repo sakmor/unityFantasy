@@ -25,17 +25,25 @@ public class biologyCS : MonoBehaviour
 	 * moveSpeedMax		最大移動速度
      * attackDistance   攻擊距離
      * lastActionTime   上次行動時間
-	 *	 
+	 *
      * [戰鬥相關變數]
      * LV               現在等級
      * EXP              現在經驗值(全部)
-     * HP               現在血量 
+     * HP               現在血量        (STR/2) + 50
+     * Damage           傷害值
      * HPMAX            血量最大值
      * MP               現在魔法值
      * MPMAX            魔法最大值
-     * 
-     * 
-     * 
+     * STR              力量  Strength
+     * DEX              敏捷  Dexterity
+     * int              智力  Intelligence
+     * Hitpoint         攻擊力
+     *
+     *
+     *
+     *
+
+     *
 	 * [系統相關變數]
 	 * dectefrequency	偵測頻率
 	 * bais				偵測頻率乖離變數
@@ -135,7 +143,7 @@ public class biologyCS : MonoBehaviour
     }
     void _catchPlayer(float n)
     {
-        if (10 * Time.fixedTime % n < 0.1)
+        if (10 * Time.fixedTime % n < 1)
         {
             var playerDistance = Vector3.Distance(maingameCS.Player.transform.position, this.transform.position);
             var startPosDis = Vector3.Distance(this.transform.position, startPos);

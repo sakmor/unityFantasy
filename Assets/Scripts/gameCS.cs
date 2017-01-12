@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class gameCS : MonoBehaviour
 {
     public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
@@ -42,7 +43,6 @@ public class gameCS : MonoBehaviour
     void Start()
     {
         setBio();
-
         logText = GameObject.Find("logText");
         fpsText = GameObject.Find("fpsText");
         fpsText.AddComponent<FramesPerSecond>();
@@ -573,6 +573,7 @@ public class gameCS : MonoBehaviour
         temp.x = Mathf.Floor(pos.x);
         temp.z = Mathf.Floor(pos.z);
         temp.y = Mathf.Floor(pos.y);
+
         return temp;
     }
     Vector2 getIntersections(float ax, float ay, float bx, float by, float cx, float cy, float cz)
@@ -623,25 +624,9 @@ public class gameCS : MonoBehaviour
         }
 
         return (new Vector2());
-        /*
-        else if ((int)(eDistCtoE) == (int)(c[2]))
-        {
-            // console.log("Only one intersection");
-            // return {
-            //            points: false,
-            //            pointOnLine: e
-            // };
-        }
-        else
-        {
-            // console.log("No intersection");
-            // return {
-            //            points: false,
-            //            pointOnLine: e
-            // };
-        }
-        */
+
     }
+
 }
 public class scene
 {
