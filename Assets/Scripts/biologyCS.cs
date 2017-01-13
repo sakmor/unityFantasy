@@ -27,10 +27,10 @@ public class biologyCS : MonoBehaviour
      * lastActionTime   上次行動時間
 	 *
      * [戰鬥相關變數]
-     * 
+     *
      * bioType          生物型態 0=玩家 1=小怪 2=菁英 3=王怪
      * hpPlus           血量值調整
-     * aTimes           可被同等級小怪或玩家的素體攻擊幾次
+     * aTimes           可被同等級小怪或玩家的素體攻擊幾次 0=玩家30, 1＝小怪10,2=精英25,3=王怪300
      *
      * LV               現在等級
      * EXP              現在經驗值(全部)
@@ -63,8 +63,8 @@ public class biologyCS : MonoBehaviour
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
     public float moveSpeedMax;//todo:測試用改成Public
-    private float ATTAKCK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    private int bioType, players;
+    public float ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    private int bioType = 1, players;
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3;
     bool runBack;
@@ -95,8 +95,8 @@ public class biologyCS : MonoBehaviour
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
         LV = 50;
-        bioType = 1;
-        bioTypeSet();
+        bioType = 0;
+        bioTypeSet(bioType);
 
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
@@ -150,13 +150,14 @@ public class biologyCS : MonoBehaviour
         HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
 
-    void bioTypeSet()
+    public void bioTypeSet(int Type)
     {
-        switch (bioType)
+        bioType = Type;
+        switch (Type)
         {
             case 0:
                 hpPlus = 2;
-                aTimes = 35;
+                aTimes = 30;
                 break;
             case 1:
                 hpPlus = 1;
@@ -164,7 +165,7 @@ public class biologyCS : MonoBehaviour
                 break;
             case 2:
                 hpPlus = 3;
-                aTimes = 30;
+                aTimes = 25;
                 break;
             case 3:
                 hpPlus = 5;
@@ -186,13 +187,20 @@ public class biologyCS : MonoBehaviour
                 break;
         }
         NumCalculate();
-        HP = HPMAX;
     }
     void NumCalculate()
     {
-        HPMAX = Mathf.Pow(LV * 5, 1.5f) + 50 * hpPlus;
-        ATTAKCK = HP * 0.5f;
-        DEF = ATTAKCK - (HPMAX / aTimes);
+        HPMAX = (50 + Mathf.Pow(LV * 5, 1.5f)) * hpPlus;
+        //如果該生物是玩家(bioType=0)，對方視為小怪，血量用1來計算
+        //反之，該生物是怪物(不管精英還是王怪)，對方視為玩家，血量用2來計算
+        float temp = (bioType == 0) ? 1 : 2;
+        ATTACK = (50 + Mathf.Pow(LV * 5, 1.5f) * temp) * 0.5f;
+
+        //防禦力=敵方攻擊-(我的血量/預期次數)
+        //
+        temp = (bioType == 0) ? 1 : 2;
+        float eATTACK = (50 + Mathf.Pow(LV * 5, 1.5f) * temp) * 0.5f;
+        DEF = eATTACK - (HPMAX / aTimes);
 
     }
     void _catchPlayer(float n)
@@ -231,7 +239,7 @@ public class biologyCS : MonoBehaviour
                         nameText.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
                         bioAction = "Attack";
                         maingameCS.logg(this.name + "攻擊！");
-                        target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTAKCK);
+                        target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
                     }
                     else
                     {

@@ -58,6 +58,7 @@ public class gameCS : MonoBehaviour
         mainCamera = GameObject.Find("mainCamera");
         mainCamera2 = GameObject.Find("mainCamera2");
         playerBioCS = Player.GetComponent<biologyCS>();
+        playerBioCS.bioTypeSet(0);
         cammeraPlate = GameObject.Find("cammeraPlate");
 
         cameraRELtarget = mainCamera.transform.position - Player.transform.position;
