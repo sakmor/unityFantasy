@@ -89,7 +89,7 @@ public class biologyCS : MonoBehaviour
         runBack = false;
 
         WalkSteptweek = 40;         //todo:應該記錄在biologyList.json
-        moveSpeed = 0.09f;          //todo:應該記錄在c_ai.json
+        moveSpeed = 0.12f;          //todo:應該記錄在c_ai.json
         runBackDist = 10f;           //todo:應該記錄在c_ai.json
         seeMax = 15f;               //todo:應該記錄在c_ai.json
         attackDistance = 2;         //todo:應該記錄在c_ai.json
@@ -342,7 +342,7 @@ public class biologyCS : MonoBehaviour
 
             SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
             var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
-            if (SphereDistance > 0.05f)
+            if (SphereDistance > 0.01f)
             {
                 this.bioAction = "Walk";
 
@@ -382,10 +382,9 @@ public class biologyCS : MonoBehaviour
 
             //依照目標距離調整移動速度
             moveSpeed = moveSpeedMax;
-            if (maingameCS.hitUIObjectName ==
-                "movePlate" && SphereDistance < 5)
+            if (SphereDistance < 0.5f)
             {
-                moveSpeed = moveSpeed * (SphereDistance / 5);
+                moveSpeed = moveSpeed * (SphereDistance / 0.5f);
             }
 
             //更新動態碰撞物

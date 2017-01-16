@@ -13,7 +13,7 @@ public class gameCS : MonoBehaviour
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
-    GameObject cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText, fpsText;
+    GameObject clickPoint, cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText, fpsText;
     GameObject[] players = new GameObject[2];
 
     //Dictionary、Array----------------------------
@@ -42,6 +42,7 @@ public class gameCS : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        clickPoint = GameObject.Find("Sphere3");
         setBio();
         logText = GameObject.Find("logText");
         fpsText = GameObject.Find("fpsText");
@@ -86,9 +87,22 @@ public class gameCS : MonoBehaviour
         fellowPlayerCameraContorl();
         lineDecte();
         buttonDetect();
-        GameObject.Find("Sphere3").transform.position = new Vector3(playerBioCS.Sphere3.x, 1, playerBioCS.Sphere3.z);
+        clickPointPos();
 
 
+
+    }
+    void clickPointPos()
+    {
+        if (playerBioCS.bioAction == "Walk")
+        {
+            clickPoint.transform.position = new Vector3(playerBioCS.Sphere3.x, 1f, playerBioCS.Sphere3.z);
+            clickPoint.GetComponent<Renderer>().enabled = true;
+        }
+        else
+        {
+            clickPoint.GetComponent<Renderer>().enabled = false;
+        }
     }
     void setUIpos()
     {
