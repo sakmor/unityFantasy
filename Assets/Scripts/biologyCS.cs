@@ -64,7 +64,7 @@ public class biologyCS : MonoBehaviour
 	 */
     public float moveSpeedMax;//todo:測試用改成Public
     public float ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    private int bioType = 1, players;
+    public int bioType = 1, players;
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3;
     bool runBack;
@@ -95,7 +95,6 @@ public class biologyCS : MonoBehaviour
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.09f;          //todo:應該記錄在c_ai.json
         LV = 50;
-        bioType = 0;
         bioTypeSet(bioType);
 
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
@@ -145,7 +144,10 @@ public class biologyCS : MonoBehaviour
     }
     public void giveDAMAGE(float n)
     {
-        HP -= n - DEF;
+        if (n - DEF > 0)
+        {
+            HP -= n - DEF;
+        }
         HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
         HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
@@ -157,7 +159,7 @@ public class biologyCS : MonoBehaviour
         {
             case 0:
                 hpPlus = 2;
-                aTimes = 30;
+                aTimes = 35;
                 break;
             case 1:
                 hpPlus = 1;
@@ -187,10 +189,14 @@ public class biologyCS : MonoBehaviour
                 break;
         }
         NumCalculate();
+        HP = HPMAX;
+        MP = MPMAX;
     }
     void NumCalculate()
     {
         HPMAX = (50 + Mathf.Pow(LV * 5, 1.5f)) * hpPlus;
+        MPMAX = HPMAX * 0.05f;
+
         //如果該生物是玩家(bioType=0)，對方視為小怪，血量用1來計算
         //反之，該生物是怪物(不管精英還是王怪)，對方視為玩家，血量用2來計算
         float temp = (bioType == 0) ? 1 : 2;
@@ -198,11 +204,31 @@ public class biologyCS : MonoBehaviour
 
         //防禦力=敵方攻擊-(我的血量/預期次數)
         //
-        temp = (bioType == 0) ? 1 : 2;
-        float eATTACK = (50 + Mathf.Pow(LV * 5, 1.5f) * temp) * 0.5f;
+        temp = (bioType == 0) ? 2 : 1;
+        float eATTACK = 50 + Mathf.Pow(LV * 5, 1.5f) * temp * 0.5f;
+        Debug.Log(eATTACK);
         DEF = eATTACK - (HPMAX / aTimes);
 
     }
+    void _catchMonster(float n)
+    {
+        if (10 * Time.fixedTime % n < 1)
+        {
+
+        }
+    }
+    Boolean _onScreen()
+    {
+        if (Vector3.Distance(maingameCS.Player.transform.position, this.transform.position) < 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void _catchPlayer(float n)
     {
         if (10 * Time.fixedTime % n < 1)
@@ -240,6 +266,7 @@ public class biologyCS : MonoBehaviour
                         bioAction = "Attack";
                         maingameCS.logg(this.name + "攻擊！");
                         target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
+                        Debug.Log(ATTACK);
                     }
                     else
                     {
@@ -310,10 +337,10 @@ public class biologyCS : MonoBehaviour
 
         float SphereDistance;
 
-        if (this.bioAction == "Walk")
-        {
-            this.bioAction = "Wait";
-        }
+        // if (this.bioAction == "Walk")
+        // {
+        //     this.bioAction = "Wait";
+        // }
 
         //如果使用者操作搖桿
         if (maingameCS.clickStart &&
@@ -342,7 +369,7 @@ public class biologyCS : MonoBehaviour
 
             SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
             var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
-            if (SphereDistance > 0.01f)
+            if (SphereDistance > 0f)
             {
                 this.bioAction = "Walk";
 
@@ -384,7 +411,13 @@ public class biologyCS : MonoBehaviour
             moveSpeed = moveSpeedMax;
             if (SphereDistance < 0.5f)
             {
-                moveSpeed = moveSpeed * (SphereDistance / 0.5f);
+                moveSpeed = 0.01f + moveSpeed * (SphereDistance / 0.5f);
+                if (SphereDistance < 0.03f)
+                {
+                    this.bioAction = "Wait";
+                    Sphere2 = Sphere3;
+
+                }
             }
 
             //更新動態碰撞物

@@ -376,7 +376,7 @@ public class gameCS : MonoBehaviour
     {
         string tempString = logText.GetComponent<Text>().text;
         int loggLine = tempString.Split('\n').Length - 1;
-        int loggLineMax = 10;
+        int loggLineMax = 5;
         if (loggLine >= loggLineMax)
         {
             logText.GetComponent<Text>().text += '\n';
