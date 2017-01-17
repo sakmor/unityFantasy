@@ -6,6 +6,7 @@ using System;
 
 [RequireComponent(typeof(Animation))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(MeshRenderer))]
 // [RequireComponent(typeof(BoxCollider))]
 
 /*******
@@ -66,13 +67,15 @@ public class biologyCS : MonoBehaviour
     public float ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType = 1, players;
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
-    public Vector3 nametextScreenPos, startPos, Sphere, Sphere2, Sphere3;
+    public Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
     GameObject nameText, bioCollider, targeLine, HID;
     gameCS maingameCS;
 
     public string bioAction, nameShort, bioDataPath;
+
+    public bool isVisible;
     public Transform target;
 
     float[] biologyListData = new float[5];
@@ -85,7 +88,7 @@ public class biologyCS : MonoBehaviour
         attackCoolDown = 5;
         players = 3;
         target = this.transform;
-        rotateSpeed = 10;
+        rotateSpeed = 15;
         runBack = false;
 
         WalkSteptweek = 40;         //todo:應該記錄在biologyList.json
@@ -128,7 +131,7 @@ public class biologyCS : MonoBehaviour
     {
         if (this.name == maingameCS.Player.name)
         {
-            //        this._catchPlayer(); todo:玩家也要追擊
+            this._catchMonster(1);
             this._movment();
             this._bioStatus();
             this._targeLineUpdate();
@@ -214,18 +217,42 @@ public class biologyCS : MonoBehaviour
     {
         if (10 * Time.fixedTime % n < 1)
         {
+            GameObject[] allBiologys = GameObject.FindGameObjectsWithTag("biology");
+            foreach (GameObject thisBiology in allBiologys)
+            {
+                if (thisBiology.GetComponent<biologyCS>().isVisible &&
+                thisBiology.GetComponent<biologyCS>().bioType == 1)
+                {
+                    float bioDistance = Vector3.Distance(thisBiology.transform.position, this.transform.position);
+                    if (bioDistance < seeMax)
+                    {
+                        if (bioDistance > attackDistance)
+                        {
+                            Sphere3 = thisBiology.transform.position;
+                        }
+                        else
+                        {
+                            if (Time.time - lastActionTime > attackCoolDown)
+                            {
+                                lastActionTime = Time.time;
+                                Sphere3 = this.transform.position;
+                                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
+                                bioAction = "Attack";
+                                maingameCS.logg(this.name + "攻擊！");
+                                target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
+                                Debug.Log(ATTACK);
+                            }
+                            else
+                            {
+                                bioAction = "Wait";
+                            }
 
-        }
-    }
-    Boolean _onScreen()
-    {
-        if (Vector3.Distance(maingameCS.Player.transform.position, this.transform.position) < 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
+                        }
+
+                    }
+
+                }
+            }
         }
     }
 
@@ -433,11 +460,17 @@ public class biologyCS : MonoBehaviour
 
     public void updateUI()
     {
-        nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
-            this.transform.position.x,
-            this.transform.position.y + 2.5f,
-            this.transform.position.z));
-        nameText.transform.position = nametextScreenPos;
+        isVisible = GetComponent<Renderer>().isVisible;
+        if (isVisible)
+        {
+            nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
+                this.transform.position.x,
+                this.transform.position.y + 2.5f,
+                this.transform.position.z));
+            nameText.transform.position = nametextScreenPos;
+        }
+
+
     }
 
     void setCollisionCubes()
