@@ -371,7 +371,7 @@ public class biologyCS : MonoBehaviour
                     break;
                 case "danceTaget":
                     //todo:看著目標左右圍繞
-                    Sphere3 = this.transform.position + Vector3.Normalize(this.transform.right) * UnityEngine.Random.Range(-2.0f, 2.0f);
+                    Sphere3 = this.transform.position + Vector3.Normalize(this.transform.right) * UnityEngine.Random.Range(-1.0f, 1.0f) + Vector3.Normalize(this.transform.forward) * UnityEngine.Random.Range(-1.0f, 1.0f);
                     break;
             }
         }
