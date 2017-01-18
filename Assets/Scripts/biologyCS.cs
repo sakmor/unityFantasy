@@ -70,9 +70,9 @@ public class biologyCS : MonoBehaviour
     public Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
-    GameObject nameText, bioCollider, targeLine, HID;
+    GameObject nameText, targeLine, HID;
     gameCS maingameCS;
-
+    BoxCollider bioCollider;
     public string bioAction, nameShort, bioDataPath;
 
     public bool isVisible;
@@ -526,13 +526,14 @@ public class biologyCS : MonoBehaviour
     void setCollisionCubes()
     {
 
-        bioCollider = Instantiate(GameObject.Find("GameObject"));
-        bioCollider.name = "bioCollider";
-        bioCollider.transform.parent = this.transform;
-        bioCollider.transform.localScale = new Vector3(1, 1, 1);
-        bioCollider.transform.localPosition = new Vector3(0, 0, 0);
-        bioCollider.transform.eulerAngles = new Vector3(0, 45, 0);
-        bioCollider.AddComponent<BoxCollider>();
+        GameObject temp = Instantiate(GameObject.Find("GameObject"));
+        temp.name = "bioCollider";
+        temp.transform.parent = this.transform;
+        temp.transform.localScale = new Vector3(1, 1, 1);
+        temp.transform.localPosition = new Vector3(0, 0, 0);
+        temp.transform.eulerAngles = new Vector3(0, 45, 0);
+        temp.AddComponent<BoxCollider>();
+        bioCollider = temp.GetComponent<BoxCollider>();
 
         BoxCollider collider = bioCollider.GetComponent<BoxCollider>() as BoxCollider;
         collider.center = new Vector3(0, biologyListData[1], 0);
@@ -642,6 +643,17 @@ public class biologyCS : MonoBehaviour
             targeLine.GetComponent<Bezier>().closeLine();
 
         }
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (this.bioType == 0)
+        {
+            if (collision.gameObject.tag == "biology")
+            {
+                Physics.IgnoreCollision(collision.collider, bioCollider);
+            }
+        }
+
     }
 
 }
