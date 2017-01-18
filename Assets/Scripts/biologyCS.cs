@@ -85,7 +85,7 @@ public class biologyCS : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        attackCoolDown = 5;
+        attackCoolDown = 15;
         players = 3;
         target = this.transform;
         rotateSpeed = 15;
@@ -244,7 +244,7 @@ public class biologyCS : MonoBehaviour
                             }
                             else
                             {
-                                bioAction = "Wait";
+                                bioAction = "danceTaget";
                             }
 
                         }
@@ -310,7 +310,7 @@ public class biologyCS : MonoBehaviour
                     //如果玩家在可視範圍內，並且在攻擊範圍內，但攻擊尚未到
                     else
                     {
-                        bioAction = "Wait";
+                        bioAction = "danceTaget";
                     }
                 }
             }
@@ -334,38 +334,6 @@ public class biologyCS : MonoBehaviour
                 Sphere3 = maingameCS.Player.transform.position;
                 target = maingameCS.Player.transform;
                 this.moveSpeedMax = catchSpeed;
-            }
-
-
-            //攻擊判斷
-            if (playerDistance < attackDistance && !runBack)
-            {
-                if (Time.time - lastActionTime > attackCoolDown)
-                {
-                    lastActionTime = Time.time;
-                    Sphere3 = this.transform.position;
-                    nameText.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
-                    bioAction = "Attack";
-                    maingameCS.logg(this.name + "攻擊！");
-                    target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
-                    Debug.Log(ATTACK);
-                }
-                else
-                {
-                    Sphere3 = this.transform.position;
-                    target = this.transform;
-                    bioAction = "Wait";
-                }
-            }
-
-
-            //脫戰判斷
-            if (target == maingameCS.Player.transform && playerDistance > seeMax)
-            {
-                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.white;
-                target = this.transform;
-                maingameCS.logg(this.name + "放棄追擊你");
-                _runback();
             }
         }
     }
@@ -400,6 +368,10 @@ public class biologyCS : MonoBehaviour
                     break;
                 case "Jump":
                     //todo:目前沒有使用
+                    break;
+                case "danceTaget":
+                    //todo:看著目標左右圍繞
+                    Sphere3 = this.transform.position + Vector3.Normalize(this.transform.right) * UnityEngine.Random.Range(-2.0f, 2.0f);
                     break;
             }
         }
@@ -479,10 +451,17 @@ public class biologyCS : MonoBehaviour
             //將生物轉向目標
             Sphere2.y = this.transform.position.y;
             Sphere.y = this.transform.position.y;
-            Vector3 targetDir = Sphere2 - this.transform.position;
-            float step = rotateSpeed * Time.deltaTime;
-            Vector3 newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0f);
-            this.transform.rotation = Quaternion.LookRotation(newDir);
+            if (target == this.transform)
+            {
+                Vector3 targetDir = Sphere2 - this.transform.position;
+                float step = rotateSpeed * Time.deltaTime;
+                Vector3 newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0f);
+                this.transform.rotation = Quaternion.LookRotation(newDir);
+            }
+            else
+            {
+                this.transform.LookAt(target);
+            }
 
             //依照目標距離調整移動速度
             moveSpeed = moveSpeedMax;
