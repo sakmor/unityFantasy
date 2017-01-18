@@ -7,16 +7,18 @@ public class nodeInfo : MonoBehaviour
 
     // Use this for initialization
     public bool walkable;
+    public float playerDist;
     public Vector3 worldPosition;
 
     public Vector3 mPosition;
     public int gridX;
     public int gridY;
-
+    public float r;
     public int gCost;
     public int hCost;
     public Node parent;
     public Grid grid;
+    public Transform target;
     void Start()
     {
         grid = GameObject.Find("aStart").GetComponent<Grid>();
@@ -25,6 +27,10 @@ public class nodeInfo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //circle arow around targt
+        this.transform.position = target.position + r * (new Vector3(Mathf.Cos(Time.time), 0, Mathf.Sin(Time.time)));
+
+        playerDist = Vector3.Distance(GameObject.Find("Cha_Knight").transform.position, this.transform.position);
         gridX = grid.NodeFromWorldPoint(this.transform.position).gridX;
         gridY = grid.NodeFromWorldPoint(this.transform.position).gridY;
         walkable = grid.NodeFromWorldPoint(this.transform.position).walkable;
