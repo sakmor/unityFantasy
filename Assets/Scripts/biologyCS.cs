@@ -107,7 +107,7 @@ public class biologyCS : MonoBehaviour
 
         moveSpeedMax = moveSpeed;
         startPos = this.transform.position;
-        bais = Mathf.Floor(UnityEngine.Random.value * 10) - 5; //-5~5
+        bais = Mathf.Floor(UnityEngine.Random.value * 10) - 4; //-4~6
 
 
         nameText = Instantiate(GameObject.Find("nameText"));
@@ -131,7 +131,7 @@ public class biologyCS : MonoBehaviour
     {
         if (this.name == maingameCS.Player.name)
         {
-            this._catchMonster(1);
+            // this._catchMonster(1);
             this._movment();
             this._bioStatus();
             this._targeLineUpdate();
@@ -263,28 +263,39 @@ public class biologyCS : MonoBehaviour
             var playerDistance = Vector3.Distance(maingameCS.Player.transform.position, this.transform.position);
             var startPosDis = Vector3.Distance(this.transform.position, startPos);
 
-            if (startPosDis > runBackDist)
-            {
-                _runback();
-            }
+            //如果距離出身點過遠則脫戰
+            if (startPosDis > runBackDist) _runback();
+
+            //如果玩家在可視範圍內
             if (playerDistance < seeMax && !runBack)
             {
-                if (target != maingameCS.Player.transform)
-                {
-                    target = maingameCS.Player.transform;
-                    maingameCS.logg(this.name + "開始追擊你了");
-
-                }
+                //如果玩家在可視範圍內，但在攻擊範圍外
                 if (playerDistance > attackDistance)
                 {
-                    Sphere3 = maingameCS.Player.transform.position;
+                    //如果玩家在可視範圍內，但在攻擊範圍外，且尚未鎖定玩家
+                    if (target != maingameCS.Player.transform)
+                    {
+                        target = maingameCS.Player.transform;
+                        maingameCS.logg(this.name + "開始追擊你了");
+                        Sphere3 = maingameCS.Player.transform.position;
+                        this.moveSpeedMax = catchSpeed;
+                        nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
+                    }
+                    //如果玩家在可視範圍內，但在攻擊範圍外，且鎖定玩家
+                    else
+                    {
+                        nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
+                        Sphere3 = maingameCS.Player.transform.position;
+                    }
+
                 }
-
-                this.moveSpeedMax = catchSpeed;
-                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
-
-                if (playerDistance < attackDistance)
+                //如果玩家在可視範圍內，並且在攻擊範圍內
+                else
                 {
+                    //停止追擊
+                    this.Sphere3 = this.transform.position;
+
+                    //如果玩家在可視範圍內，並且在攻擊範圍內，且攻擊時間到了
                     if (Time.time - lastActionTime > attackCoolDown)
                     {
                         lastActionTime = Time.time;
@@ -295,28 +306,21 @@ public class biologyCS : MonoBehaviour
                         target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
                         Debug.Log(ATTACK);
                     }
+                    //如果玩家在可視範圍內，並且在攻擊範圍內，但攻擊尚未到
                     else
                     {
                         bioAction = "Wait";
                     }
                 }
             }
-            else
+            //如果玩家在可視範圍內之外
+            else if (target != this.transform)
             {
-                if (target != this.transform)
-                {
-                    target = this.transform;
-                    maingameCS.logg(this.name + "放棄追擊你");
-                    _runback();
-                }
+                target = this.transform;
+                maingameCS.logg(this.name + "放棄追擊你");
+                _runback();
                 nameText.GetComponent<UnityEngine.UI.Text>().color = Color.white;
-                //        this.Sphere3.transform.position = this.transform.position;
-                //        this.Sphere3.transform.position.y = 1;
-                //        maingameCS.logg("here");
-
             }
-
-
         }
     }
 
