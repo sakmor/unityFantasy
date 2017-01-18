@@ -263,6 +263,7 @@ public class biologyCS : MonoBehaviour
             var playerDistance = Vector3.Distance(maingameCS.Player.transform.position, this.transform.position);
             var startPosDis = Vector3.Distance(this.transform.position, startPos);
 
+
             //如果距離出身點過遠則脫戰
             if (startPosDis > runBackDist) _runback();
 
@@ -320,6 +321,51 @@ public class biologyCS : MonoBehaviour
                 maingameCS.logg(this.name + "放棄追擊你");
                 _runback();
                 nameText.GetComponent<UnityEngine.UI.Text>().color = Color.white;
+            }
+            //脫戰判斷
+            if (startPosDis > runBackDist) { _runback(); }
+
+
+            //追擊判斷 //判斷是否為首次追擊
+            if (playerDistance < seeMax && playerDistance > attackDistance && !runBack && target != maingameCS.Player.transform)
+            {
+                maingameCS.logg(this.name + "開始追擊你了");
+                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
+                Sphere3 = maingameCS.Player.transform.position;
+                target = maingameCS.Player.transform;
+                this.moveSpeedMax = catchSpeed;
+            }
+
+
+            //攻擊判斷
+            if (playerDistance < attackDistance && !runBack)
+            {
+                if (Time.time - lastActionTime > attackCoolDown)
+                {
+                    lastActionTime = Time.time;
+                    Sphere3 = this.transform.position;
+                    nameText.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
+                    bioAction = "Attack";
+                    maingameCS.logg(this.name + "攻擊！");
+                    target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
+                    Debug.Log(ATTACK);
+                }
+                else
+                {
+                    Sphere3 = this.transform.position;
+                    target = this.transform;
+                    bioAction = "Wait";
+                }
+            }
+
+
+            //脫戰判斷
+            if (target == maingameCS.Player.transform && playerDistance > seeMax)
+            {
+                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.white;
+                target = this.transform;
+                maingameCS.logg(this.name + "放棄追擊你");
+                _runback();
             }
         }
     }

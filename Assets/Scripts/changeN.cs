@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class changeN : MonoBehaviour
 {
     public bool go = false;
-    public float targNU, starNU, result, duration = 0.5f;
+    public float targNU, starNU, result, duration = 0.05f;
     private float _targNU, startTime;
 
     void Start()
