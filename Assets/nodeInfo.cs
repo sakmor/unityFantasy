@@ -44,11 +44,4 @@ public class nodeInfo : MonoBehaviour
         mPosition = GameObject.Find("mainGame").GetComponent<gameCS>().normalized(worldPosition);
 
     }
-
-    private float AngleBetweenVector3(Vector3 vec1, Vector3 vec2)
-    {
-        Vector3 diference = vec2 - vec1;
-        float sign = (vec2.z < vec1.z) ? -1.0f : 1.0f;
-        return Vector3.Angle(Vector2.right, diference) * sign;
-    }
 }

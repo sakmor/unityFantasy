@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
+using myMath;
 
 [RequireComponent(typeof(Animation))]
 [RequireComponent(typeof(Rigidbody))]
@@ -375,12 +376,17 @@ public class biologyCS : MonoBehaviour
             Sphere.x = maingameCS.mouseDragVector.x * 0.02f;
             Sphere.z = maingameCS.mouseDragVector.z * 0.02f;
 
-            //將spere2依據攝影機位置做座標轉換
-            var tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-            tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-            Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
-            Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
+            //轉換搖桿向量至角色位置
+            Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Sphere.x, Sphere.z);
+            Sphere2.x = temp.x;
+            Sphere2.z = temp.z;
             Sphere2.y = this.transform.position.y;
+            // //將spere2依據攝影機位置做座標轉換
+            // float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+            // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+            // Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
+            // Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
+            // Sphere2.y = this.transform.position.y;
 
             SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
         }

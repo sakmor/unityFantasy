@@ -96,7 +96,7 @@ public class gameCS : MonoBehaviour
     {
         if (playerBioCS.bioAction == "Walk")
         {
-            clickPoint.transform.position = new Vector3(playerBioCS.Sphere3.x, 1f, playerBioCS.Sphere3.z);
+            clickPoint.transform.position = new Vector3(playerBioCS.Sphere2.x, 1f, playerBioCS.Sphere2.z);
             clickPoint.GetComponent<Renderer>().enabled = true;
         }
         else
