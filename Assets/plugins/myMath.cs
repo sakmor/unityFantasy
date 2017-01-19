@@ -185,5 +185,24 @@ namespace myMath
 
             return temp;
         }
+
+        public static Vector3 getCirclePath(Vector3 start, Vector3 target, float angle)
+        {
+            float _r = Vector3.Distance(target, start);
+            float dregg = AngleBetweenVector3(target, start) + angle;
+            return target + _r * (new Vector3(Mathf.Cos(dregg * Mathf.Deg2Rad), 0, Mathf.Sin(dregg * Mathf.Deg2Rad)));
+        }
+        public static Vector3 getCirclePath(Vector3 start, Vector3 target, float angle, float r)
+        {
+            float dregg = AngleBetweenVector3(target, start) + angle;
+            return target + r * (new Vector3(Mathf.Cos(dregg * Mathf.Deg2Rad), 0, Mathf.Sin(dregg * Mathf.Deg2Rad)));
+        }
+        public static float AngleBetweenVector3(Vector3 vec1, Vector3 vec2)
+        {
+            Vector3 diference = vec2 - vec1;
+            float sign = (vec2.z < vec1.z) ? -1.0f : 1.0f;
+            return Vector3.Angle(Vector2.right, diference) * sign;
+        }
+
     }
 }
