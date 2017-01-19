@@ -18,6 +18,7 @@ public class nodeInfo : MonoBehaviour
     public int hCost;
     public Node parent;
     public Grid grid;
+    public float dregg;
     public Transform target;
     void Start()
     {
@@ -28,7 +29,7 @@ public class nodeInfo : MonoBehaviour
     void Update()
     {
         //circle arow around targt
-        this.transform.position = target.position + r * (new Vector3(Mathf.Cos(Time.time), 0, Mathf.Sin(Time.time)));
+        this.transform.position = target.position + r * (new Vector3(Mathf.Cos(dregg * Mathf.Deg2Rad), 0, Mathf.Sin(dregg * Mathf.Deg2Rad)));
 
         playerDist = Vector3.Distance(GameObject.Find("Cha_Knight").transform.position, this.transform.position);
         gridX = grid.NodeFromWorldPoint(this.transform.position).gridX;
