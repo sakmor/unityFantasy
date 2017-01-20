@@ -192,11 +192,15 @@ namespace myMath
             float dregg = AngleBetweenVector3(target, start) + angle;
             return target + _r * (new Vector3(Mathf.Cos(dregg * Mathf.Deg2Rad), 0, Mathf.Sin(dregg * Mathf.Deg2Rad)));
         }
+
         public static Vector3 getCirclePath(Vector3 start, Vector3 target, float angle, float r)
         {
+
             float dregg = AngleBetweenVector3(target, start) + angle;
+            Debug.Log(" 距離：" + r + " 角度：" + angle + "目前角度" + dregg);
             return target + r * (new Vector3(Mathf.Cos(dregg * Mathf.Deg2Rad), 0, Mathf.Sin(dregg * Mathf.Deg2Rad)));
         }
+
         public static float AngleBetweenVector3(Vector3 vec1, Vector3 vec2)
         {
             Vector3 diference = vec2 - vec1;

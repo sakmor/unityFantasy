@@ -24,6 +24,8 @@ public class gameCS : MonoBehaviour
     public bool touchScreen;
     public bool cammeraPlatein2out, movePlatein2out, clickStart;
 
+    //float----------------------------
+
     //String----------------------------
     public string hitUIObjectName = "";
 
@@ -101,7 +103,7 @@ public class gameCS : MonoBehaviour
         }
         else
         {
-            clickPoint.GetComponent<Renderer>().enabled = false;
+            clickPoint.GetComponent<Renderer>().enabled = true;
         }
     }
     void setUIpos()
@@ -239,8 +241,8 @@ public class gameCS : MonoBehaviour
                 //控制生物移動
                 if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0)
                 {
-                    mouseDragVector.x = (myIputPostion.x - mouseStartPOS.x) * 2.5f;
-                    mouseDragVector.z = (myIputPostion.y - mouseStartPOS.y) * 2.5f;
+                    mouseDragVector.x = movePlateMouse.transform.localPosition.x / (_rect.height * 0.5f);
+                    mouseDragVector.z = movePlateMouse.transform.localPosition.y / (_rect.width * 0.5f);
                 }
             }
 
