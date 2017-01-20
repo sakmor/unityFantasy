@@ -377,17 +377,24 @@ public class biologyCS : MonoBehaviour
             Sphere.z = maingameCS.mouseDragVector.z;
 
             //轉換搖桿向量至角色位置
-            // Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Sphere.x, Sphere.z);
-            // Sphere2.x = temp.x;
-            // Sphere2.z = temp.z;
-            // Sphere2.y = this.transform.position.y;
+            float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 90 + maingameCS.temp;
+            float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
 
-            //將spere2依據攝影機位置做座標轉換
             float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-            tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-            Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
-            Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
+            tempAngel = maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+            Debug.Log(tempAngel * Mathf.Rad2Deg);
+
+            Vector3 temp = MathS.getCirclePath(Sphere, this.transform.position, Angle, r);
+            Sphere2.x = temp.x;
+            Sphere2.z = temp.z;
             Sphere2.y = this.transform.position.y;
+
+            // //將spere2依據攝影機位置做座標轉換
+            // float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+            // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+            // Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
+            // Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
+            // Sphere2.y = this.transform.position.y;
 
             SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
         }
@@ -460,7 +467,7 @@ public class biologyCS : MonoBehaviour
             dynamicCollision();
 
             //移動生物到目標點
-            this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
+            // this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
 
             //調整步伐
             anim["Walk"].speed = WalkSteptweek * moveSpeed;

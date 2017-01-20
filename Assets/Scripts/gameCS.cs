@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class gameCS : MonoBehaviour
 {
+    public float temp;
     public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
      Vector2>();
 

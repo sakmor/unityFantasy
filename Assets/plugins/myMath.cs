@@ -197,7 +197,6 @@ namespace myMath
         {
 
             float dregg = AngleBetweenVector3(target, start) + angle;
-            Debug.Log(" 距離：" + r + " 角度：" + angle + "目前角度" + dregg);
             return target + r * (new Vector3(Mathf.Cos(dregg * Mathf.Deg2Rad), 0, Mathf.Sin(dregg * Mathf.Deg2Rad)));
         }
 
