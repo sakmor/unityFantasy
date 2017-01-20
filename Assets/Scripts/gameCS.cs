@@ -13,7 +13,7 @@ public class gameCS : MonoBehaviour
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
-    GameObject clickPoint, cammeraPlateMouse, Cube, hitUIObject, movePlateMouse, movePlate, cammeraPlate, logText, fpsText;
+    GameObject clickPoint, cammeraStickMouse, Cube, hitUIObject, moveStickMouse, moveStick, cammeraStick, logText, fpsText;
     GameObject[] players = new GameObject[2];
 
     //Dictionary、Array----------------------------
@@ -22,9 +22,10 @@ public class gameCS : MonoBehaviour
 
     //boolean----------------------------
     public bool touchScreen;
-    public bool cammeraPlatein2out, movePlatein2out, clickStart;
+    public bool cammeraStickin2out, moveStickin2out, clickStart;
 
     //float----------------------------
+    float stickSensitive = 5;
 
     //String----------------------------
     public string hitUIObjectName = "";
@@ -51,9 +52,9 @@ public class gameCS : MonoBehaviour
         fpsText.AddComponent<FramesPerSecond>();
         logg("This Device is:" + SystemInfo.deviceType);
 
-        cammeraPlateMouse = GameObject.Find("cammeraPlateMouse");
-        movePlateMouse = GameObject.Find("movePlateMouse");
-        movePlate = GameObject.Find("movePlate");
+        cammeraStickMouse = GameObject.Find("cammeraStickMouse");
+        moveStickMouse = GameObject.Find("moveStickMouse");
+        moveStick = GameObject.Find("moveStick");
         Cube = GameObject.Find("Cube");
 
         Player = GameObject.Find("Cha_Knight");//todo:玩家不一定是用Cha_Knight
@@ -62,7 +63,7 @@ public class gameCS : MonoBehaviour
         mainCamera2 = GameObject.Find("mainCamera2");
         playerBioCS = Player.GetComponent<biologyCS>();
         playerBioCS.bioTypeSet(0);
-        cammeraPlate = GameObject.Find("cammeraPlate");
+        cammeraStick = GameObject.Find("cammeraStick");
 
         cameraRELtarget = mainCamera.transform.position - Player.transform.position;
         camera1 = mainCamera.GetComponent<Camera>();
@@ -108,7 +109,7 @@ public class gameCS : MonoBehaviour
     }
     void setUIpos()
     {
-        movePlate.transform.position = new Vector3(movePlate.GetComponent<RectTransform>().sizeDelta.x, movePlate.GetComponent<RectTransform>().sizeDelta.y, 0);
+        moveStick.transform.position = new Vector3(moveStick.GetComponent<RectTransform>().sizeDelta.x, moveStick.GetComponent<RectTransform>().sizeDelta.y, 0);
         fpsText.transform.position = new Vector3(fpsText.GetComponent<RectTransform>().sizeDelta.x * 0.5f + 15, UnityEngine.Screen.height - 15, 0);
         logText.transform.position = new Vector3(logText.GetComponent<RectTransform>().sizeDelta.x + 10, 370, 0);
         GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
@@ -152,7 +153,7 @@ public class gameCS : MonoBehaviour
                 mouseStartPOS = myIputPostion;
             }
             //如果點選到了攝影機搖桿
-            if (hitUIObjectName == "cammeraPlate")
+            if (hitUIObjectName == "cammeraStick")
             {
                 Sprite _sprite = hitUIObject.GetComponent<Image>().sprite;
                 Rect _rect = hitUIObject.GetComponentInParent<RectTransform>().rect;
@@ -169,21 +170,21 @@ public class gameCS : MonoBehaviour
 
                 if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
                 {
-                    cammeraPlatein2out = true;
-                    cammeraPlateMouse.transform.position = myIputPostion;
+                    cammeraStickin2out = true;
+                    cammeraStickMouse.transform.position = myIputPostion;
                 }
-                else if (cammeraPlatein2out)
+                else if (cammeraStickin2out)
                 {
                     //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
                     Vector2 a = new Vector2(myIputPostion.x, myIputPostion.y);
                     Vector2 b = new Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
                     Vector3 c = new Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5f);
                     Vector2 x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
-                    cammeraPlateMouse.transform.position = new Vector3(x.x, x.y, 0);
+                    cammeraStickMouse.transform.position = new Vector3(x.x, x.y, 0);
                 }
 
                 //控制攝影機--香菇頭左右
-                mainCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraPlateMouse.transform.position.x) * Time.deltaTime);
+                mainCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraStickMouse.transform.position.x) * Time.deltaTime);
 
                 //控制攝影機--香菇頭上下
                 var camera2PlayerVector = mainCamera.transform.position - Player.transform.position;
@@ -192,17 +193,17 @@ public class gameCS : MonoBehaviour
                 tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
 
                 //限制攝影機上下移動的角度
-                if (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y < 0)
+                if (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y < 0)
                 {
                     if (Vector3.Angle(camera2PlayerVector, Vector3.up) >= 10)
                     {
-                        mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                        mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                     }
                 }
                 else
                     if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
                 {
-                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraPlateMouse.transform.position.y) * Time.deltaTime);
+                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                 }
 
                 //更新攝影機與目標的相對位置
@@ -210,7 +211,7 @@ public class gameCS : MonoBehaviour
 
             }
             //如果點選到了移動搖桿
-            if (hitUIObjectName == "movePlate")
+            if (hitUIObjectName == "moveStick")
             {
 
                 Sprite _sprite = hitUIObject.GetComponent<Image>().sprite;
@@ -225,46 +226,46 @@ public class gameCS : MonoBehaviour
 
                 if (UIObjectRGB.a != 0 && Vector2.Distance(myIputPostion, hitUIObject.transform.position) < _rect.width * 0.5)
                 {
-                    movePlatein2out = true;
-                    movePlateMouse.transform.position = myIputPostion;
+                    moveStickin2out = true;
+                    moveStickMouse.transform.position = myIputPostion;
                 }
-                else if (movePlatein2out)
+                else if (moveStickin2out)
                 {
                     //如果拖拉滑鼠盤脫離搖桿盤的範圍，取得圓的交點
                     Vector2 a = new Vector2(myIputPostion.x, myIputPostion.y);
                     Vector2 b = new Vector2(hitUIObject.transform.position.x, hitUIObject.transform.position.y);
                     Vector3 c = new Vector3(hitUIObject.transform.position.x, hitUIObject.transform.position.y, _rect.width * 0.5f);
                     Vector2 x = getIntersections(a.x, a.y, b.x, b.y, c.x, c.y, c.z);
-                    movePlateMouse.transform.position = new Vector3(x.x, x.y, 0);
+                    moveStickMouse.transform.position = new Vector3(x.x, x.y, 0);
                 }
 
                 //控制生物移動
                 if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0)
                 {
-                    mouseDragVector.x = movePlateMouse.transform.localPosition.x / (_rect.height * 0.5f);
-                    mouseDragVector.z = movePlateMouse.transform.localPosition.y / (_rect.width * 0.5f);
+                    mouseDragVector.x = moveStickMouse.transform.localPosition.x / (_rect.height * 0.5f);
+                    mouseDragVector.z = moveStickMouse.transform.localPosition.y / (_rect.width * 0.5f);
                 }
             }
 
         }
         else
         {
-            cammeraPlateMouse.transform.position = cammeraPlate.transform.position;
-            movePlateMouse.transform.position = movePlate.transform.position;
+            cammeraStickMouse.transform.position = cammeraStick.transform.position;
+            moveStickMouse.transform.position = moveStick.transform.position;
             hitUIObject = null;
-            //放開滑鼠時...如果前一個按鍵removePlate，則移除
-            //放開滑鼠時...如果前一個按鍵cubePlate，則新增
+            //放開滑鼠時...如果前一個按鍵removeStick，則移除
+            //放開滑鼠時...如果前一個按鍵cubeStick，則新增
             if (hitUIObjectName != "")
             {
-                if (hitUIObjectName == "removePlate")
+                if (hitUIObjectName == "removeStick")
                 {
                     playerBioCS.bioAction = "Action";
                 }
-                if (hitUIObjectName == "cubePlate")
+                if (hitUIObjectName == "cubeStick")
                 {
                     playerBioCS.bioAction = "Create";
                 }
-                if (hitUIObjectName == "movePlate")
+                if (hitUIObjectName == "moveStick")
                 {
                     playerBioCS.Sphere2 = playerBioCS.transform.position;
                     playerBioCS.Sphere3 = playerBioCS.transform.position;
@@ -272,8 +273,8 @@ public class gameCS : MonoBehaviour
                 hitUIObjectName = "";
             }
             clickStart = false;
-            cammeraPlatein2out = false;
-            movePlatein2out = false;
+            cammeraStickin2out = false;
+            moveStickin2out = false;
         }
 
     }
@@ -553,8 +554,8 @@ public class gameCS : MonoBehaviour
             //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
             if (Physics.Raycast(ray, out mouseHitPlane) &&
                 !EventSystem.current.IsPointerOverGameObject() &&
-                hitUIObjectName != "cammeraPlate" &&
-                hitUIObjectName != "movePlate"
+                hitUIObjectName != "cammeraStick" &&
+                hitUIObjectName != "moveStick"
             )
             {
 

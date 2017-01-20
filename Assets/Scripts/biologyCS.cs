@@ -366,7 +366,7 @@ public class biologyCS : MonoBehaviour
 
         //如果使用者操作搖桿
         if (maingameCS.clickStart &&
-            maingameCS.hitUIObjectName == "movePlate" &&
+            maingameCS.hitUIObjectName == "moveStick" &&
             maingameCS.Player.name == this.name)
         {
 
