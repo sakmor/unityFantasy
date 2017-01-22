@@ -268,7 +268,10 @@ public class biologyCS : MonoBehaviour
                 _runback();
 
             //gameBits--1
-            if (getClosestEnemy)
+            if (target2ClosestEnemy())
+            {
+
+            }
             //action--1
             {
 
@@ -676,7 +679,7 @@ public class biologyCS : MonoBehaviour
     }
 
     //回傳隨便一個敵方
-    bool getAnyEnemy()
+    bool target2AnyEnemy()
     {
         foreach (var t in battleBios)
         {
@@ -690,7 +693,7 @@ public class biologyCS : MonoBehaviour
     }
 
     //回傳離我最近敵方
-    bool getClosestEnemy()
+    bool target2ClosestEnemy()
     {
         Transform tMin = null;
         float minDist = Mathf.Infinity;
@@ -712,7 +715,7 @@ public class biologyCS : MonoBehaviour
         return false;
     }
     //回傳離我最遠敵方
-    Transform getFurthestEnemy()
+    bool target2FurthestEnemy()
     {
         Transform tMax = null;
         float maxDist = Mathf.Infinity;
@@ -727,13 +730,14 @@ public class biologyCS : MonoBehaviour
                     tMax = t.transform;
                     maxDist = dist;
                 }
-                return tMax;
+                target = tMax;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳敵方中血量最高者
-    Transform getHighestHPEnemy()
+    bool target2HighestHPEnemy()
     {
         float highestHP = 0;
         Transform tMax = null;
@@ -750,10 +754,10 @@ public class biologyCS : MonoBehaviour
                 return tMax;
             }
         }
-        return null;
+        return false;
     }
     //回傳敵方中血量最低者
-    Transform getLowestHPEnemy()
+    bool target2LowestHPEnemy()
     {
         float lowestHP = 9999999999;
         Transform tMin = null;
@@ -767,13 +771,14 @@ public class biologyCS : MonoBehaviour
                     tMin = t.transform;
                     lowestHP = tempHP;
                 }
-                return tMin;
+                target = tMin;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳敵方中血量上限最高者
-    Transform getHighestHPMaxEnemy()
+    bool target2HighestHPMaxEnemy()
     {
         float highestHP = 0;
         Transform tMax = null;
@@ -787,13 +792,14 @@ public class biologyCS : MonoBehaviour
                     tMax = t.transform;
                     highestHP = tempHP;
                 }
-                return tMax;
+                target = tMax;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳敵方中血量上限最低者
-    Transform getLowestHPMaxEnemy()
+    bool target2LowestHPMaxEnemy()
     {
         float lowestHP = 9999999999;
         Transform tMin = null;
@@ -810,10 +816,10 @@ public class biologyCS : MonoBehaviour
                 return tMin;
             }
         }
-        return null;
+        return false;
     }
     //回傳敵方等級最低者
-    Transform getLowestLevelEnemy()
+    bool target2LowestLevelEnemy()
     {
         float lowestLevel = 9999999999;
         Transform tMin = null;
@@ -827,13 +833,14 @@ public class biologyCS : MonoBehaviour
                     tMin = t.transform;
                     lowestLevel = tempHP;
                 }
-                return tMin;
+                target = tMin;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳敵方等級最高者
-    Transform getHighestLevelEnemy()
+    bool target2HighestLevelEnemy()
     {
         float highestLevel = 0;
         Transform tMax = null;
@@ -847,389 +854,422 @@ public class biologyCS : MonoBehaviour
                     tMax = t.transform;
                     highestLevel = tempHP;
                 }
-                return tMax;
+                target = tMax;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳隊長的目標(玩家專用)
-    Transform getLeaderTarget()
+    bool target2LeaderTarget()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().target.name == maingameCS.playerBioCS[0].name)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳以我為目標的目標
-    Transform getTargetSelfEnemy()
+    bool target2TargetSelfEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().target.name == this.name)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     //回傳以隊友為目標的目標
-    Transform getTargetAllyEnemy()
+    bool target2TargetAllyEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().target.name == this.name)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於90%目標
-    Transform getHpOver90percentEnemy()
+    bool target2HpOver90percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.9)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於70%目標
-    Transform getHpOver70percentEnemy()
+    bool target2HpOver70percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.7)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於50%目標
-    Transform getHpOver50percentEnemy()
+    bool target2HpOver50percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.5)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於30%目標
-    Transform getHpOver30percentEnemy()
+    bool target2HpOver30percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.3)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於10%目標
-    Transform getHpOver10percentEnemy()
+    bool target2HpOver10percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.1)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量低於90%目標
-    Transform getHpUnder90percentEnemy()
+    bool target2HpUnder90percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.9)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量低於70%目標
-    Transform getHpUnder70percentEnemy()
+    bool target2HpUnder70percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.7)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於50%目標
-    Transform getHpUnder50percentEnemy()
+    bool target2HpUnder50percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.5)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於30%目標
-    Transform getHpUnder30percentEnemy()
+    bool target2HpUnder30percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.3)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於10%目標
-    Transform getHpUnder10percentEnemy()
+    bool target2HpUnder10percentEnemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.1)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳血量高於100000目標
-    Transform getHpOver100000Enemy()
+    bool target2HpOver100000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 100000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver50000Enemy()
+    bool target2HpOver50000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 50000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver10000Enemy()
+    bool target2HpOver10000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 10000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver5000Enemy()
+    bool target2HpOver5000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 5000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    Transform getHpOver3000Enemy()
+    bool target2HpOver3000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 3000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver2000Enemy()
+    bool target2HpOver2000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 2000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver1000Enemy()
+    bool target2HpOver1000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 1000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver500Enemy()
+    bool target2HpOver500Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 500)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpOver100Enemy()
+    bool target2HpOver100Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP >= 500)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳血量低於100000目標
-    Transform getHpUnder100000Enemy()
+    bool target2HpUnder100000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 100000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder50000Enemy()
+    bool target2HpUnder50000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 50000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder10000Enemy()
+    bool target2HpUnder10000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 10000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder5000Enemy()
+    bool target2HpUnder5000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 5000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    Transform getHpUnder3000Enemy()
+    bool target2HpUnder3000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 3000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder2000Enemy()
+    bool target2HpUnder2000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 2000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder1000Enemy()
+    bool target2HpUnder1000Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 1000)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder500Enemy()
+    bool target2HpUnder500Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 500)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
-    Transform getHpUnder100Enemy()
+    bool target2HpUnder100Enemy()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP <= 500)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
 
 
     //------------------
     //回傳隨便一個我方
-    Transform getAnyAlly()
+    bool target2AnyAlly()
     {
         foreach (var t in battleBios)
         {
             if (bioCamp == t.GetComponent<biologyCS>().bioCamp)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     //回傳我方中血量最低者
-    Transform getLowestHPAlly()
+    bool target2LowestHPAlly()
     {
         float lowestHP = 9999999999;
         Transform tMin = null;
@@ -1243,84 +1283,92 @@ public class biologyCS : MonoBehaviour
                     tMin = t.transform;
                     lowestHP = tempHP;
                 }
-                return tMin;
+                target = tMin;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
 
     //回傳殘存血量低於90%目標
-    Transform getHpUnder90percentAlly()
+    bool target2HpUnder90percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.9)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量低於70%目標
-    Transform getHpUnder70percentAlly()
+    bool target2HpUnder70percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.7)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於50%目標
-    Transform getHpUnder50percentAlly()
+    bool target2HpUnder50percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.5)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於30%目標
-    Transform getHpUnder30percentAlly()
+    bool target2HpUnder30percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.3)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳殘存血量高於10%目標
-    Transform getHpUnder10percentAlly()
+    bool target2HpUnder10percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.1)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳戰鬥不能的我方
-    Transform getHpUnder0percentAlly()
+    bool target2HpUnder0percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.0)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
 
