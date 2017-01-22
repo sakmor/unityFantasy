@@ -96,6 +96,11 @@ public class Bezier : MonoBehaviour
                     {
                         rend.material.SetColor("_Color", new Color(1, 1, 1, fadeOut));
                     }
+                    else
+                    {
+                        drawIt = false;
+
+                    }
                 }
                 int nodeIndex = j * 3;
                 Vector3 pixel = CalculateCubicBezierPoint(t, controlPoints[nodeIndex].position, controlPoints[nodeIndex + 1].position, controlPoints[nodeIndex + 2].position, controlPoints[nodeIndex + 3].position);

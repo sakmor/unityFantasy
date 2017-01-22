@@ -33,8 +33,9 @@ public class nodeInfo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        this.transform.position = GameObject.Find("Cha_Knight").transform.position - GameObject.Find("mainCamera").transform.forward * 1;
 
-        this.transform.position = MathS.getCirclePath(this.transform.position, target.position, right, rr + forward);
+        // this.transform.position = MathS.getCirclePath(this.transform.position, target.position, right, rr + forward);
 
         playerDist = Vector3.Distance(GameObject.Find("Cha_Knight").transform.position, this.transform.position);
         gridX = grid.NodeFromWorldPoint(this.transform.position).gridX;
