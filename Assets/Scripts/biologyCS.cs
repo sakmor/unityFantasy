@@ -71,7 +71,8 @@ public class biologyCS : MonoBehaviour
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
-    GameObject[] collisionCubes = new GameObject[28], battleBios;
+    GameObject[] collisionCubes = new GameObject[28];
+    List<GameObject> battleBios;
 
     GameObject nameText, targeLine, HID;
     gameCS maingameCS;
@@ -227,13 +228,6 @@ public class biologyCS : MonoBehaviour
     {
 
     }
-    void _tactic()
-    {
-        //如果目標等級高於我10級
-
-
-
-    }
 
     void _attack()
     {
@@ -246,77 +240,45 @@ public class biologyCS : MonoBehaviour
 
         }
     }
+    List<GameObject> getSeeMaxBio()
+    {
+        GameObject[] tempALL = GameObject.FindGameObjectsWithTag("biology");
+        List<GameObject> tempNew = new List<GameObject>();
+        foreach (var t in tempALL)
+        {
+            if (Vector3.Distance(this.transform.position, t.transform.position) < seeMax)
+            {
+                tempNew.Add(t);
+            }
+        }
+        return tempNew;
+
+    }
 
     void _AI(float n)
     {
         if (10 * Time.fixedTime % n < 1)
         {
-            //取得戰場情報(敵方我位置)
-            battleBios = GameObject.FindGameObjectsWithTag("biology");
-
-            //Party leader's target(怪物禁用)
-            //隊長的目標
-            target = maingameCS.playerBioCS[0].target;
-
-            //Nearest visible 
-            //最近的目標
-            target = getClosestEnemy();
-
-            //Any
-            //隨便一個目標
-            target = getAnyEnemy();
-
-            //Targeting leader
-            //攻擊隊長的目標
-            target = getLeaderTarget();
-
-            //Targeting self
-            //攻擊自身的目標
-            target = getTargetSelfEnemy();
-
-
-            //Targeting ally
-            //攻擊我方成員的任一目標
-            target = getTargetAllyEnemy();
-
-
-            //Furthest
-            //最遠的目標
-            target = getFurthestEnemy();
-
-            //highestHP
-            //生命值最高的敵方
-            target = getHighestHPEnemy();
-
-            //LowestHP
-            //生命值最低的敵方
-            target = getLowestHPEnemy();
-
-            //lowestLevel
-            //等級最高的敵方
-            target = getLowestLevelEnemy();
-
-            //highestLevel
-            //等級最高的敵方
-            target = getHighestLevelEnemy();
-
-
-
-            targetDistance = Vector3.Distance(maingameCS.Player.transform.position, this.transform.position);
-            startPosDis = Vector3.Distance(this.transform.position, startPos);
-
+            //更新戰場情報(可視範圍內的敵方我)
+            battleBios = getSeeMaxBio();
 
             //如果距離出身點過遠，則脫戰
+            startPosDis = Vector3.Distance(this.transform.position, startPos);
             if (startPosDis > runBackDist)
                 _runback();
 
-            //如果可視距離沒有玩家，則閒晃
-            if (targetDistance > seeMax && !runBack)
-                _randomGo();
+            //gameBits--1
+            if (getClosestEnemy)
+            //action--1
+            {
 
-            //如果玩家在可視範圍內，則進入戰略判斷
-            if (targetDistance < seeMax)
-                _tactic();
+
+            }
+
+
+
+            //如果所有指令皆不達成，則閒晃
+            _randomGo();
         }
     }
     void _catchPlayer(float n)
@@ -714,20 +676,21 @@ public class biologyCS : MonoBehaviour
     }
 
     //回傳隨便一個敵方
-    Transform getAnyEnemy()
+    bool getAnyEnemy()
     {
         foreach (var t in battleBios)
         {
             if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
             {
-                return t.transform;
+                target = t.transform;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     //回傳離我最近敵方
-    Transform getClosestEnemy()
+    bool getClosestEnemy()
     {
         Transform tMin = null;
         float minDist = Mathf.Infinity;
@@ -742,10 +705,11 @@ public class biologyCS : MonoBehaviour
                     tMin = t.transform;
                     minDist = dist;
                 }
-                return tMin;
+                target = tMin;
+                return true;
             }
         }
-        return null;
+        return false;
     }
     //回傳離我最遠敵方
     Transform getFurthestEnemy()
