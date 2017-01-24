@@ -99,7 +99,7 @@ public class gameCS : MonoBehaviour
     }
     void clickPointPos()
     {
-        if (playerBioCS[0].bioAction == "Walk")
+        if (playerBioCS[0].bioAnimation == "mWalk")
         {
             clickPoint.transform.position = new Vector3(playerBioCS[0].Sphere2.x, 1f, playerBioCS[0].Sphere2.z);
             clickPoint.GetComponent<Renderer>().enabled = true;
@@ -261,11 +261,7 @@ public class gameCS : MonoBehaviour
             {
                 if (hitUIObjectName == "removeStick")
                 {
-                    playerBioCS[0].bioAction = "Action";
-                }
-                if (hitUIObjectName == "cubeStick")
-                {
-                    playerBioCS[0].bioAction = "Create";
+                    playerBioCS[0].bioAnimation = "mAction";
                 }
                 if (hitUIObjectName == "moveStick")
                 {
@@ -578,7 +574,7 @@ public class gameCS : MonoBehaviour
                             var targetDir = mouseHitPlane.transform.position - Player.transform.position;
                             var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0f);
                             Player.transform.rotation = Quaternion.LookRotation(newDir);
-                            playerBioCS[0].bioAction = "Attack";
+                            playerBioCS[0].bioAnimation = "mAttack";
                         }
                         break;
                 }

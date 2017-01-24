@@ -59,25 +59,25 @@ public class biologyCS : MonoBehaviour
 	 * startPos			出生位置
 	 * targetName		追擊目標的名字
      * targt            追擊目標的資訊
-	 * bioAction		生物狀態
+	 * bioAnimation		生物狀態
 	 *
 	 * [生物清單相關變數]
 	 * WalkSteptweek	生物步伐()
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
     public float moveSpeedMax;//todo:測試用改成Public
-    float startPosDis, targetDistance, ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    public float startPosDis, targetDistance, ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType = 1, bioCamp = 1, players;
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
     GameObject[] collisionCubes = new GameObject[28];
-    List<GameObject> battleBios;
+    public List<GameObject> battleBios;
 
     GameObject nameText, targeLine, HID;
     gameCS maingameCS;
     BoxCollider bioCollider;
-    public string bioAction, nameShort, bioDataPath;
+    public string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
 
     public bool isVisible, isEnable = false;
     public Transform target;
@@ -85,6 +85,8 @@ public class biologyCS : MonoBehaviour
     float[] biologyListData = new float[5];
 
     Animation anim;
+
+    gameBits gameBits;
 
     // Use this for initialization
     void Start()
@@ -119,11 +121,12 @@ public class biologyCS : MonoBehaviour
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
         nameText.GetComponent<Text>().text = this.name;
 
-        bioAction = "Wait";
+        bioAnimation = "mWait";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
 
         Sphere3 = this.transform.position;
 
+        gameBits = new gameBits(this.GetComponent<biologyCS>());
         setTargeLine();
         loadBiologyList();
         setCollisionCubes();
@@ -137,14 +140,16 @@ public class biologyCS : MonoBehaviour
         {
             // this._catchMonster(1);
             this._movment();
-            this._bioStatus();
+            this._bioAnimation();
+            this._bioAction(bioAction);
             this._targeLineUpdate();
+            this.gameBits.Update();
         }
         else
         {
-            GameObject.Find("Sphere3").transform.position = Sphere3; this._catchPlayer(5 + bais);
+            GameObject.Find("Sphere3").transform.position = Sphere3;
             this._movment();
-            this._bioStatus();
+            this._bioAnimation();
             this._targeLineUpdate();
             // GameObject.Find("nodeINFO").transform.position = Sphere3;
         }
@@ -217,186 +222,64 @@ public class biologyCS : MonoBehaviour
         DEF = eATTACK - (HPMAX / aTimes);
 
     }
-    void _catchMonster(float n)
-    {
-        if (10 * Time.fixedTime % n < 1)
-        {
-
-        }
-    }
-    void _randomGo()
-    {
-
-    }
-
-    void _attack()
-    {
-        if (targetDistance < attackDistance)
-        {
-
-        }
-        else
-        {
-
-        }
-    }
-    List<GameObject> getSeeMaxBio()
-    {
-        GameObject[] tempALL = GameObject.FindGameObjectsWithTag("biology");
-        List<GameObject> tempNew = new List<GameObject>();
-        foreach (var t in tempALL)
-        {
-            if (Vector3.Distance(this.transform.position, t.transform.position) < seeMax)
-            {
-                tempNew.Add(t);
-            }
-        }
-        return tempNew;
-
-    }
-
-    void _AI(float n)
-    {
-        if (10 * Time.fixedTime % n < 1)
-        {
-            //更新戰場情報(可視範圍內的敵方我)
-            battleBios = getSeeMaxBio();
-
-            //如果距離出身點過遠，則脫戰
-            startPosDis = Vector3.Distance(this.transform.position, startPos);
-            if (startPosDis > runBackDist)
-                _runback();
-
-            //gameBits--1
-            if (target2ClosestEnemy())
-            {
-
-            }
-            //action--1
-            {
 
 
-            }
-
-
-
-            //如果所有指令皆不達成，則閒晃
-            _randomGo();
-        }
-    }
-    void _catchPlayer(float n)
-    {
-        if (10 * Time.fixedTime % n < 1)
-        {
-            var playerDistance = Vector3.Distance(maingameCS.Player.transform.position, this.transform.position);
-            var startPosDis = Vector3.Distance(this.transform.position, startPos);
-
-
-            //如果距離出身點過遠則脫戰
-            if (startPosDis > runBackDist) _runback();
-
-            //如果玩家在可視範圍內
-            if (playerDistance < seeMax && !runBack)
-            {
-                //如果玩家在可視範圍內，但在攻擊範圍外
-                if (playerDistance > attackDistance)
-                {
-                    //如果玩家在可視範圍內，但在攻擊範圍外，且尚未鎖定玩家
-                    if (target != maingameCS.Player.transform)
-                    {
-                        target = maingameCS.Player.transform;
-                        maingameCS.logg(this.name + "開始追擊你了");
-                        Sphere3 = maingameCS.Player.transform.position;
-                        this.moveSpeedMax = catchSpeed;
-                        nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
-                    }
-                    //如果玩家在可視範圍內，但在攻擊範圍外，且鎖定玩家
-                    else
-                    {
-                        nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
-                        Sphere3 = maingameCS.Player.transform.position;
-                    }
-
-                }
-                //如果玩家在可視範圍內，並且在攻擊範圍內
-                else
-                {
-                    //如果玩家在可視範圍內，並且在攻擊範圍內，且攻擊時間到了
-                    if (Time.time - lastActionTime > attackCoolDown)
-                    {
-                        lastActionTime = Time.time;
-
-                        nameText.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
-                        bioAction = "Attack";
-                        maingameCS.logg(this.name + "攻擊！");
-                        target.gameObject.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
-                    }
-                    //如果玩家在可視範圍內，並且在攻擊範圍內，但攻擊尚未到
-                    else
-                    {
-                        if (Time.time - lastDanceTime > 3)
-                        {
-                            lastDanceTime = Time.time;
-                            Sphere3 = MathS.getCirclePath(this.transform.position, target.position, UnityEngine.Random.Range(-20, 20), UnityEngine.Random.Range(1, attackDistance));
-                        }
-                        else
-                        {
-
-                        }
-                    }
-                }
-            }
-            //如果玩家在可視範圍內之外
-            else if (target != this.transform)
-            {
-                target = this.transform;
-                maingameCS.logg(this.name + "放棄追擊你");
-                _runback();
-                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.white;
-            }
-            //脫戰判斷
-            if (startPosDis > runBackDist) { _runback(); }
-
-
-            //追擊判斷 //判斷是否為首次追擊
-            if (playerDistance < seeMax && playerDistance > attackDistance && !runBack && target != maingameCS.Player.transform)
-            {
-                maingameCS.logg(this.name + "開始追擊你了");
-                nameText.GetComponent<UnityEngine.UI.Text>().color = Color.red;
-                Sphere3 = maingameCS.Player.transform.position;
-                target = maingameCS.Player.transform;
-                this.moveSpeedMax = catchSpeed;
-            }
-        }
-    }
 
     void _runback()
     {
         runBack = true;
         Sphere3 = startPos;
     }
-    void _bioStatus()
+    void _bioAction(string n)
+    {
+        switch (n)
+        {
+            case "actionAttack":
+                actionAttack();
+                break;
+            default:
+                //發呆
+                break;
+        }
+    }
+
+    void actionAttack()
+    {
+        float targetDist = Vector3.Distance(target.position, this.transform.position);
+        if (targetDist > attackDistance)
+        {
+            Sphere3 = target.position;
+        }
+        else
+        {
+            bioAnimation = "mAttack";
+            target.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
+            gameBits.actionNoRun = true;
+        }
+
+    }
+    void _bioAnimation()
     {
         //對應生物所處狀態，播放對應動作
         if (!anim.IsPlaying("Attack"))
         {
-            switch (this.bioAction)
+            switch (this.bioAnimation)
             {
-                case "Attack":
+                case "mAttack":
                     anim.CrossFade("Attack");
                     break;
-                case "Damage":
+                case "mDamage":
                     anim.CrossFade("Damage");
                     break;
-                case "Walk":
+                case "mWalk":
                     anim.CrossFade("Walk");
                     break;
-                case "picking":
+                case "mPicking":
                     break;
-                case "Wait":
+                case "mWait":
                     anim.CrossFade("Wait");
-                    runBack = false;
-                    Sphere2 = this.transform.position;
+                    runBack = false; //todo: 不該寫在這裡
+                    Sphere2 = this.transform.position;//todo: 不該寫在這裡
                     break;
                 case "Jump":
                     //todo:目前沒有使用
@@ -405,7 +288,7 @@ public class biologyCS : MonoBehaviour
         }
         if (anim.IsPlaying("Wait"))
         {
-            this.bioAction = "Wait";
+            this.bioAnimation = "mWait";
         }
 
     }
@@ -415,9 +298,9 @@ public class biologyCS : MonoBehaviour
 
         float SphereDistance;
 
-        // if (this.bioAction == "Walk")
+        // if (this.bioAnimation == "Walk")
         // {
-        //     this.bioAction = "Wait";
+        //     this.bioAnimation = "Wait";
         // }
 
         //如果使用者操作搖桿
@@ -426,7 +309,7 @@ public class biologyCS : MonoBehaviour
             maingameCS.Player.name == this.name)
         {
 
-            this.bioAction = "Walk";
+            this.bioAnimation = "mWalk";
 
             //自搖桿取得的移動向量直
             Sphere.x = maingameCS.mouseDragVector.x;
@@ -462,7 +345,7 @@ public class biologyCS : MonoBehaviour
             var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
             if (SphereDistance > 0.05f)
             {
-                this.bioAction = "Walk";
+                this.bioAnimation = "mWalk";
 
                 //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
                 if (SphereDistance < 1 ||
@@ -488,7 +371,7 @@ public class biologyCS : MonoBehaviour
             }
         }
 
-        if (this.bioAction == "Walk")
+        if (this.bioAnimation == "mWalk")
         {
             //將生物轉向目標
             this.transform.position = new Vector3(this.transform.position.x, 0.5f, this.transform.position.z);
@@ -513,7 +396,7 @@ public class biologyCS : MonoBehaviour
                 moveSpeed = 0.01f + moveSpeed * (SphereDistance / 0.5f);
                 if (SphereDistance < 0.03f)
                 {
-                    this.bioAction = "Wait";
+                    this.bioAnimation = "mWait";
                     Sphere2 = Sphere3;
 
                 }
@@ -678,698 +561,7 @@ public class biologyCS : MonoBehaviour
 
     }
 
-    //回傳隨便一個敵方
-    bool target2AnyEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
 
-    //回傳離我最近敵方
-    bool target2ClosestEnemy()
-    {
-        Transform tMin = null;
-        float minDist = Mathf.Infinity;
-        Vector3 currentPos = transform.position;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float dist = Vector3.Distance(t.transform.position, currentPos);
-                if (dist < minDist)
-                {
-                    tMin = t.transform;
-                    minDist = dist;
-                }
-                target = tMin;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳離我最遠敵方
-    bool target2FurthestEnemy()
-    {
-        Transform tMax = null;
-        float maxDist = Mathf.Infinity;
-        Vector3 currentPos = transform.position;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float dist = Vector3.Distance(t.transform.position, currentPos);
-                if (dist > maxDist)
-                {
-                    tMax = t.transform;
-                    maxDist = dist;
-                }
-                target = tMax;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳敵方中血量最高者
-    bool target2HighestHPEnemy()
-    {
-        float highestHP = 0;
-        Transform tMax = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HP;
-                if (tempHP > highestHP)
-                {
-                    tMax = t.transform;
-                    highestHP = tempHP;
-                }
-                return tMax;
-            }
-        }
-        return false;
-    }
-    //回傳敵方中血量最低者
-    bool target2LowestHPEnemy()
-    {
-        float lowestHP = 9999999999;
-        Transform tMin = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HP;
-                if (tempHP < lowestHP)
-                {
-                    tMin = t.transform;
-                    lowestHP = tempHP;
-                }
-                target = tMin;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳敵方中血量上限最高者
-    bool target2HighestHPMaxEnemy()
-    {
-        float highestHP = 0;
-        Transform tMax = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HPMAX;
-                if (tempHP > highestHP)
-                {
-                    tMax = t.transform;
-                    highestHP = tempHP;
-                }
-                target = tMax;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳敵方中血量上限最低者
-    bool target2LowestHPMaxEnemy()
-    {
-        float lowestHP = 9999999999;
-        Transform tMin = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HPMAX;
-                if (tempHP < lowestHP)
-                {
-                    tMin = t.transform;
-                    lowestHP = tempHP;
-                }
-                return tMin;
-            }
-        }
-        return false;
-    }
-    //回傳敵方等級最低者
-    bool target2LowestLevelEnemy()
-    {
-        float lowestLevel = 9999999999;
-        Transform tMin = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HP;
-                if (tempHP < lowestLevel)
-                {
-                    tMin = t.transform;
-                    lowestLevel = tempHP;
-                }
-                target = tMin;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳敵方等級最高者
-    bool target2HighestLevelEnemy()
-    {
-        float highestLevel = 0;
-        Transform tMax = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HP;
-                if (tempHP > highestLevel)
-                {
-                    tMax = t.transform;
-                    highestLevel = tempHP;
-                }
-                target = tMax;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳隊長的目標(玩家專用)
-    bool target2LeaderTarget()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().target.name == maingameCS.playerBioCS[0].name)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳以我為目標的目標
-    bool target2TargetSelfEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().target.name == this.name)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //回傳以隊友為目標的目標
-    bool target2TargetAllyEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().target.name == this.name)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於90%目標
-    bool target2HpOver90percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.9)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於70%目標
-    bool target2HpOver70percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.7)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於50%目標
-    bool target2HpOver50percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.5)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於30%目標
-    bool target2HpOver30percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.3)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於10%目標
-    bool target2HpOver10percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.1)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量低於90%目標
-    bool target2HpUnder90percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.9)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量低於70%目標
-    bool target2HpUnder70percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.7)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於50%目標
-    bool target2HpUnder50percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.5)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於30%目標
-    bool target2HpUnder30percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.3)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於10%目標
-    bool target2HpUnder10percentEnemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.1)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳血量高於100000目標
-    bool target2HpOver100000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 100000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver50000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 50000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver10000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 10000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver5000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 5000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool target2HpOver3000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 3000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver2000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 2000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver1000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 1000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver500Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 500)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpOver100Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP >= 500)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳血量低於100000目標
-    bool target2HpUnder100000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 100000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder50000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 50000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder10000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 10000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder5000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 5000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool target2HpUnder3000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 3000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder2000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 2000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder1000Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 1000)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder500Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 500)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    bool target2HpUnder100Enemy()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP <= 500)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
-    //------------------
-    //回傳隨便一個我方
-    bool target2AnyAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (bioCamp == t.GetComponent<biologyCS>().bioCamp)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //回傳我方中血量最低者
-    bool target2LowestHPAlly()
-    {
-        float lowestHP = 9999999999;
-        Transform tMin = null;
-        foreach (var t in battleBios)
-        {
-            if (bioCamp == t.GetComponent<biologyCS>().bioCamp)
-            {
-                float tempHP = t.GetComponent<biologyCS>().HP;
-                if (tempHP < lowestHP)
-                {
-                    tMin = t.transform;
-                    lowestHP = tempHP;
-                }
-                target = tMin;
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    //回傳殘存血量低於90%目標
-    bool target2HpUnder90percentAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.9)
-            {
-                target = t.transform;
-                return true;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量低於70%目標
-    bool target2HpUnder70percentAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.7)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於50%目標
-    bool target2HpUnder50percentAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.5)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於30%目標
-    bool target2HpUnder30percentAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.3)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳殘存血量高於10%目標
-    bool target2HpUnder10percentAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.1)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
-    //回傳戰鬥不能的我方
-    bool target2HpUnder0percentAlly()
-    {
-        foreach (var t in battleBios)
-        {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.0)
-            {
-                target = t.transform;
-                return true;
-            }
-        }
-        return false;
-    }
 
 
 }
