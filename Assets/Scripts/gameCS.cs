@@ -19,7 +19,7 @@ public class gameCS : MonoBehaviour
 
     //Dictionary、Array----------------------------
     List<string> cubeArrayTxt;
-    GameObject[] allBiologys;
+    public GameObject[] allBiologys;
 
     //boolean----------------------------
     public bool touchScreen;

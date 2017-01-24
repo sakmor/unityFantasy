@@ -71,11 +71,10 @@ public class biologyCS : MonoBehaviour
     public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
     public Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
-    GameObject[] collisionCubes = new GameObject[28];
-    public List<GameObject> battleBios;
+    public GameObject[] collisionCubes = new GameObject[28], allBiologys;
 
     GameObject nameText, targeLine, HID;
-    gameCS maingameCS;
+    public gameCS maingameCS;
     BoxCollider bioCollider;
     public string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
 
@@ -91,6 +90,7 @@ public class biologyCS : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         attackCoolDown = 15;
         players = 3;
         target = this.transform;
@@ -123,6 +123,7 @@ public class biologyCS : MonoBehaviour
 
         bioAnimation = "mWait";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+        allBiologys = maingameCS.allBiologys;
 
         Sphere3 = this.transform.position;
 
@@ -151,6 +152,7 @@ public class biologyCS : MonoBehaviour
             this._movment();
             this._bioAnimation();
             this._targeLineUpdate();
+            this.gameBits.Update();
             // GameObject.Find("nodeINFO").transform.position = Sphere3;
         }
 
@@ -225,17 +227,16 @@ public class biologyCS : MonoBehaviour
 
 
 
-    void _runback()
-    {
-        runBack = true;
-        Sphere3 = startPos;
-    }
+
     void _bioAction(string n)
     {
         switch (n)
         {
             case "actionAttack":
                 actionAttack();
+                break;
+            case "actionRunback":
+                actionRunback();
                 break;
             default:
                 //發呆
@@ -257,6 +258,11 @@ public class biologyCS : MonoBehaviour
             gameBits.actionNoRun = true;
         }
 
+    }
+    void actionRunback()
+    {
+        runBack = true;
+        Sphere3 = startPos;
     }
     void _bioAnimation()
     {
@@ -281,7 +287,7 @@ public class biologyCS : MonoBehaviour
                     runBack = false; //todo: 不該寫在這裡
                     Sphere2 = this.transform.position;//todo: 不該寫在這裡
                     break;
-                case "Jump":
+                case "mJump":
                     //todo:目前沒有使用
                     break;
             }

@@ -1,23 +1,24 @@
 using System.Reflection;
 using UnityEngine;
 using System.Collections.Generic;
-public class gameBits
+public class gameBits : MonoBehaviour
 {
     public bool actionNoRun = true;
     Transform target;
     List<GameObject> battleBios;
-    List<string> decideList;
-    List<string> actionList;
+    List<string> decideList = new List<string>();
+    List<string> actionList = new List<string>();
+    GameObject[] allBiologys;
 
     int bioCamp, gameBitsNO;
     string leaderName, name;
     Transform Transform;
-    float seeMax;
+    float seeMax, bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 4f)); //-4~6
 
     public gameBits(biologyCS thisBio)
     {
+        allBiologys = thisBio.GetComponent<biologyCS>().allBiologys;
         target = thisBio.target;
-        battleBios = thisBio.battleBios;
         bioCamp = thisBio.bioCamp;
         leaderName = thisBio.leaderName;
         name = thisBio.name;
@@ -34,17 +35,17 @@ public class gameBits
 
     public void Update()
     {
-        getSeeMaxBio();
+        getSeeMaxBio(bais);
         getDecide();
 
     }
 
     bool getDecide()
     {
-        bool decideIS = false;
-        if (actionNoRun && battleBios.Count > 0)
+        if (actionNoRun && battleBios.Count > 1)
         {
-            for (var i = 0; i < 6; i++)
+            bool decideIS = false;
+            for (var i = 0; i < decideList.Count; i++)
             {
                 decideIS = str2Function(decideList[i]);
                 if (decideIS && str2Function(actionList[i]))
@@ -124,19 +125,20 @@ public class gameBits
     }
 
 
-    void getSeeMaxBio()
+    void getSeeMaxBio(float bais)
     {
-        GameObject[] tempALL = GameObject.FindGameObjectsWithTag("biology");
-        List<GameObject> tempNew = new List<GameObject>();
-        foreach (var t in tempALL)
+        if (Time.time % bais < 0.5)
         {
-            if (Vector3.Distance(Transform.position, t.transform.position) < seeMax)
+            List<GameObject> tempNew = new List<GameObject>();
+            foreach (var t in allBiologys)
             {
-                tempNew.Add(t);
+                if (Vector3.Distance(Transform.position, t.transform.position) < seeMax)
+                {
+                    tempNew.Add(t);
+                }
             }
+            battleBios = tempNew;
         }
-        battleBios = tempNew;
-
     }
     bool actionAttack()
     {
