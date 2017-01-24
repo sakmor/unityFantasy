@@ -1,10 +1,10 @@
 using System.Reflection;
 using UnityEngine;
 using System.Collections.Generic;
-public class gameBits : MonoBehaviour
+public class gameBits
 {
     public bool actionNoRun = true;
-    Transform target;
+    Transform target, _target;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
@@ -48,6 +48,7 @@ public class gameBits : MonoBehaviour
             for (var i = 0; i < decideList.Count; i++)
             {
                 decideIS = str2Function(decideList[i]);
+                changeTarget();
                 if (decideIS && str2Function(actionList[i]))
                 {
                     actionNoRun = false;
@@ -60,6 +61,17 @@ public class gameBits : MonoBehaviour
         {
             return false;
         }
+    }
+    bool changeTarget()
+    {
+        if (_target != target)
+        {
+            _target = target;
+            Transform.GetComponent<biologyCS>().target = target;
+            return true;
+        }
+        return false;
+
     }
 
 
@@ -115,7 +127,6 @@ public class gameBits : MonoBehaviour
             case "decideHpUnder30percentAlly": return decideHpUnder30percentAlly();
             case "decideHpUnder10percentAlly": return decideHpUnder10percentAlly();
             case "decideHpUnder0percentAlly": return decideHpUnder0percentAlly();
-
             case "actionAttack": return actionAttack();
 
             default:
@@ -142,6 +153,7 @@ public class gameBits : MonoBehaviour
     }
     bool actionAttack()
     {
+        Debug.Log(target.name);
         if (!target == Transform && target.GetComponent<biologyCS>().HP > 0)
         {
             Transform.GetComponent<biologyCS>().bioAction = "actionAttack";

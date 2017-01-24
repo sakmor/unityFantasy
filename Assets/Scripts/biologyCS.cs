@@ -152,7 +152,7 @@ public class biologyCS : MonoBehaviour
             this._movment();
             this._bioAnimation();
             this._targeLineUpdate();
-            this.gameBits.Update();
+            // this.gameBits.Update();
             // GameObject.Find("nodeINFO").transform.position = Sphere3;
         }
 
