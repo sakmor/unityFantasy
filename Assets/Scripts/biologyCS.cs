@@ -73,7 +73,7 @@ public class biologyCS : MonoBehaviour
     Transform target;
     float[] biologyListData = new float[5];
     Animation anim;
-    List<string> bioActionList;
+    List<string> bioActionList = new List<string>();
     gameBits gameBits;
 
     // Use this for initialization
@@ -641,7 +641,7 @@ public class biologyCS : MonoBehaviour
     void checkBioCamp()
     {
 
-        bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
+        // bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
         bioType = (bioCamp == 0) ? 0 : 1;
     }
 

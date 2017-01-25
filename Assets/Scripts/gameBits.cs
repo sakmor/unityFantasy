@@ -22,7 +22,6 @@ public class gameBits : biologyCS
         leaderName = getLeadername();
         seeMax = getSeeMax();
 
-        name = thisBio.name;
         Transform = thisBio.transform;
 
         decideList.Add("decideHpUnder50percentEnemy");

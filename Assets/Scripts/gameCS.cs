@@ -15,7 +15,6 @@ public class gameCS : MonoBehaviour
     GameObject[] players = new GameObject[2];
 
     //Dictionary、Array----------------------------
-    List<string> cubeArrayTxt;
     GameObject[] allBiologys;
 
     //boolean----------------------------
@@ -35,7 +34,7 @@ public class gameCS : MonoBehaviour
 
     //Script 自定義----------------------------
     public Pathfinding PathfindingCS;
-    public List<biologyCS> playerBioCSList;
+    public List<biologyCS> playerBioCSList = new List<biologyCS>();
     public biologyList biologyList;
 
     //UnityEngine ----------------------------
