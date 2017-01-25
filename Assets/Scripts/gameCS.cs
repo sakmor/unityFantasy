@@ -1,6 +1,4 @@
 ﻿using UnityEngine.EventSystems;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,8 +6,7 @@ using UnityEngine.UI;
 
 public class gameCS : MonoBehaviour
 {
-    public float temp;
-    public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
+    Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
      Vector2>();
 
     //GameObject
@@ -19,7 +16,7 @@ public class gameCS : MonoBehaviour
 
     //Dictionary、Array----------------------------
     List<string> cubeArrayTxt;
-    public GameObject[] allBiologys;
+    GameObject[] allBiologys;
 
     //boolean----------------------------
     public bool touchScreen;
@@ -38,7 +35,7 @@ public class gameCS : MonoBehaviour
 
     //Script 自定義----------------------------
     public Pathfinding PathfindingCS;
-    public biologyCS[] playerBioCS = new biologyCS[3];
+    public List<biologyCS> playerBioCSList;
     public biologyList biologyList;
 
     //UnityEngine ----------------------------
@@ -62,9 +59,7 @@ public class gameCS : MonoBehaviour
 
         mainCamera = GameObject.Find("mainCamera");
         mainCamera2 = GameObject.Find("mainCamera2");
-        playerBioCS[0] = Player.GetComponent<biologyCS>();
-        playerBioCS[0].bioTypeSet(0);
-        playerBioCS[0].bioCamp = 0;
+        playerBioCSList.Add(Player.GetComponent<biologyCS>());
         cammeraStick = GameObject.Find("cammeraStick");
 
         cameraRELtarget = mainCamera.transform.position - Player.transform.position;
@@ -99,9 +94,9 @@ public class gameCS : MonoBehaviour
     }
     void clickPointPos()
     {
-        if (playerBioCS[0].bioAnimation == "mWalk")
+        if (playerBioCSList[0].getBioAnimation() == "mWalk")
         {
-            clickPoint.transform.position = new Vector3(playerBioCS[0].Sphere2.x, 1f, playerBioCS[0].Sphere2.z);
+            clickPoint.transform.position = playerBioCSList[0].getDestination();
             clickPoint.GetComponent<Renderer>().enabled = true;
         }
         else
@@ -259,14 +254,10 @@ public class gameCS : MonoBehaviour
             //放開滑鼠時...如果前一個按鍵cubeStick，則新增
             if (hitUIObjectName != "")
             {
-                if (hitUIObjectName == "removeStick")
-                {
-                    playerBioCS[0].bioAnimation = "mAction";
-                }
+
                 if (hitUIObjectName == "moveStick")
                 {
-                    playerBioCS[0].Sphere2 = playerBioCS[0].transform.position;
-                    playerBioCS[0].Sphere3 = playerBioCS[0].transform.position;
+                    playerBioCSList[0].bioStop();
                 }
                 hitUIObjectName = "";
             }
@@ -538,8 +529,9 @@ public class gameCS : MonoBehaviour
                     float tag = cubesDictionary[tempVector3].y;
                     if (tag == 1)
                     {
-                        playerBioCS[0].Sphere3 = ray.GetPoint(rayDistance);//todo:Sphere3應該要用安全的方式存取
-                        logg("前往座標：x:" + playerBioCS[0].Sphere3.x.ToString("f2") + ",y:" + playerBioCS[0].Sphere3.z.ToString("f2"));
+                        var temp3 = ray.GetPoint(rayDistance);
+                        playerBioCSList[0].bioGoto(ray.GetPoint(rayDistance));
+                        logg("前往座標：x:" + temp3.x.ToString("f2") + ",y:" + temp3.z.ToString("f2"));
                     }
                     else
                     {
@@ -565,17 +557,6 @@ public class gameCS : MonoBehaviour
                         break;
                     case "biology":
                         logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
-                        //如果點擊到生物，停止移動
-                        playerBioCS[0].Sphere2 = Player.transform.position;
-                        playerBioCS[0].Sphere3 = Player.transform.position;
-                        //如果點擊到生物，且該生物在攻擊範圍內
-                        if (playerBioCS[0].attackDistance > Vector3.Distance(mouseHitPlane.transform.position, Player.transform.position))
-                        {
-                            var targetDir = mouseHitPlane.transform.position - Player.transform.position;
-                            var newDir = Vector3.RotateTowards(this.transform.forward, targetDir, 300, 0.0f);
-                            Player.transform.rotation = Quaternion.LookRotation(newDir);
-                            playerBioCS[0].bioAnimation = "mAttack";
-                        }
                         break;
                 }
             }
@@ -640,6 +621,34 @@ public class gameCS : MonoBehaviour
         }
 
         return (new Vector2());
+
+    }
+    public bool checkCubesDictionary(Vector3 n)
+    {
+        return cubesDictionary.ContainsKey(n);
+    }
+    public Dictionary<Vector3, Vector2> getCubesDictionary()
+    {
+        return cubesDictionary;
+    }
+    public bool checkPlayerBioCSListByName(string n)
+    {
+        Debug.Log("haha");
+
+        for (var i = 0; i < playerBioCSList.Count; i++)
+        {
+            if (playerBioCSList[i].name == n)
+            {
+                return true;
+            }
+
+        }
+        return false;
+
+    }
+    public GameObject[] getAllBiologys()
+    {
+        return allBiologys;
 
     }
 

@@ -1,28 +1,28 @@
-using System.Reflection;
 using UnityEngine;
 using System.Collections.Generic;
-public class gameBits
+public class gameBits : biologyCS
 {
+    Transform target, _target;
     public bool actionNoRun = true;
-    public Transform target, _target;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
     GameObject[] allBiologys;
 
     int bioCamp, gameBitsNO;
-    string leaderName, name;
+    string leaderName;
     Transform Transform;
     float seeMax, bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 4f)); //-4~6
 
     public gameBits(biologyCS thisBio)
     {
-        allBiologys = thisBio.GetComponent<biologyCS>().allBiologys;
-        target = thisBio.target;
-        bioCamp = thisBio.bioCamp;
-        leaderName = thisBio.leaderName;
+        allBiologys = getAllBiologys();
+        target = getTarget();
+        bioCamp = getBioCamp();
+        leaderName = getLeadername();
+        seeMax = getSeeMax();
+
         name = thisBio.name;
-        seeMax = thisBio.seeMax;
         Transform = thisBio.transform;
 
         decideList.Add("decideHpUnder50percentEnemy");
@@ -66,7 +66,7 @@ public class gameBits
     }
     void changeTarget(Transform eTarget)
     {
-        Transform.GetComponent<biologyCS>().target = eTarget;
+        setTarget(eTarget);
 
     }
 
@@ -149,9 +149,10 @@ public class gameBits
     }
     bool actionAttack()
     {
-        if (target != Transform && target.GetComponent<biologyCS>().HP > 0)
+        if (target != _target && target.GetComponent<biologyCS>().getHP() > 0)
         {
-            Transform.GetComponent<biologyCS>().bioAction = "actionAttack";
+            _target = target;
+            setBioAction("actionAttack");
             return true;
         }
         return false;
@@ -163,7 +164,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != getBioCamp())
             {
                 target = t.transform;
                 return true;
@@ -180,7 +181,7 @@ public class gameBits
         Vector3 currentPos = Transform.transform.position;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != getBioCamp())
             {
                 float dist = Vector3.Distance(t.transform.position, currentPos);
                 if (dist < minDist)
@@ -202,7 +203,7 @@ public class gameBits
         Vector3 currentPos = Transform.position;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
                 float dist = Vector3.Distance(t.transform.position, currentPos);
                 if (dist > maxDist)
@@ -223,9 +224,9 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HP;
+                float tempHP = t.GetComponent<biologyCS>().getHP();
                 if (tempHP > highestHP)
                 {
                     tMax = t.transform;
@@ -243,9 +244,9 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HP;
+                float tempHP = t.GetComponent<biologyCS>().getHP();
                 if (tempHP < lowestHP)
                 {
                     tMin = t.transform;
@@ -264,9 +265,9 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HPMAX;
+                float tempHP = t.GetComponent<biologyCS>().getHPMAX();
                 if (tempHP > highestHP)
                 {
                     tMax = t.transform;
@@ -285,9 +286,9 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HPMAX;
+                float tempHP = t.GetComponent<biologyCS>().getHPMAX();
                 if (tempHP < lowestHP)
                 {
                     tMin = t.transform;
@@ -305,9 +306,9 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HP;
+                float tempHP = t.GetComponent<biologyCS>().getHP();
                 if (tempHP < lowestLevel)
                 {
                     tMin = t.transform;
@@ -326,9 +327,9 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HP;
+                float tempHP = t.GetComponent<biologyCS>().getHP();
                 if (tempHP > highestLevel)
                 {
                     tMax = t.transform;
@@ -345,7 +346,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().target.name == leaderName)
+            if (t.GetComponent<biologyCS>().getTarget().name == leaderName)
             {
                 target = t.transform;
                 return true;
@@ -358,7 +359,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().target.name == this.name)
+            if (t.GetComponent<biologyCS>().getTarget().name == this.name)
             {
                 target = t.transform;
                 return true;
@@ -372,7 +373,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().target.name == this.name)
+            if (t.GetComponent<biologyCS>().getTarget().name == this.name)
             {
                 target = t.transform;
                 return true;
@@ -385,7 +386,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.9)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.9)
             {
                 target = t.transform;
                 return true;
@@ -398,7 +399,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.7)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.7)
             {
                 target = t.transform;
                 return true;
@@ -411,7 +412,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.5)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.5)
             {
                 target = t.transform;
                 return true;
@@ -424,7 +425,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.3)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.3)
             {
                 target = t.transform;
                 return true;
@@ -437,7 +438,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX >= 0.1)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.1)
             {
                 target = t.transform;
                 return true;
@@ -450,7 +451,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.9)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.9)
             {
                 target = t.transform;
                 return true;
@@ -463,7 +464,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.7)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.7)
             {
                 target = t.transform;
                 return true;
@@ -476,7 +477,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.5)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.5)
             {
                 target = t.transform;
                 return true;
@@ -489,7 +490,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.3)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.3)
             {
                 target = t.transform;
                 return true;
@@ -502,7 +503,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.1)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.1)
             {
                 target = t.transform;
                 return true;
@@ -515,7 +516,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 100000)
+            if (t.GetComponent<biologyCS>().getHP() >= 100000)
             {
                 target = t.transform;
                 return true;
@@ -527,7 +528,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 50000)
+            if (t.GetComponent<biologyCS>().getHP() >= 50000)
             {
                 target = t.transform;
                 return true;
@@ -539,7 +540,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 10000)
+            if (t.GetComponent<biologyCS>().getHP() >= 10000)
             {
                 target = t.transform;
                 return true;
@@ -551,7 +552,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 5000)
+            if (t.GetComponent<biologyCS>().getHP() >= 5000)
             {
                 target = t.transform;
                 return true;
@@ -564,7 +565,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 3000)
+            if (t.GetComponent<biologyCS>().getHP() >= 3000)
             {
                 target = t.transform;
                 return true;
@@ -576,7 +577,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 2000)
+            if (t.GetComponent<biologyCS>().getHP() >= 2000)
             {
                 target = t.transform;
                 return true;
@@ -588,7 +589,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 1000)
+            if (t.GetComponent<biologyCS>().getHP() >= 1000)
             {
                 target = t.transform;
                 return true;
@@ -600,7 +601,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 500)
+            if (t.GetComponent<biologyCS>().getHP() >= 500)
             {
                 target = t.transform;
                 return true;
@@ -612,7 +613,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP >= 500)
+            if (t.GetComponent<biologyCS>().getHP() >= 500)
             {
                 target = t.transform;
                 return true;
@@ -625,7 +626,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 100000)
+            if (t.GetComponent<biologyCS>().getHP() <= 100000)
             {
                 target = t.transform;
                 return true;
@@ -637,7 +638,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 50000)
+            if (t.GetComponent<biologyCS>().getHP() <= 50000)
             {
                 target = t.transform;
                 return true;
@@ -649,7 +650,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 10000)
+            if (t.GetComponent<biologyCS>().getHP() <= 10000)
             {
                 target = t.transform;
                 return true;
@@ -661,7 +662,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 5000)
+            if (t.GetComponent<biologyCS>().getHP() <= 5000)
             {
                 target = t.transform;
                 return true;
@@ -674,7 +675,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 3000)
+            if (t.GetComponent<biologyCS>().getHP() <= 3000)
             {
                 target = t.transform;
                 return true;
@@ -686,7 +687,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 2000)
+            if (t.GetComponent<biologyCS>().getHP() <= 2000)
             {
                 target = t.transform;
                 return true;
@@ -698,7 +699,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 1000)
+            if (t.GetComponent<biologyCS>().getHP() <= 1000)
             {
                 target = t.transform;
                 return true;
@@ -710,7 +711,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 500)
+            if (t.GetComponent<biologyCS>().getHP() <= 500)
             {
                 target = t.transform;
                 return true;
@@ -722,7 +723,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP <= 500)
+            if (t.GetComponent<biologyCS>().getHP() <= 500)
             {
                 target = t.transform;
                 return true;
@@ -739,7 +740,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (bioCamp == t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp == t.GetComponent<biologyCS>().getBioCamp())
             {
                 target = t.transform;
                 return true;
@@ -755,9 +756,9 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp == t.GetComponent<biologyCS>().bioCamp)
+            if (bioCamp == t.GetComponent<biologyCS>().getBioCamp())
             {
-                float tempHP = t.GetComponent<biologyCS>().HP;
+                float tempHP = t.GetComponent<biologyCS>().getHP();
                 if (tempHP < lowestHP)
                 {
                     tMin = t.transform;
@@ -776,7 +777,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.9)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.9)
             {
                 target = t.transform;
                 return true;
@@ -789,7 +790,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.7)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.7)
             {
                 target = t.transform;
                 return true;
@@ -802,7 +803,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.5)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.5)
             {
                 target = t.transform;
                 return true;
@@ -815,7 +816,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.3)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.3)
             {
                 target = t.transform;
                 return true;
@@ -828,7 +829,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.1)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.1)
             {
                 target = t.transform;
                 return true;
@@ -841,7 +842,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().HP / t.GetComponent<biologyCS>().MPMAX <= 0.0)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.0)
             {
                 target = t.transform;
                 return true;

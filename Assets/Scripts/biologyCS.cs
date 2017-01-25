@@ -10,11 +10,6 @@ using myMath;
 [RequireComponent(typeof(MeshRenderer))]
 // [RequireComponent(typeof(BoxCollider))]
 
-/*******
- *
- *
- */
-
 
 public class biologyCS : MonoBehaviour
 {
@@ -65,31 +60,35 @@ public class biologyCS : MonoBehaviour
 	 * WalkSteptweek	生物步伐()
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
-    public float moveSpeedMax;//todo:測試用改成Public
-    public float startPosDis, targetDistance, ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    public int bioType = 1, bioCamp = 1, players;
-    public float WalkSteptweek, attackDistance;//todo:attackDistance應該要放在安全的地方
-    public Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
+    float WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, targetDistance, ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    int bioType = 1, bioCamp = 1, players;
+    Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
-    public GameObject[] collisionCubes = new GameObject[28], allBiologys;
-
+    GameObject[] collisionCubes = new GameObject[28], allBiologys;
     GameObject nameText, targeLine, HID;
-    public gameCS maingameCS;
+    gameCS maingameCS;
     BoxCollider bioCollider;
-    public string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
-
-    public bool isVisible, isEnable = false;
-    public Transform target;
-
+    string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
+    bool isVisible, isEnable = false;
+    Transform target;
     float[] biologyListData = new float[5];
-
     Animation anim;
-
+    List<string> bioActionList;
     gameBits gameBits;
 
     // Use this for initialization
     void Start()
     {
+        //如果該生物在玩家清單，改變陣營為玩家。
+        checkBioCamp();
+
+
+        bioActionList.Add("actionAttack");
+        bioActionList.Add("actionRunback");
+
+
+        maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+        allBiologys = maingameCS.getAllBiologys();
 
         attackCoolDown = 15;
         players = 3;
@@ -122,8 +121,7 @@ public class biologyCS : MonoBehaviour
         nameText.GetComponent<Text>().text = this.name;
 
         bioAnimation = "mWait";
-        maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
-        allBiologys = maingameCS.allBiologys;
+
 
         Sphere3 = this.transform.position;
 
@@ -157,6 +155,57 @@ public class biologyCS : MonoBehaviour
         }
 
     }
+    public string getBioAction()
+    {
+        return bioAction;
+    }
+    internal void setBioAction(string n)
+    {
+        if (checkBioActionList(n))
+        {
+            bioAction = n;
+        }
+    }
+    public GameObject[] getAllBiologys()
+    {
+        return allBiologys;
+    }
+    public float getHP()
+    {
+        return HP;
+    }
+    public float getHPMAX()
+    {
+        return HPMAX;
+    }
+    public Transform getTarget()
+    {
+        return target;
+    }
+    internal void setTarget(Transform t)
+    {
+        target = t;
+    }
+    public float getSeeMax()
+    {
+        return seeMax;
+    }
+    public string getLeadername()
+    {
+        return leaderName;
+    }
+    public int getBioCamp()
+    {
+        return bioCamp;
+    }
+    public void bioGoto(Vector3 v)
+    {
+        Sphere3 = v;
+    }
+    public void bioStop()
+    {
+        Sphere3 = this.transform.position;
+    }
     public void giveDAMAGE(float n)
     {
         if (n - DEF > 0)
@@ -167,7 +216,7 @@ public class biologyCS : MonoBehaviour
         HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
 
-    public void bioTypeSet(int Type)
+    void bioTypeSet(int Type)
     {
         bioType = Type;
         switch (Type)
@@ -206,6 +255,18 @@ public class biologyCS : MonoBehaviour
         NumCalculate();
         HP = HPMAX;
         MP = MPMAX;
+    }
+    bool checkBioActionList(string n)
+    {
+        if (bioActionList.Contains(n))
+        {
+            return true;
+        }
+        else
+        {
+            Debug.Log("指定錯誤生物動作bioAction");
+            return false;
+        }
     }
     void NumCalculate()
     {
@@ -302,77 +363,79 @@ public class biologyCS : MonoBehaviour
     void _movment()
     {
 
-        float SphereDistance;
+        float SphereDistance = 0;
 
         // if (this.bioAnimation == "Walk")
         // {
         //     this.bioAnimation = "Wait";
         // }
 
-        //如果使用者操作搖桿
-        if (maingameCS.clickStart &&
-            maingameCS.hitUIObjectName == "moveStick" &&
-            maingameCS.Player.name == this.name)
+        //如果該生物是被使用者操控的
+        if (maingameCS.Player.name == this.name)
         {
-
-            this.bioAnimation = "mWalk";
-
-            //自搖桿取得的移動向量直
-            Sphere.x = maingameCS.mouseDragVector.x;
-            Sphere.z = maingameCS.mouseDragVector.z;
-
-            //轉換搖桿向量至角色位置
-            float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 270 + maingameCS.temp;
-            float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
-
-            float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-            tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-            Debug.Log(tempAngel * Mathf.Rad2Deg);
-
-            Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Angle + tempAngel * Mathf.Rad2Deg, r);
-            Sphere2.x = temp.x;
-            Sphere2.z = temp.z;
-            Sphere2.y = this.transform.position.y;
-
-            // //將spere2依據攝影機位置做座標轉換
-            // float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-            // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-            // Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
-            // Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
-            // Sphere2.y = this.transform.position.y;
-
-            SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
-        }
-        //如果使用者點擊螢幕操作
-        else
-        {
-
-            SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
-            var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
-            if (SphereDistance > 0.05f)
+            //如果使用者操作搖桿
+            if (maingameCS.clickStart &&
+                maingameCS.hitUIObjectName == "moveStick")
             {
+
                 this.bioAnimation = "mWalk";
 
-                //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
-                if (SphereDistance < 1 ||
-                maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
-                {
-                    Sphere2 = Sphere3;
-                }
-                else
-                {
-                    if (Sphere2Distance < 1)
-                    {
-                        // Debug.Log("PathfindingCS");
-                        Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
-                        if (Sphere2 == new Vector3(-999, -999, -999))
-                        {
-                            maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
-                            Sphere2 = this.transform.position;
-                            Sphere3 = this.transform.position;
-                        }
-                    }
+                //自搖桿取得的移動向量直
+                Sphere.x = maingameCS.mouseDragVector.x;
+                Sphere.z = maingameCS.mouseDragVector.z;
 
+                //轉換搖桿向量至角色位置
+                float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 270;
+                float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
+
+                float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+                tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+
+                Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Angle + tempAngel * Mathf.Rad2Deg, r);
+                Sphere2.x = temp.x;
+                Sphere2.z = temp.z;
+                Sphere2.y = this.transform.position.y;
+
+                // //將spere2依據攝影機位置做座標轉換
+                // float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+                // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+                // Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
+                // Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
+                // Sphere2.y = this.transform.position.y;
+
+                SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
+            }
+            //如果使用者點擊螢幕操作
+            else
+            {
+
+                SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
+                var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
+                if (SphereDistance > 0.05f)
+                {
+                    this.bioAnimation = "mWalk";
+
+                    //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
+                    if (SphereDistance < 1 ||
+                    maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
+                    {
+                        Sphere2 = Sphere3;
+                    }
+                    else
+                    {
+                        if (Sphere2Distance < 1)
+                        {
+                            // Debug.Log("PathfindingCS");
+                            Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
+                            if (Sphere2 == new Vector3(-999, -999, -999))
+                            {
+                                maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
+                                Sphere2 = this.transform.position;
+                                Sphere3 = this.transform.position;
+                            }
+                        }
+
+                    }
                 }
             }
         }
@@ -477,7 +540,7 @@ public class biologyCS : MonoBehaviour
                 {
                     g++;
                     Vector3 temp = new Vector3(tempVector3.x + x, tempVector3.y + y, tempVector3.z + z);
-                    if (maingameCS.cubesDictionary.ContainsKey(maingameCS.normalized(temp)))
+                    if (maingameCS.checkCubesDictionary(temp))
                     {
                         collisionCubes[g].transform.position = new Vector3(temp.x, temp.y, temp.z);
                     }
@@ -519,6 +582,7 @@ public class biologyCS : MonoBehaviour
         }
         //讀取生物清單表
         string[] drawNumbers = maingameCS.biologyList.drawNumber;
+
         int biologyNumber = Array.FindIndex(drawNumbers, n => n.Contains(nameShort));
         biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length - biologyNumber];     //walkSteptweek
         biologyListData[1] = maingameCS.biologyList.biodata[biologyNumber + 1 + biologyNumber * biologyListData.Length - biologyNumber]; //center.y
@@ -555,6 +619,14 @@ public class biologyCS : MonoBehaviour
 
         }
     }
+    public Vector3 getDestination()
+    {
+        return Sphere3;
+    }
+    public string getBioAnimation()
+    {
+        return bioAnimation;
+    }
     void OnCollisionEnter(Collision collision)
     {
         if (this.bioType == 0)
@@ -565,6 +637,12 @@ public class biologyCS : MonoBehaviour
             }
         }
 
+    }
+    void checkBioCamp()
+    {
+
+        bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
+        bioType = (bioCamp == 0) ? 0 : 1;
     }
 
 
