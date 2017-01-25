@@ -19,7 +19,8 @@ public class Grid : MonoBehaviour
 
     void Awake()
     {
-        cubesDictionary = GameObject.Find("mainGame").GetComponent<gameCS>().getCubesDictionary();
+        gameCS mainGame = GameObject.Find("mainGame").GetComponent<gameCS>();
+        cubesDictionary = mainGame.getCubesDictionary();
         CreateGrid();
     }
     public bool walkable(Node n)

@@ -34,7 +34,7 @@ public class gameCS : MonoBehaviour
 
     //Script 自定義----------------------------
     public Pathfinding PathfindingCS;
-    public List<biologyCS> playerBioCSList = new List<biologyCS>();
+    public List<biologyCS> playerBioCSList;
     public biologyList biologyList;
 
     //UnityEngine ----------------------------
@@ -417,6 +417,7 @@ public class gameCS : MonoBehaviour
         allBiologys = GameObject.FindGameObjectsWithTag("biology");
         foreach (GameObject thisBiology in allBiologys)
         {
+            biologyCS temp = new biologyCS(this);
             thisBiology.AddComponent<biologyCS>();
         }
         TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
@@ -632,18 +633,17 @@ public class gameCS : MonoBehaviour
     }
     public bool checkPlayerBioCSListByName(string n)
     {
-        Debug.Log("haha");
-
-        for (var i = 0; i < playerBioCSList.Count; i++)
+        foreach (var i in playerBioCSList)
         {
-            if (playerBioCSList[i].name == n)
+            Debug.Log(n);
+            Debug.Log(i.name);
+            if (i.name == n)
             {
                 return true;
             }
 
         }
         return false;
-
     }
     public GameObject[] getAllBiologys()
     {

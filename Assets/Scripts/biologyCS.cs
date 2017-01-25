@@ -61,22 +61,26 @@ public class biologyCS : MonoBehaviour
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
     float WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, targetDistance, ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    int bioType = 1, bioCamp = 1, players;
+    public int bioType, bioCamp, players;
     Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
-    GameObject[] collisionCubes = new GameObject[28], allBiologys;
+    internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
     GameObject nameText, targeLine, HID;
     gameCS maingameCS;
     BoxCollider bioCollider;
     string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
     bool isVisible, isEnable = false;
-    Transform target;
+    public Transform target;
     float[] biologyListData = new float[5];
     Animation anim;
-    List<string> bioActionList = new List<string>();
+    internal List<string> bioActionList = new List<string>();
     gameBits gameBits;
 
     // Use this for initialization
+    public biologyCS(gameCS parent)
+    {
+        maingameCS = parent;
+    }
     void Start()
     {
         //如果該生物在玩家清單，改變陣營為玩家。
@@ -85,7 +89,6 @@ public class biologyCS : MonoBehaviour
 
         bioActionList.Add("actionAttack");
         bioActionList.Add("actionRunback");
-
 
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         allBiologys = maingameCS.getAllBiologys();
@@ -103,7 +106,7 @@ public class biologyCS : MonoBehaviour
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.05f;          //todo:應該記錄在c_ai.json
         LV = 50;
-        bioTypeSet(bioType);
+
 
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
@@ -124,13 +127,16 @@ public class biologyCS : MonoBehaviour
 
 
         Sphere3 = this.transform.position;
-
-        gameBits = new gameBits(this.GetComponent<biologyCS>());
+        gameBits = new gameBits(this);
         setTargeLine();
         loadBiologyList();
         setCollisionCubes();
         dynamicCollision();
         loadAnimation();
+    }
+    public biologyCS()
+    {
+        Debug.Log("create");
     }
     // Update is called once per frame
     void Update()
@@ -166,10 +172,11 @@ public class biologyCS : MonoBehaviour
             bioAction = n;
         }
     }
-    public GameObject[] getAllBiologys()
+    public Transform getTransform()
     {
-        return allBiologys;
+        return this.transform;
     }
+
     public float getHP()
     {
         return HP;
@@ -216,10 +223,9 @@ public class biologyCS : MonoBehaviour
         HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
 
-    void bioTypeSet(int Type)
+    void setValueByBioType()
     {
-        bioType = Type;
-        switch (Type)
+        switch (bioType)
         {
             case 0:
                 hpPlus = 2;
@@ -640,9 +646,10 @@ public class biologyCS : MonoBehaviour
     }
     void checkBioCamp()
     {
-
-        // bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
+        maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+        bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
         bioType = (bioCamp == 0) ? 0 : 1;
+        setValueByBioType();
     }
 
 

@@ -1,28 +1,32 @@
 using UnityEngine;
 using System.Collections.Generic;
-public class gameBits : biologyCS
+public class gameBits
 {
-    Transform target, _target;
+    Transform target;
     public bool actionNoRun = true;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
     GameObject[] allBiologys;
+    biologyCS parent;
+
 
     int bioCamp, gameBitsNO;
     string leaderName;
     Transform Transform;
     float seeMax, bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 4f)); //-4~6
 
-    public gameBits(biologyCS thisBio)
+    public gameBits(biologyCS parent)
     {
-        allBiologys = getAllBiologys();
-        target = getTarget();
-        bioCamp = getBioCamp();
-        leaderName = getLeadername();
-        seeMax = getSeeMax();
 
-        Transform = thisBio.transform;
+        allBiologys = parent.allBiologys;
+        // target = parent.getTarget();
+        bioCamp = parent.getBioCamp();
+        leaderName = parent.getLeadername();
+        seeMax = parent.getSeeMax();
+        Transform = parent.getTransform();
+        this.parent = parent;
+
 
         decideList.Add("decideHpUnder50percentEnemy");
         actionList.Add("actionAttack");
@@ -63,9 +67,14 @@ public class gameBits : biologyCS
             return false;
         }
     }
+
     void changeTarget(Transform eTarget)
     {
-        setTarget(eTarget);
+        if (eTarget != target)
+        {
+            target = eTarget;
+            parent.setTarget(eTarget);
+        }
 
     }
 
@@ -148,10 +157,9 @@ public class gameBits : biologyCS
     }
     bool actionAttack()
     {
-        if (target != _target && target.GetComponent<biologyCS>().getHP() > 0)
+        if (target.GetComponent<biologyCS>().getHP() > 0)
         {
-            _target = target;
-            setBioAction("actionAttack");
+            parent.setBioAction("actionAttack");
             return true;
         }
         return false;
@@ -163,7 +171,7 @@ public class gameBits : biologyCS
     {
         foreach (var t in battleBios)
         {
-            if (bioCamp != getBioCamp())
+            if (bioCamp != parent.getBioCamp())
             {
                 target = t.transform;
                 return true;
@@ -180,7 +188,7 @@ public class gameBits : biologyCS
         Vector3 currentPos = Transform.transform.position;
         foreach (var t in battleBios)
         {
-            if (bioCamp != getBioCamp())
+            if (bioCamp != parent.getBioCamp())
             {
                 float dist = Vector3.Distance(t.transform.position, currentPos);
                 if (dist < minDist)
@@ -358,7 +366,7 @@ public class gameBits : biologyCS
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().getTarget().name == this.name)
+            if (t.GetComponent<biologyCS>().getTarget().name == parent.name)
             {
                 target = t.transform;
                 return true;
@@ -372,7 +380,7 @@ public class gameBits : biologyCS
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().getTarget().name == this.name)
+            if (t.GetComponent<biologyCS>().getTarget().name == parent.name)
             {
                 target = t.transform;
                 return true;
