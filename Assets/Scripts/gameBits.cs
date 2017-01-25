@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class gameBits
 {
     public bool actionNoRun = true;
-    Transform target, _target;
+    public Transform target, _target;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
@@ -48,29 +48,25 @@ public class gameBits
             for (var i = 0; i < decideList.Count; i++)
             {
                 decideIS = str2Function(decideList[i]);
-                changeTarget();
                 if (decideIS && str2Function(actionList[i]))
                 {
+                    changeTarget(target);
                     actionNoRun = false;
                     return true;
                 }
             }
+            changeTarget(Transform);
             return false;
         }
         else
         {
+            changeTarget(Transform);
             return false;
         }
     }
-    bool changeTarget()
+    void changeTarget(Transform eTarget)
     {
-        if (_target != target)
-        {
-            _target = target;
-            Transform.GetComponent<biologyCS>().target = target;
-            return true;
-        }
-        return false;
+        Transform.GetComponent<biologyCS>().target = eTarget;
 
     }
 
@@ -153,8 +149,7 @@ public class gameBits
     }
     bool actionAttack()
     {
-        Debug.Log(target.name);
-        if (!target == Transform && target.GetComponent<biologyCS>().HP > 0)
+        if (target != Transform && target.GetComponent<biologyCS>().HP > 0)
         {
             Transform.GetComponent<biologyCS>().bioAction = "actionAttack";
             return true;
