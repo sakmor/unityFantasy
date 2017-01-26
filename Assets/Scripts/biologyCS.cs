@@ -146,7 +146,6 @@ public class biologyCS : MonoBehaviour
             this._movment();
             this._bioAnimation();
             this._bioAction(bioAction);
-            this._targeLineUpdate();
             this.gameBits.Update();
         }
         else
@@ -154,7 +153,6 @@ public class biologyCS : MonoBehaviour
             GameObject.Find("Sphere3").transform.position = Sphere3;
             this._movment();
             this._bioAnimation();
-            this._targeLineUpdate();
             // this.gameBits.Update();
             // GameObject.Find("nodeINFO").transform.position = Sphere3;
         }
@@ -613,18 +611,12 @@ public class biologyCS : MonoBehaviour
         targeLine.GetComponent<Bezier>().controlPoints[3] = this.transform;
         targeLine.transform.Find("p0").position = new Vector3(this.transform.position.x, this.transform.position.y + 5.0f, this.transform.position.z);
     }
-    void _targeLineUpdate()
-    {
-        if (target != this.transform)
-        {
-            targeLine.GetComponent<Bezier>().line2target(target);
-        }
-        else
-        {
-            targeLine.GetComponent<Bezier>().closeLine();
 
-        }
+    internal void drawTargetLine()
+    {
+        targeLine.GetComponent<Bezier>().line2target(target);
     }
+
     public float getActionSpeed()
     {
         return actionSpeed;

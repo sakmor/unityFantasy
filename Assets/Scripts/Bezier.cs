@@ -21,15 +21,14 @@ public class Bezier : MonoBehaviour
     }
     public void line2target(Transform target)
     {
-        if (this.controlPoints[2] == this.transform.parent.transform)
-        {
-            this.controlPoints[2] = target;
-            this.controlPoints[3] = target;
-            drawIt = true;
-            linepapa = 0;
-            startTime = Time.time;
-            rend.material.SetColor("_Color", new Color(1, 1, 1, 1));
-        }
+
+        this.controlPoints[2] = target;
+        this.controlPoints[3] = target;
+        drawIt = true;
+        linepapa = 0;
+        startTime = Time.time;
+        rend.material.SetColor("_Color", new Color(1, 1, 1, 1));
+
     }
     public void closeLine()
     {
@@ -46,7 +45,7 @@ public class Bezier : MonoBehaviour
         rend.material.mainTexture = Resources.Load("texture/linebeam") as Texture;
 
         linepapa = 0;
-        duration = 1f;
+        duration = 0.25f;
         if (!lineRenderer)
         {
             lineRenderer = GetComponent<LineRenderer>();

@@ -77,6 +77,7 @@ public class gameBits
                 {
                     targetDist = Vector3.Distance(Transform.position, target.position);
                     changeTarget(target);
+                    parent.drawTargetLine();
                     return true;
                 }
 
