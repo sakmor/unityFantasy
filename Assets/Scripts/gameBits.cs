@@ -3,7 +3,7 @@ using System.Collections.Generic;
 public class gameBits
 {
     Transform target, _target;
-    float targetDist;
+    float targetDist, nowActionTime;
     public bool actionIsOn;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
@@ -35,12 +35,22 @@ public class gameBits
         actionList.Add("actionAttack");
 
     }
-
     public void Update()
     {
+        actionTimeRun();
         getSeeMaxBio(bais);
         decide2Action();
 
+    }
+
+    void actionTimeRun()
+    {
+        var nowTime = (Time.time - nowActionTime) * parent.getActionSpeed();
+        if (nowTime / 26 >= 1)
+        {
+            nowActionTime = Time.time;
+        }
+        GameObject.Find("ActionBarLine").transform.localScale = new Vector3(Mathf.Floor(nowTime), 1, 1);
     }
 
     bool decide2Action()

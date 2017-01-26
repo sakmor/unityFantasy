@@ -22,6 +22,7 @@ public class biologyCS : MonoBehaviour
 	 * moveSpeed		現在移動速度
 	 * moveSpeedMax		最大移動速度
      * attackDistance   攻擊距離
+     * actionSpeed      行動速度
      * lastActionTime   上次行動時間
 	 *
      * [戰鬥相關變數]
@@ -61,7 +62,7 @@ public class biologyCS : MonoBehaviour
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
     public float HP, HPMAX;
-    float WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, ATTACK, DAMAGE, hpPlus, aTimes, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    float actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, ATTACK, DAMAGE, hpPlus, aTimes, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
     public float targetDistance;
     Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
@@ -91,6 +92,7 @@ public class biologyCS : MonoBehaviour
         allBiologys = maingameCS.getAllBiologys();
 
         attackCoolDown = 15;
+        actionSpeed = 5.2f;          //todo:應該記錄在c_biology.json
         players = 3;
         target = this.transform;
         rotateSpeed = 15;
@@ -608,6 +610,10 @@ public class biologyCS : MonoBehaviour
             targeLine.GetComponent<Bezier>().closeLine();
 
         }
+    }
+    public float getActionSpeed()
+    {
+        return actionSpeed;
     }
     public float getAttackDistance()
     {
