@@ -60,8 +60,10 @@ public class biologyCS : MonoBehaviour
 	 * WalkSteptweek	生物步伐()
 	 * rotateSpeed		生物旋轉速度(未儲存)
 	 */
-    float WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, targetDistance, ATTACK, DAMAGE, hpPlus, aTimes, HP, HPMAX, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    public float HP, HPMAX;
+    float WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, ATTACK, DAMAGE, hpPlus, aTimes, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
+    public float targetDistance;
     Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
     internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
@@ -73,7 +75,6 @@ public class biologyCS : MonoBehaviour
     public Transform target;
     float[] biologyListData = new float[5];
     Animation anim;
-    internal List<string> bioActionList = new List<string>();
     gameBits gameBits;
 
     // Use this for initialization
@@ -85,10 +86,6 @@ public class biologyCS : MonoBehaviour
     {
         //如果該生物在玩家清單，改變陣營為玩家。
         checkBioCamp();
-
-
-        bioActionList.Add("actionAttack");
-        bioActionList.Add("actionRunback");
 
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         allBiologys = maingameCS.getAllBiologys();
@@ -167,10 +164,7 @@ public class biologyCS : MonoBehaviour
     }
     internal void setBioAction(string n)
     {
-        if (checkBioActionList(n))
-        {
-            bioAction = n;
-        }
+        bioAction = n;
     }
     public Transform getTransform()
     {
@@ -262,18 +256,7 @@ public class biologyCS : MonoBehaviour
         HP = HPMAX;
         MP = MPMAX;
     }
-    bool checkBioActionList(string n)
-    {
-        if (bioActionList.Contains(n))
-        {
-            return true;
-        }
-        else
-        {
-            Debug.Log("指定錯誤生物動作bioAction");
-            return false;
-        }
-    }
+
     void NumCalculate()
     {
         HPMAX = (50 + Mathf.Pow(LV * 5, 1.5f)) * hpPlus;
@@ -294,8 +277,7 @@ public class biologyCS : MonoBehaviour
 
 
 
-
-    void _bioAction(string n)
+    bool _bioAction(string n)
     {
         switch (n)
         {
@@ -306,9 +288,11 @@ public class biologyCS : MonoBehaviour
                 actionRunback();
                 break;
             default:
-                //發呆
-                break;
+                gameBits.setActionIsOn(false);
+                return false;
         }
+        gameBits.setActionIsOn(true);
+        return true;
     }
 
     void actionAttack()
@@ -316,13 +300,15 @@ public class biologyCS : MonoBehaviour
         float targetDist = Vector3.Distance(target.position, this.transform.position);
         if (targetDist > attackDistance)
         {
-            Sphere3 = target.position;
+            bioGoto(target.position);
+            gameBits.setActionIsOn(true);
         }
         else
         {
-            bioAnimation = "mAttack";
+            bioStop();
+            setBioAnimation("mAttack");
             target.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
-            gameBits.actionNoRun = true;
+            gameBits.setActionIsOn(false);
         }
 
     }
@@ -610,8 +596,6 @@ public class biologyCS : MonoBehaviour
         targeLine.GetComponent<Bezier>().controlPoints[2] = this.transform;
         targeLine.GetComponent<Bezier>().controlPoints[3] = this.transform;
         targeLine.transform.Find("p0").position = new Vector3(this.transform.position.x, this.transform.position.y + 5.0f, this.transform.position.z);
-
-
     }
     void _targeLineUpdate()
     {
@@ -625,6 +609,10 @@ public class biologyCS : MonoBehaviour
 
         }
     }
+    public float getAttackDistance()
+    {
+        return attackDistance;
+    }
     public Vector3 getDestination()
     {
         return Sphere3;
@@ -632,6 +620,14 @@ public class biologyCS : MonoBehaviour
     public string getBioAnimation()
     {
         return bioAnimation;
+    }
+    internal bool setBioAnimation(string n)
+    {
+        if (bioAnimation != n)
+        {
+            bioAnimation = n;
+        }
+        return true;
     }
     void OnCollisionEnter(Collision collision)
     {

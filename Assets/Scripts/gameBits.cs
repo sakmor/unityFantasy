@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 public class gameBits
 {
-    Transform target;
-    public bool actionNoRun = true;
+    Transform target, _target;
+    float targetDist;
+    public bool actionIsOn;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
@@ -18,7 +19,7 @@ public class gameBits
 
     public gameBits(biologyCS parent)
     {
-
+        actionIsOn = false;
         allBiologys = parent.allBiologys;
         // target = parent.getTarget();
         bioCamp = parent.getBioCamp();
@@ -33,19 +34,19 @@ public class gameBits
         decideList.Add("decideClosestEnemy");
         actionList.Add("actionAttack");
 
-
     }
 
     public void Update()
     {
         getSeeMaxBio(bais);
-        getDecide();
+        decide2Action();
 
     }
 
-    bool getDecide()
+    bool decide2Action()
     {
-        if (actionNoRun && battleBios.Count > 1)
+        var actionIsOnaa = actionIsOn;
+        if (actionIsOn == false && battleBios.Count > 1)
         {
             bool decideIS = false;
             for (var i = 0; i < decideList.Count; i++)
@@ -53,30 +54,31 @@ public class gameBits
                 decideIS = str2Function(decideList[i]);
                 if (decideIS && str2Function(actionList[i]))
                 {
+                    targetDist = Vector3.Distance(Transform.position, target.position);
                     changeTarget(target);
-                    actionNoRun = false;
                     return true;
                 }
+
             }
             changeTarget(Transform);
             return false;
         }
         else
         {
-            changeTarget(Transform);
             return false;
         }
     }
 
     void changeTarget(Transform eTarget)
     {
-        if (eTarget != target)
+        if (_target != eTarget)
         {
-            target = eTarget;
+            _target = eTarget;
             parent.setTarget(eTarget);
         }
 
     }
+    internal
 
 
     bool str2Function(string t)
@@ -157,6 +159,7 @@ public class gameBits
     }
     bool actionAttack()
     {
+        //如果目標還活著
         if (target.GetComponent<biologyCS>().getHP() > 0)
         {
             parent.setBioAction("actionAttack");
@@ -856,5 +859,14 @@ public class gameBits
             }
         }
         return false;
+    }
+
+    internal void setActionIsOn(bool n)
+    {
+        if (actionIsOn != n)
+        {
+            actionIsOn = n;
+        }
+
     }
 }

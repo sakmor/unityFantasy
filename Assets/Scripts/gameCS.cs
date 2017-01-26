@@ -106,7 +106,7 @@ public class gameCS : MonoBehaviour
     void setUIpos()
     {
         moveStick.transform.position = new Vector3(moveStick.GetComponent<RectTransform>().sizeDelta.x, moveStick.GetComponent<RectTransform>().sizeDelta.y, 0);
-        fpsText.transform.position = new Vector3(fpsText.GetComponent<RectTransform>().sizeDelta.x * 0.5f + 15, UnityEngine.Screen.height - 15, 0);
+        fpsText.transform.position = new Vector3(fpsText.GetComponent<RectTransform>().sizeDelta.x * 0.5f + 15, UnityEngine.Screen.height - 60, 0);
         logText.transform.position = new Vector3(logText.GetComponent<RectTransform>().sizeDelta.x + 10, 370, 0);
         GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
 
