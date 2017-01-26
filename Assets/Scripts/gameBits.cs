@@ -3,7 +3,7 @@ using System.Collections.Generic;
 public class gameBits
 {
     Transform target, _target;
-    float targetDist, nowActionTime;
+    float targetDist, lastActionTime, nowActionTime;
     public bool actionIsOn;
     List<GameObject> battleBios;
     List<string> decideList = new List<string>();
@@ -39,18 +39,29 @@ public class gameBits
     {
         actionTimeRun();
         getSeeMaxBio(bais);
-        decide2Action();
+
 
     }
 
     void actionTimeRun()
     {
-        var nowTime = (Time.time - nowActionTime) * parent.getActionSpeed();
-        if (nowTime / 26 >= 1)
+
+        if (nowActionTime <= 1)
         {
-            nowActionTime = Time.time;
+            nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26; //todo:26應該改為自動換算介面長度
+            GameObject.Find("ActionBarLine").transform.localScale = new Vector3(Mathf.Floor(nowActionTime * 26), 1, 1);
         }
-        GameObject.Find("ActionBarLine").transform.localScale = new Vector3(Mathf.Floor(nowTime), 1, 1);
+        else
+        {
+            decide2Action();
+        }
+
+    }
+    internal void resetActionTime()
+    {
+        lastActionTime = Time.time;
+        nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26;
+        setActionIsOn(false);
     }
 
     bool decide2Action()
@@ -878,5 +889,9 @@ public class gameBits
             actionIsOn = n;
         }
 
+    }
+    public bool getActionIsOn()
+    {
+        return actionIsOn;
     }
 }

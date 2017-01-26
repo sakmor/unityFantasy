@@ -92,7 +92,7 @@ public class biologyCS : MonoBehaviour
         allBiologys = maingameCS.getAllBiologys();
 
         attackCoolDown = 15;
-        actionSpeed = 5.2f;          //todo:應該記錄在c_biology.json
+        actionSpeed = 20.2f;          //todo:應該記錄在c_biology.json
         players = 3;
         target = this.transform;
         rotateSpeed = 15;
@@ -281,43 +281,57 @@ public class biologyCS : MonoBehaviour
 
     bool _bioAction(string n)
     {
+        bool actionIsDone = false;
         switch (n)
         {
             case "actionAttack":
-                actionAttack();
+                actionIsDone = actionAttack();
                 break;
             case "actionRunback":
-                actionRunback();
+                actionIsDone = actionRunback();
+                break;
+            case "DanceTatget":
+                //todo:隨機圍繞目標
+                setBioAnimation("mWait");
+                break;
+            case "":
+                setBioAnimation("mWait");
                 break;
             default:
-                gameBits.setActionIsOn(false);
+                Debug.Log("biologyCS:_bioAction()--收到無效指令指令");
                 return false;
         }
-        gameBits.setActionIsOn(true);
+        if (actionIsDone)
+        {
+            gameBits.resetActionTime();
+            setBioAction("DanceTatget");
+
+        }
         return true;
     }
 
-    void actionAttack()
+    bool actionAttack()
     {
         float targetDist = Vector3.Distance(target.position, this.transform.position);
         if (targetDist > attackDistance)
         {
             bioGoto(target.position);
-            gameBits.setActionIsOn(true);
+            return false;
         }
         else
         {
             bioStop();
             setBioAnimation("mAttack");
             target.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
-            gameBits.setActionIsOn(false);
+            return true;
         }
 
     }
-    void actionRunback()
+    bool actionRunback()
     {
         runBack = true;
         Sphere3 = startPos;
+        return true;
     }
     void _bioAnimation()
     {
