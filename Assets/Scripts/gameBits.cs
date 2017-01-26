@@ -188,7 +188,7 @@ public class gameBits
         Vector3 currentPos = Transform.transform.position;
         foreach (var t in battleBios)
         {
-            if (bioCamp != parent.getBioCamp())
+            if (t.GetComponent<biologyCS>().getBioCamp() != parent.getBioCamp())
             {
                 float dist = Vector3.Distance(t.transform.position, currentPos);
                 if (dist < minDist)

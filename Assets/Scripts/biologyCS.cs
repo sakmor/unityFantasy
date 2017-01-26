@@ -219,8 +219,8 @@ public class biologyCS : MonoBehaviour
         {
             HP -= n - DEF;
         }
-        HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
-        HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
+        // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
+        // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
 
     void setValueByBioType()
