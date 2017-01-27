@@ -215,17 +215,16 @@ public class gameBits
                     tMin = t.transform;
                     minDist = dist;
                 }
-                target = tMin;
-                return true;
             }
         }
-        return false;
+        target = tMin;
+        return true;
     }
     //回傳離我最遠敵方
     bool decideFurthestEnemy()
     {
         Transform tMax = null;
-        float maxDist = Mathf.Infinity;
+        float maxDist = Mathf.NegativeInfinity;
         Vector3 currentPos = Transform.position;
         foreach (var t in battleBios)
         {
@@ -237,11 +236,10 @@ public class gameBits
                     tMax = t.transform;
                     maxDist = dist;
                 }
-                target = tMax;
-                return true;
             }
         }
-        return false;
+        target = tMax;
+        return true;
     }
     //回傳敵方中血量最高者
     bool decideHighestHPEnemy()
@@ -258,10 +256,10 @@ public class gameBits
                     tMax = t.transform;
                     highestHP = tempHP;
                 }
-                return tMax;
             }
         }
-        return false;
+        target = tMax;
+        return true;
     }
     //回傳敵方中血量最低者
     bool decideLowestHPEnemy()
@@ -278,11 +276,11 @@ public class gameBits
                     tMin = t.transform;
                     lowestHP = tempHP;
                 }
-                target = tMin;
-                return true;
+
             }
         }
-        return false;
+        target = tMin;
+        return true;
     }
     //回傳敵方中血量上限最高者
     bool decideHighestHPMaxEnemy()
@@ -299,11 +297,11 @@ public class gameBits
                     tMax = t.transform;
                     highestHP = tempHP;
                 }
-                target = tMax;
-                return true;
+
             }
         }
-        return false;
+        target = tMax;
+        return true;
     }
     //回傳敵方中血量上限最低者
     bool decideLowestHPMaxEnemy()
@@ -320,10 +318,11 @@ public class gameBits
                     tMin = t.transform;
                     lowestHP = tempHP;
                 }
-                return tMin;
+
             }
         }
-        return false;
+        target = tMin;
+        return true;
     }
     //回傳敵方等級最低者
     bool decideLowestLevelEnemy()
@@ -340,11 +339,10 @@ public class gameBits
                     tMin = t.transform;
                     lowestLevel = tempHP;
                 }
-                target = tMin;
-                return true;
             }
         }
-        return false;
+        target = tMin;
+        return true;
     }
     //回傳敵方等級最高者
     bool decideHighestLevelEnemy()
@@ -361,11 +359,10 @@ public class gameBits
                     tMax = t.transform;
                     highestLevel = tempHP;
                 }
-                target = tMax;
-                return true;
             }
         }
-        return false;
+        target = tMax;
+        return true;
     }
     //回傳隊長的目標(玩家專用)
     bool decideLeaderTarget()
