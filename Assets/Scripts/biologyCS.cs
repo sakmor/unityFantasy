@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
-using System;
+using UnityEngine.UI;
 using myMath;
 
 [RequireComponent(typeof(Animation))]
@@ -10,57 +10,56 @@ using myMath;
 [RequireComponent(typeof(MeshRenderer))]
 // [RequireComponent(typeof(BoxCollider))]
 
-
 public class biologyCS : MonoBehaviour
 {
     /* [AI相關變數]
-     * isEnable         停止運作
-	 * runBackDist		脫戰距離
-	 * seeMax			視線距離
-	 * catchSpeed		追擊速度
-	 * attackCoolDown	行動冷卻
-	 * moveSpeed		現在移動速度
-	 * moveSpeedMax		最大移動速度
-     * attackDistance   攻擊距離
-     * actionSpeed      行動速度
-     * lastActionTime   上次行動時間
-	 *
-     * [戰鬥相關變數]
-     * bioCamp          生物陣營 0=玩家 1=敵方 2=第三方
-     * bioType          生物型態 0=玩家 1=小怪 2=菁英 3=王怪
-     * hpPlus           血量值調整
-     * aTimes           可被同等級小怪或玩家的素體攻擊幾次 0=玩家30, 1＝小怪10,2=精英25,3=王怪300
-     *
-     * LV               現在等級
-     * EXP              現在經驗值(全部)
-     * HP               現在血量        (STR/2) + 50
-     * Damage           傷害值
-     * HPMAX            血量最大值
-     * MP               現在魔法值
-     * MPMAX            魔法最大值
-     * DEF              防禦值
-     * DAMAGE           傷害值(遭受)
-     * Attack
-     *
-     *
-
-     *
-	 * [系統相關變數]
-	 * dectefrequency	偵測頻率
-	 * bais				偵測頻率乖離變數
-     * players          使用哪個顯示器  0=怪物不使用 1=p1  2=p2 3=p3;
-     *
-	 *
-	 * [生物狀態變數]
-	 * startPos			出生位置
-	 * targetName		追擊目標的名字
-     * targt            追擊目標的資訊
-	 * bioAnimation		生物狀態
-	 *
-	 * [生物清單相關變數]
-	 * WalkSteptweek	生物步伐()
-	 * rotateSpeed		生物旋轉速度(未儲存)
-	 */
+    * isEnable         停止運作
+    * runBackDist		脫戰距離
+    * seeMax			視線距離
+    * catchSpeed		追擊速度
+    * attackCoolDown	行動冷卻
+    * moveSpeed		現在移動速度
+    * moveSpeedMax		最大移動速度
+    * attackDistance   攻擊距離
+    * actionSpeed      行動速度
+    * lastActionTime   上次行動時間
+    *
+    * [戰鬥相關變數]
+    * bioCamp          生物陣營 0=玩家 1=敵方 2=第三方
+    * bioType          生物型態 0=玩家 1=小怪 2=菁英 3=王怪
+    * hpPlus           血量值調整
+    * aTimes           可被同等級小怪或玩家的素體攻擊幾次 0=玩家30, 1＝小怪10,2=精英25,3=王怪300
+    *
+    * LV               現在等級
+    * EXP              現在經驗值(全部)
+    * HP               現在血量        (STR/2) + 50
+    * Damage           傷害值
+    * HPMAX            血量最大值
+    * MP               現在魔法值
+    * MPMAX            魔法最大值
+    * DEF              防禦值
+    * DAMAGE           傷害值(遭受)
+    * Attack
+    *
+    *
+    
+    *
+    * [系統相關變數]
+    * dectefrequency	偵測頻率
+    * bais				偵測頻率乖離變數
+    * players          使用哪個顯示器  0=怪物不使用 1=p1  2=p2 3=p3;
+    *
+    *
+    * [生物狀態變數]
+    * startPos			出生位置
+    * targetName		追擊目標的名字
+    * targt            追擊目標的資訊
+    * bioAnimation		生物狀態
+    *
+    * [生物清單相關變數]
+    * WalkSteptweek	生物步伐()
+    * rotateSpeed		生物旋轉速度(未儲存)
+    */
     public float HP, HPMAX;
     float actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, ATTACK, DAMAGE, hpPlus, aTimes, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
@@ -87,7 +86,7 @@ public class biologyCS : MonoBehaviour
     {
         //如果該生物在玩家清單，改變陣營為玩家。
         checkBioCamp();
-
+        bioAction = "";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         allBiologys = maingameCS.getAllBiologys();
 
@@ -106,7 +105,6 @@ public class biologyCS : MonoBehaviour
         catchSpeed = 0.05f;          //todo:應該記錄在c_ai.json
         LV = 50;
 
-
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
         GameObject.Find("playerINFO/P3/HP").GetComponent<Text>().text = HP.ToString("F0");
@@ -116,14 +114,12 @@ public class biologyCS : MonoBehaviour
         startPos = this.transform.position;
         bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 6f)); //-4~6
 
-
         nameText = Instantiate(GameObject.Find("nameText"));
         nameText.name = this.name + "_nameText";
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
         nameText.GetComponent<Text>().text = this.name;
 
         bioAnimation = "mWait";
-
 
         Sphere3 = this.transform.position;
         gameBits = new gameBits(this);
@@ -275,8 +271,6 @@ public class biologyCS : MonoBehaviour
 
     }
 
-
-
     bool _bioAction(string n)
     {
         bool actionIsDone = false;
@@ -423,7 +417,7 @@ public class biologyCS : MonoBehaviour
 
                     //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
                     if (SphereDistance < 1 ||
-                    maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
+                        maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
                     {
                         Sphere2 = Sphere3;
                     }
@@ -494,12 +488,11 @@ public class biologyCS : MonoBehaviour
         if (isVisible)
         {
             nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
-                this.transform.position.x,
-                this.transform.position.y + 2.5f,
-                this.transform.position.z));
+                    this.transform.position.x,
+                    this.transform.position.y + 2.5f,
+                    this.transform.position.z));
             nameText.transform.position = nametextScreenPos;
         }
-
 
     }
 
@@ -555,9 +548,6 @@ public class biologyCS : MonoBehaviour
         }
     }
 
-
-
-
     void loadAnimation()
     {
         anim = this.GetComponent<Animation>();
@@ -569,8 +559,6 @@ public class biologyCS : MonoBehaviour
             AnimationClip aClip = mdl.GetComponent<Animation>().clip;
             anim.AddClip(aClip, name);
         }
-
-
 
     }
     void loadBiologyList()
@@ -659,8 +647,5 @@ public class biologyCS : MonoBehaviour
         bioType = (bioCamp == 0) ? 0 : 1;
         setValueByBioType();
     }
-
-
-
 
 }

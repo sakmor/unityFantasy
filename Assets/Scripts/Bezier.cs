@@ -76,12 +76,9 @@ public class Bezier : MonoBehaviour
 
                 if (linepapa <= 0.9)
                 {
-                    // y=ax^b+cx
+
                     linepapa = MathS.easeInQuad(Time.time - startTime, 0, 1, duration);
-                    // if (linepapa > 1)
-                    // {
-                    //     linepapa = 0.01f;
-                    // }
+
                     if (t > linepapa)
                     {
                         t = linepapa;

@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 public class gameBits
 {
     Transform target, _target;
@@ -10,7 +10,6 @@ public class gameBits
     List<string> actionList = new List<string>();
     GameObject[] allBiologys;
     biologyCS parent;
-
 
     int bioCamp, gameBitsNO;
     string leaderName;
@@ -28,7 +27,6 @@ public class gameBits
         Transform = parent.getTransform();
         this.parent = parent;
 
-
         decideList.Add("decideHpUnder50percentEnemy");
         actionList.Add("actionAttack");
         decideList.Add("decideClosestEnemy");
@@ -39,7 +37,6 @@ public class gameBits
     {
         actionTimeRun();
         getSeeMaxBio(bais);
-
 
     }
 
@@ -77,7 +74,6 @@ public class gameBits
                 {
                     targetDist = Vector3.Distance(Transform.position, target.position);
                     changeTarget(target);
-                    parent.drawTargetLine();
                     return true;
                 }
 
@@ -101,7 +97,6 @@ public class gameBits
 
     }
     internal
-
 
     bool str2Function(string t)
     {
@@ -163,7 +158,6 @@ public class gameBits
 
     }
 
-
     void getSeeMaxBio(float bais)
     {
         if (Time.time % bais < 0.5)
@@ -190,7 +184,6 @@ public class gameBits
         return false;
     }
 
-
     //回傳隨便一個敵方
     bool decideAnyEnemy()
     {
@@ -211,6 +204,7 @@ public class gameBits
         Transform tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = Transform.transform.position;
+        Debug.Log(battleBios.Count);
         foreach (var t in battleBios)
         {
             if (t.GetComponent<biologyCS>().getBioCamp() != parent.getBioCamp())
@@ -764,8 +758,6 @@ public class gameBits
         return false;
     }
 
-
-
     //------------------
     //回傳隨便一個我方
     bool decideAnyAlly()
@@ -802,7 +794,6 @@ public class gameBits
         }
         return false;
     }
-
 
     //回傳殘存血量低於90%目標
     bool decideHpUnder90percentAlly()
