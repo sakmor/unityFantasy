@@ -60,8 +60,8 @@ public class biologyCS : MonoBehaviour
     * WalkSteptweek	生物步伐()
     * rotateSpeed		生物旋轉速度(未儲存)
     */
-    public float HP, HPMAX;
-    float actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, ATTACK, DAMAGE, hpPlus, aTimes, MP, DEF, MPMAX, LV, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    public float LV, ATTACK, HP, DEF, HPMAX;
+    float actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
     public float targetDistance;
     Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
@@ -85,6 +85,7 @@ public class biologyCS : MonoBehaviour
     void Start()
     {
         //如果該生物在玩家清單，改變陣營為玩家。
+        LV = 50;                    //todo:應該記錄在生物表
         checkBioCamp();
         bioAction = "";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
@@ -93,7 +94,7 @@ public class biologyCS : MonoBehaviour
         attackCoolDown = 15;
         actionSpeed = 20.2f;          //todo:應該記錄在c_biology.json
         players = 3;
-        target = this.transform;
+        target = null;
         rotateSpeed = 15;
         runBack = false;
 
@@ -103,7 +104,7 @@ public class biologyCS : MonoBehaviour
         seeMax = 15f;               //todo:應該記錄在c_ai.json
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.05f;          //todo:應該記錄在c_ai.json
-        LV = 50;
+
 
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
@@ -131,11 +132,12 @@ public class biologyCS : MonoBehaviour
     }
     public biologyCS()
     {
-        Debug.Log("create");
+
     }
     // Update is called once per frame
     void Update()
     {
+
         if (this.name == maingameCS.Player.name)
         {
             // this._catchMonster(1);
@@ -203,7 +205,7 @@ public class biologyCS : MonoBehaviour
     {
         Sphere3 = this.transform.position;
     }
-    public void giveDAMAGE(float n)
+    public void takeDAMAGE(float n)
     {
         if (n - DEF > 0)
         {
@@ -297,9 +299,10 @@ public class biologyCS : MonoBehaviour
         {
             gameBits.resetActionTime();
             setBioAction("DanceTatget");
-
+            return true;
         }
-        return true;
+        return false;
+
     }
 
     bool actionAttack()
@@ -314,7 +317,7 @@ public class biologyCS : MonoBehaviour
         {
             bioStop();
             setBioAnimation("mAttack");
-            target.GetComponent<biologyCS>().giveDAMAGE(ATTACK);
+            target.GetComponent<biologyCS>().takeDAMAGE(ATTACK);
             return true;
         }
 
@@ -446,7 +449,7 @@ public class biologyCS : MonoBehaviour
             this.transform.position = new Vector3(this.transform.position.x, 0.5f, this.transform.position.z);
             Sphere2.y = this.transform.position.y;
             Sphere.y = this.transform.position.y;
-            if (target == this.transform)
+            if (target == null)
             {
                 Vector3 targetDir = Sphere2 - this.transform.position;
                 float step = rotateSpeed * Time.deltaTime;

@@ -1,13 +1,12 @@
-﻿using UnityEngine.EventSystems;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 
 public class gameCS : MonoBehaviour
 {
     Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
-     Vector2>();
+    Vector2>();
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player;
@@ -88,8 +87,6 @@ public class gameCS : MonoBehaviour
         buttonDetect();
         clickPointPos();
 
-
-
     }
     void clickPointPos()
     {
@@ -157,7 +154,6 @@ public class gameCS : MonoBehaviour
                 Color UIObjectRGB;
                 Vector2 imageScale = hitUIObject.GetComponent<RectTransform>().localScale;
 
-
                 //取得使用者滑鼠點擊處的Alpha值(為了不規則的按鈕)
                 temp.x = myIputPostion.x - hitUIObject.transform.position.x + _rect.width * 0.5f;
                 temp.y = myIputPostion.y - hitUIObject.transform.position.y + _rect.height * 0.5f;
@@ -197,7 +193,7 @@ public class gameCS : MonoBehaviour
                     }
                 }
                 else
-                    if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
+                if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
                 {
                     mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                 }
@@ -327,7 +323,6 @@ public class gameCS : MonoBehaviour
     //                 }
     //             }
     //         }
-
 
     //     }
     // }
@@ -460,8 +455,6 @@ public class gameCS : MonoBehaviour
             Mesh mesh = (Mesh)Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3], typeof(Mesh));
             temp.GetComponent<MeshFilter>().mesh = mesh;
 
-
-
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
                 case 0:
@@ -505,9 +498,9 @@ public class gameCS : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             groundPlane.Set3Points(
-               new Vector3(1.0f, Player.transform.position.y, 0.0f),
-               new Vector3(0.0f, Player.transform.position.y, 1.0f),
-               new Vector3(1.0f, Player.transform.position.y, 1.0f));
+                new Vector3(1.0f, Player.transform.position.y, 0.0f),
+                new Vector3(0.0f, Player.transform.position.y, 1.0f),
+                new Vector3(1.0f, Player.transform.position.y, 1.0f));
             //        mouseLineDecte();
 
             //滑鼠點擊取得做標點
@@ -549,7 +542,6 @@ public class gameCS : MonoBehaviour
             )
             {
 
-
                 // Debug.Log('' + mouseHitPlane.transform.tag);
                 switch (mouseHitPlane.transform.tag)
                 {
@@ -579,16 +571,13 @@ public class gameCS : MonoBehaviour
         // Calculate the euclidean distance between a & b
         float eDistAtoB = Mathf.Sqrt(Mathf.Pow(b[0] - a[0], 2) + Mathf.Pow(b[1] - a[1], 2));
 
-
         // compute the direction vector d from a to b
         float[] d = { (b[0] - a[0]) / eDistAtoB, (b[1] - a[1]) / eDistAtoB };
-
 
         // Now the line equation is x = dx*t + ax, y = dy*t + ay with 0 <= t <= 1.
 
         // compute the value t of the closest point to the circle center (cx, cy)
         var t = (d[0] * (c[0] - a[0])) + (d[1] * (c[1] - a[1]));
-
 
         // compute the coordinates of the point e on line and closest to c
         var ecoords0 = (t * d[0]) + a[0];
@@ -617,7 +606,6 @@ public class gameCS : MonoBehaviour
             // check if g lies on the line
             return (finalAnswer);
 
-
         }
 
         return (new Vector2());
@@ -635,8 +623,6 @@ public class gameCS : MonoBehaviour
     {
         foreach (var i in playerBioCSList)
         {
-            Debug.Log(n);
-            Debug.Log(i.name);
             if (i.name == n)
             {
                 return true;

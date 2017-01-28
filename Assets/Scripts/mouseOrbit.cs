@@ -1,6 +1,5 @@
-using UnityEngine;
 using System.Collections;
-
+using UnityEngine;
 
 //http://wiki.unity3d.com/index.php?title=MouseOrbitImproved
 [AddComponentMenu("Camera-Control/Mouse Orbit with zoom")]
@@ -51,8 +50,6 @@ public class mouseOrbit : MonoBehaviour
 
         }
     }
-
-
 
     void mouseOrbitSet()
     {

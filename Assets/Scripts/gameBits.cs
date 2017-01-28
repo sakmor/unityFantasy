@@ -57,13 +57,12 @@ public class gameBits
     internal void resetActionTime()
     {
         lastActionTime = Time.time;
-        nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26;
+        nowActionTime = 0;
         setActionIsOn(false);
     }
 
     bool decide2Action()
     {
-        var actionIsOnaa = actionIsOn;
         if (actionIsOn == false && battleBios.Count > 1)
         {
             bool decideIS = false;
@@ -72,19 +71,21 @@ public class gameBits
                 decideIS = str2Function(decideList[i]);
                 if (decideIS && str2Function(actionList[i]))
                 {
+                    setActionIsOn(true);
                     targetDist = Vector3.Distance(Transform.position, target.position);
                     changeTarget(target);
                     return true;
                 }
 
             }
-            changeTarget(Transform);
+            changeTarget(null);
             return false;
         }
         else
         {
             return false;
         }
+
     }
 
     void changeTarget(Transform eTarget)
@@ -184,16 +185,27 @@ public class gameBits
         return false;
     }
 
+    //檢查目標是否同陣營
+    bool isTargetSameCompare(GameObject t)
+    {
+        if (bioCamp == t.GetComponent<biologyCS>().getBioCamp())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     //回傳隨便一個敵方
     bool decideAnyEnemy()
     {
         foreach (var t in battleBios)
         {
-            if (bioCamp != parent.getBioCamp())
-            {
-                target = t.transform;
-                return true;
-            }
+            if (isTargetSameCompare(t)) continue;
+            target = t.transform;
+            return true;
+
         }
         return false;
     }
@@ -204,17 +216,15 @@ public class gameBits
         Transform tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = Transform.transform.position;
-        Debug.Log(battleBios.Count);
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().getBioCamp() != parent.getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+
+            float dist = Vector3.Distance(t.transform.position, currentPos);
+            if (dist < minDist)
             {
-                float dist = Vector3.Distance(t.transform.position, currentPos);
-                if (dist < minDist)
-                {
-                    tMin = t.transform;
-                    minDist = dist;
-                }
+                tMin = t.transform;
+                minDist = dist;
             }
         }
         target = tMin;
@@ -228,14 +238,12 @@ public class gameBits
         Vector3 currentPos = Transform.position;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            float dist = Vector3.Distance(t.transform.position, currentPos);
+            if (dist > maxDist)
             {
-                float dist = Vector3.Distance(t.transform.position, currentPos);
-                if (dist > maxDist)
-                {
-                    tMax = t.transform;
-                    maxDist = dist;
-                }
+                tMax = t.transform;
+                maxDist = dist;
             }
         }
         target = tMax;
@@ -248,15 +256,14 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHP();
+            if (tempHP > highestHP)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHP();
-                if (tempHP > highestHP)
-                {
-                    tMax = t.transform;
-                    highestHP = tempHP;
-                }
+                tMax = t.transform;
+                highestHP = tempHP;
             }
+
         }
         target = tMax;
         return true;
@@ -268,15 +275,12 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHP();
+            if (tempHP < lowestHP)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHP();
-                if (tempHP < lowestHP)
-                {
-                    tMin = t.transform;
-                    lowestHP = tempHP;
-                }
-
+                tMin = t.transform;
+                lowestHP = tempHP;
             }
         }
         target = tMin;
@@ -289,15 +293,12 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHPMAX();
+            if (tempHP > highestHP)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHPMAX();
-                if (tempHP > highestHP)
-                {
-                    tMax = t.transform;
-                    highestHP = tempHP;
-                }
-
+                tMax = t.transform;
+                highestHP = tempHP;
             }
         }
         target = tMax;
@@ -310,15 +311,12 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHPMAX();
+            if (tempHP < lowestHP)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHPMAX();
-                if (tempHP < lowestHP)
-                {
-                    tMin = t.transform;
-                    lowestHP = tempHP;
-                }
-
+                tMin = t.transform;
+                lowestHP = tempHP;
             }
         }
         target = tMin;
@@ -331,15 +329,14 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHP();
+            if (tempHP < lowestLevel)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHP();
-                if (tempHP < lowestLevel)
-                {
-                    tMin = t.transform;
-                    lowestLevel = tempHP;
-                }
+                tMin = t.transform;
+                lowestLevel = tempHP;
             }
+
         }
         target = tMin;
         return true;
@@ -351,15 +348,15 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp != t.GetComponent<biologyCS>().getBioCamp())
+            if (isTargetSameCompare(t)) continue;
+            if (isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHP();
+            if (tempHP > highestLevel)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHP();
-                if (tempHP > highestLevel)
-                {
-                    tMax = t.transform;
-                    highestLevel = tempHP;
-                }
+                tMax = t.transform;
+                highestLevel = tempHP;
             }
+
         }
         target = tMax;
         return true;
@@ -369,6 +366,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getTarget().name == leaderName)
             {
                 target = t.transform;
@@ -382,6 +380,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getTarget().name == parent.name)
             {
                 target = t.transform;
@@ -396,6 +395,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getTarget().name == parent.name)
             {
                 target = t.transform;
@@ -409,6 +409,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.9)
             {
                 target = t.transform;
@@ -422,6 +423,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.7)
             {
                 target = t.transform;
@@ -435,11 +437,11 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.5)
-            {
-                target = t.transform;
-                return true;
-            }
+            if (isTargetSameCompare(t)) continue;
+            if (isTargetSameCompare(t)) continue;
+            target = t.transform;
+            return true;
+
         }
         return false;
     }
@@ -450,6 +452,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.3)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -463,6 +466,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.1)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -476,6 +480,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.9)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -489,6 +494,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.7)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -500,6 +506,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.5)
             {
                 target = t.transform;
@@ -513,6 +520,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.3)
             {
                 target = t.transform;
@@ -526,6 +534,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.1)
             {
                 target = t.transform;
@@ -541,6 +550,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 100000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -553,6 +563,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 50000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -565,6 +576,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 10000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -577,6 +589,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 5000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -590,6 +603,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 3000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -602,6 +616,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 2000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -614,6 +629,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 1000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -626,6 +642,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 500)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -638,6 +655,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 500)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -651,6 +669,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 100000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -675,6 +694,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 10000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -687,6 +707,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 5000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -700,6 +721,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 3000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -712,6 +734,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 2000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -724,6 +747,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 1000)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -736,6 +760,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 500)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -748,6 +773,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 500)
             {
+                if (isTargetSameCompare(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -761,11 +787,10 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (bioCamp == t.GetComponent<biologyCS>().getBioCamp())
-            {
-                target = t.transform;
-                return true;
-            }
+            if (!isTargetSameCompare(t)) continue;
+            target = t.transform;
+            return true;
+
         }
         return false;
     }
@@ -777,17 +802,15 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (bioCamp == t.GetComponent<biologyCS>().getBioCamp())
+            if (!isTargetSameCompare(t)) continue;
+            float tempHP = t.GetComponent<biologyCS>().getHP();
+            if (tempHP < lowestHP)
             {
-                float tempHP = t.GetComponent<biologyCS>().getHP();
-                if (tempHP < lowestHP)
-                {
-                    tMin = t.transform;
-                    lowestHP = tempHP;
-                }
-                target = tMin;
-                return true;
+                tMin = t.transform;
+                lowestHP = tempHP;
             }
+            target = tMin;
+            return true;
         }
         return false;
     }
@@ -797,6 +820,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (!isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.9)
             {
                 target = t.transform;
@@ -810,6 +834,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (!isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.7)
             {
                 target = t.transform;
@@ -823,6 +848,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (!isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.5)
             {
                 target = t.transform;
@@ -836,6 +862,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (!isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.3)
             {
                 target = t.transform;
@@ -849,6 +876,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (!isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.1)
             {
                 target = t.transform;
@@ -862,6 +890,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
+            if (!isTargetSameCompare(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.0)
             {
                 target = t.transform;
