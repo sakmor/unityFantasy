@@ -1,50 +1,65 @@
 ﻿Shader "Cg  shader for billboards" {
    Properties {
-      _MainTex ("Texture Image", 2D) = "white" {}
-      _ScaleX ("Scale X", Float) = 1.0
-      _ScaleY ("Scale Y", Float) = 1.0
+		[PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
+		_Color ("Tint", Color) = (1,1,1,1)
+		[MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
+
    }
    SubShader {
-       Tags { "Queue" = "Transparent" } 
+		Tags
+		{ 
+			"Queue"="Transparent" 
+			"IgnoreProjector"="True" 
+			"RenderType"="Transparent" 
+			"PreviewType"="Plane"
+			"CanUseSpriteAtlas"="True"
+		}
+    
       Pass {   
          ZWrite Off // don't write to depth buffer 
+         Lighting Off
          Blend SrcAlpha OneMinusSrcAlpha // use alpha blending
          CGPROGRAM
  
          #pragma vertex vert  
          #pragma fragment frag 
+         #pragma target 2.0
+         #pragma multi_compile _ PIXELSNAP_ON
+         #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
+         #include "UnityCG.cginc"
 
          // User-specified uniforms            
          uniform sampler2D _MainTex;        
-         uniform float _ScaleX;
-         uniform float _ScaleY;
 
          struct vertexInput {
             float4 vertex : POSITION;
             float4 tex : TEXCOORD0;
+            fixed4 color    : COLOR;
          };
          struct vertexOutput {
             float4 pos : SV_POSITION;
             float4 tex : TEXCOORD0;
+            fixed4 color    : COLOR;
          };
- 
+         
+         fixed4 _Color;
          vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
 
             output.pos = mul(UNITY_MATRIX_P, 
               mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
-              - float4(input.vertex.x, input.vertex.y, 0.0, 0.0)
-              * float4(_ScaleX, _ScaleY, 1.0, 1.0));
+              - float4(input.vertex.x, input.vertex.y, 0.0, 0.0));
  
             output.tex = input.tex;
-
+            output.color = input.color * _Color;
             return output;
          }
  
          float4 frag(vertexOutput input) : COLOR
          {
-            return tex2D(_MainTex, float2(input.tex.xy));   
+            fixed4 c = tex2D(_MainTex, float2(input.tex.xy)) * input.color;
+            return c;
          }
  
          ENDCG
