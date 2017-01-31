@@ -64,7 +64,8 @@ public class biologyCS : MonoBehaviour
     float lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
     public float targetDistance;
-    Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
+    Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3, _position
+    ;
     bool runBack;
     internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
     GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
@@ -85,6 +86,7 @@ public class biologyCS : MonoBehaviour
     }
     void Start()
     {
+        _position = transform.position;
         //如果該生物在玩家清單，改變陣營為玩家。
         LV = 50;                    //todo:應該記錄在生物表
         checkBioCamp();
@@ -152,6 +154,7 @@ public class biologyCS : MonoBehaviour
         }
         else
         {
+
             GameObject.Find("Sphere3").transform.position = Sphere3;
             this._movment();
             this._bioAnimation();
@@ -172,29 +175,33 @@ public class biologyCS : MonoBehaviour
 
         if (anim.IsPlaying("Attack") && anim["Attack"].time > hitTime)
         {
+
+            target.GetComponent<biologyCS>().anim.CrossFade("Damage");
             if (Time.time - lastHitTime > anim["Attack"].length)
             {
+                target.GetComponent<biologyCS>().takeDAMAGE(ATTACK);
                 lastHitTime = Time.time;
                 target.GetComponent<biologyCS>().rend.material.SetFloat("_RimPower", 0);
             }
 
-
         }
 
-        if (Time.time - lastHitTime < 0.2)
+        if (Time.time - lastHitTime < 0.15)
         {
             if (target != null)
             {
-                target.GetComponent<biologyCS>().anim.CrossFade("Damage");
+                target.GetComponent<biologyCS>().shakeThisModel();
+                target.GetComponent<biologyCS>().anim["Damage"].speed = 0.0f;
                 // target.GetComponent<biologyCS>().anim["Wait"].speed = 0.0f;
                 anim["Attack"].speed = 0.0f;
+
             }
         }
         else
         {
             if (target != null)
             {
-                target.GetComponent<biologyCS>().anim["Wait"].speed = 1.0f;
+                target.GetComponent<biologyCS>().anim["Damage"].speed = 1.0f;
                 anim["Attack"].speed = 1.0f;
             }
         }
@@ -314,7 +321,12 @@ public class biologyCS : MonoBehaviour
         HP = HPMAX;
         MP = MPMAX;
     }
-
+    void shakeThisModel()
+    {
+        this.transform.position = _position;
+        this.transform.position += new Vector3(
+            UnityEngine.Random.Range(-0.15f, 0.15f), 0, UnityEngine.Random.Range(-0.15f, 0.15f));
+    }
     void NumCalculate()
     {
         HPMAX = (50 + Mathf.Pow(LV * 5, 1.5f)) * hpPlus;
@@ -368,7 +380,9 @@ public class biologyCS : MonoBehaviour
 
     bool actionAttack()
     {
+        if (target.GetComponent<biologyCS>().HP < 0) return true;
         float targetDist = Vector3.Distance(target.position, this.transform.position);
+
         if (targetDist > attackDistance)
         {
             bioGoto(target.position);
@@ -378,7 +392,6 @@ public class biologyCS : MonoBehaviour
         {
             bioStop();
             setBioAnimation("mAttack");
-            target.GetComponent<biologyCS>().takeDAMAGE(ATTACK);
             return true;
         }
 
