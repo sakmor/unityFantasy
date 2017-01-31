@@ -105,7 +105,7 @@ Material:
       second: 0.02
     - first:
         name: _RimPower
-      second: 8
+      second: 3
     - first:
         name: _SmoothnessTextureChannel
       second: 0

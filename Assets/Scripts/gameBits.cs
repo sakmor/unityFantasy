@@ -46,7 +46,7 @@ public class gameBits
         if (nowActionTime <= 1)
         {
             nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26; //todo:26應該改為自動換算介面長度
-            GameObject.Find("ActionBarLine").transform.localScale = new Vector3(Mathf.Floor(nowActionTime * 26), 1, 1);
+            // GameObject.Find("ActionBarLine").transform.localScale = new Vector3(Mathf.Floor(nowActionTime * 26), 1, 1);
         }
         else
         {

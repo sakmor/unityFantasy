@@ -61,7 +61,7 @@ public class biologyCS : MonoBehaviour
     * rotateSpeed		生物旋轉速度(未儲存)
     */
     public float LV, ATTACK, HP, DEF, HPMAX;
-    float actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    float lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
     public float targetDistance;
     Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
@@ -73,7 +73,7 @@ public class biologyCS : MonoBehaviour
     string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
     bool isVisible, isEnable = false;
     public Transform target;
-    float[] biologyListData = new float[5];
+    float[] biologyListData = new float[6];
     Animation anim;
     gameBits gameBits;
     Renderer rend;
@@ -165,18 +165,45 @@ public class biologyCS : MonoBehaviour
     void setEffect()
     {
         rend = model.GetComponent<Renderer>();
-        foreach (var t in rend.materials)
-        {
-            t.SetFloat("_RimPower", 0);
-        }
     }
+
     void effect()
     {
+
+        if (anim.IsPlaying("Attack") && anim["Attack"].time > hitTime)
+        {
+            if (Time.time - lastHitTime > anim["Attack"].length)
+            {
+                lastHitTime = Time.time;
+                target.GetComponent<biologyCS>().rend.material.SetFloat("_RimPower", 0);
+            }
+
+
+        }
+
+        if (Time.time - lastHitTime < 0.2)
+        {
+            if (target != null)
+            {
+                target.GetComponent<biologyCS>().anim.CrossFade("Damage");
+                // target.GetComponent<biologyCS>().anim["Wait"].speed = 0.0f;
+                anim["Attack"].speed = 0.0f;
+            }
+        }
+        else
+        {
+            if (target != null)
+            {
+                target.GetComponent<biologyCS>().anim["Wait"].speed = 1.0f;
+                anim["Attack"].speed = 1.0f;
+            }
+        }
+
         foreach (var t in rend.materials)
         {
             if (t.GetFloat("_RimPower") < 3)
             {
-                t.SetFloat("_RimPower", t.GetFloat("_RimPower") + 0.25f);
+                t.SetFloat("_RimPower", t.GetFloat("_RimPower") + 0.5f);
             }
         }
 
@@ -244,7 +271,6 @@ public class biologyCS : MonoBehaviour
         {
             HP -= n - DEF;
         }
-        rend.material.SetFloat("_RimPower", 0);
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
@@ -624,8 +650,8 @@ public class biologyCS : MonoBehaviour
         biologyListData[2] = maingameCS.biologyList.biodata[biologyNumber + 2 + biologyNumber * biologyListData.Length - biologyNumber]; //size.x
         biologyListData[3] = maingameCS.biologyList.biodata[biologyNumber + 3 + biologyNumber * biologyListData.Length - biologyNumber]; //size.y
         biologyListData[4] = maingameCS.biologyList.biodata[biologyNumber + 4 + biologyNumber * biologyListData.Length - biologyNumber]; //size.z
-
-        //調整生物縮放值
+        biologyListData[5] = maingameCS.biologyList.biodata[biologyNumber + 5 + biologyNumber * biologyListData.Length - biologyNumber]; //hitTime
+        hitTime = biologyListData[5];                                                                                                             //調整生物縮放值
         transform.localScale = new Vector3(biologyListData[4], biologyListData[4], biologyListData[4]);
         this.WalkSteptweek = biologyListData[0];
     }
