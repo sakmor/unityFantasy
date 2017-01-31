@@ -67,7 +67,7 @@ public class biologyCS : MonoBehaviour
     Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
     internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
-    GameObject nameText, targeLine, HID;
+    GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
     gameCS maingameCS;
     BoxCollider bioCollider;
     string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
@@ -76,6 +76,7 @@ public class biologyCS : MonoBehaviour
     float[] biologyListData = new float[5];
     Animation anim;
     gameBits gameBits;
+    Renderer rend;
 
     // Use this for initialization
     public biologyCS(gameCS parent)
@@ -89,6 +90,10 @@ public class biologyCS : MonoBehaviour
         checkBioCamp();
         bioAction = "";
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+
+        if (bioCamp == 1) model = this.transform.FindChild("Model").gameObject; //todo:因為美術資源用別人的，只好先寫死
+        if (bioCamp == 0) model = this.transform.FindChild("Group Locator/Knight").gameObject; //todo:因為美術資源用別人的，只好先寫死
+
         allBiologys = maingameCS.getAllBiologys();
 
         attackCoolDown = 15;
@@ -105,7 +110,6 @@ public class biologyCS : MonoBehaviour
         attackDistance = 2;         //todo:應該記錄在c_ai.json
         catchSpeed = 0.05f;          //todo:應該記錄在c_ai.json
 
-
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
         GameObject.Find("playerINFO/P3/HP").GetComponent<Text>().text = HP.ToString("F0");
@@ -115,10 +119,7 @@ public class biologyCS : MonoBehaviour
         startPos = this.transform.position;
         bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 6f)); //-4~6
 
-        nameText = Instantiate(GameObject.Find("nameText"));
-        nameText.name = this.name + "_nameText";
-        nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
-        nameText.GetComponent<Text>().text = this.name;
+        setNameText();
 
         bioAnimation = "mWait";
 
@@ -129,6 +130,7 @@ public class biologyCS : MonoBehaviour
         setCollisionCubes();
         dynamicCollision();
         loadAnimation();
+        setEffect();
     }
     public biologyCS()
     {
@@ -145,6 +147,8 @@ public class biologyCS : MonoBehaviour
             this._bioAnimation();
             this._bioAction(bioAction);
             this.gameBits.Update();
+            this.updateUI();
+            this.effect();
         }
         else
         {
@@ -153,8 +157,37 @@ public class biologyCS : MonoBehaviour
             this._bioAnimation();
             // this.gameBits.Update();
             // GameObject.Find("nodeINFO").transform.position = Sphere3;
+            this.updateUI();
+            this.effect();
         }
 
+    }
+    void setEffect()
+    {
+        rend = model.GetComponent<Renderer>();
+        foreach (var t in rend.materials)
+        {
+            t.SetFloat("_RimPower", 0);
+        }
+    }
+    void effect()
+    {
+        foreach (var t in rend.materials)
+        {
+            if (t.GetFloat("_RimPower") < 3)
+            {
+                t.SetFloat("_RimPower", t.GetFloat("_RimPower") + 0.25f);
+            }
+        }
+
+    }
+    void setNameText()
+    {
+        nameText = Instantiate(GameObject.Find("nameText"));
+        nameText.name = this.name + "_nameText";
+        nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
+        nameText.GetComponent<Text>().text = this.name;
+        HPBarLine = nameText.gameObject.transform.FindChild("HPBar/HPBarLine").gameObject;
     }
     public string getBioAction()
     {
@@ -211,6 +244,7 @@ public class biologyCS : MonoBehaviour
         {
             HP -= n - DEF;
         }
+        rend.material.SetFloat("_RimPower", 0);
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
     }
@@ -295,6 +329,7 @@ public class biologyCS : MonoBehaviour
                 Debug.Log("biologyCS:_bioAction()--收到無效指令指令");
                 return false;
         }
+        //有目標但是尚未時間到
         if (actionIsDone)
         {
             gameBits.resetActionTime();
@@ -497,6 +532,9 @@ public class biologyCS : MonoBehaviour
             nameText.transform.position = nametextScreenPos;
         }
 
+        var n = HP > 0 ? HP / HPMAX * 12 : 0;
+        HPBarLine.transform.localScale = new Vector3(n, 1, 1);
+
     }
 
     void setCollisionCubes()
@@ -601,6 +639,10 @@ public class biologyCS : MonoBehaviour
         targeLine.GetComponent<Bezier>().controlPoints[2] = this.transform;
         targeLine.GetComponent<Bezier>().controlPoints[3] = this.transform;
         targeLine.transform.Find("p0").position = new Vector3(this.transform.position.x, this.transform.position.y + 5.0f, this.transform.position.z);
+    }
+    void setHPbar()
+    {
+
     }
 
     internal void drawTargetLine()

@@ -105,7 +105,7 @@ Material:
       second: 0.02
     - first:
         name: _RimPower
-      second: 3
+      second: 8
     - first:
         name: _SmoothnessTextureChannel
       second: 0
@@ -123,7 +123,7 @@ Material:
       second: 1
     - first:
         name: _selfillum
-      second: 1
+      second: 1.33
     m_Colors:
     - first:
         name: _Color

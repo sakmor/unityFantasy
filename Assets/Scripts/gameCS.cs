@@ -80,7 +80,6 @@ public class gameCS : MonoBehaviour
         cameraUpdate();
         mouseOrTouch();
         inputHitScene();
-        isCameraPosMove();
         fellowPlayerCameraMove();
         fellowPlayerCameraContorl();
         lineDecte();
@@ -346,18 +345,7 @@ public class gameCS : MonoBehaviour
         mainCamera.transform.LookAt(new Vector3(Player.transform.position.x, Player.transform.position.y + 2.0f, Player.transform.position.z));
 
     }
-    void isCameraPosMove()
-    {
-        if (lastCameraPos != mainCamera.transform.position)
-        {
-            foreach (GameObject thisBiology in allBiologys)
-            {
-                thisBiology.GetComponent<biologyCS>().updateUI();
-            }
-            lastCameraPos = mainCamera.transform.position;
-        }
 
-    }
     public void logg(string n)
     {
         string tempString = logText.GetComponent<Text>().text;
