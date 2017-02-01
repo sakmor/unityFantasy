@@ -5,7 +5,7 @@ public class gameBits
     Transform target, _target;
     float targetDist, lastActionTime, nowActionTime;
     public bool actionIsOn;
-    List<GameObject> battleBios;
+    List<GameObject> battleBios = new List<GameObject>();
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
     GameObject[] allBiologys;

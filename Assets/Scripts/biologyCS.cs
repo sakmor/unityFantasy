@@ -182,9 +182,11 @@ public class biologyCS : MonoBehaviour
                 target.GetComponent<biologyCS>().takeDAMAGE(ATTACK);
                 lastHitTime = Time.time;
                 target.GetComponent<biologyCS>().rend.material.SetFloat("_RimPower", 0);
+
             }
 
         }
+
 
         if (Time.time - lastHitTime < 0.15)
         {
@@ -206,6 +208,7 @@ public class biologyCS : MonoBehaviour
                 target.GetComponent<biologyCS>().anim["Damage"].speed = 1.0f;
                 anim["Attack"].speed = 1.0f;
             }
+
         }
 
         foreach (var t in rend.materials)
@@ -216,6 +219,14 @@ public class biologyCS : MonoBehaviour
             }
         }
 
+    }
+    void getjumpText(float n)
+    {
+        GameObject jumpText = Instantiate(GameObject.Find("jumpText"));
+        jumpText.AddComponent<jumpText>();
+        jumpText.GetComponent<jumpText>().number = n.ToString("F0");
+        jumpText.transform.position = this.transform.position;
+        jumpText.transform.position += new Vector3(0, 1.5f, 0);
     }
     void setNameText()
     {
@@ -279,6 +290,12 @@ public class biologyCS : MonoBehaviour
         if (n - DEF > 0)
         {
             HP -= n - DEF;
+        }
+        getjumpText(n - DEF);
+        if (HP <= 0)
+        {
+            this.setDead();
+
         }
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
@@ -404,6 +421,12 @@ public class biologyCS : MonoBehaviour
         Sphere3 = startPos;
         return true;
     }
+
+    void setDead()
+    {
+        bioAnimation = "mDead";
+        anim.Play("Dead");
+    }
     void _bioAnimation()
     {
         //對應生物所處狀態，播放對應動作
@@ -422,6 +445,13 @@ public class biologyCS : MonoBehaviour
                     break;
                 case "mPicking":
                     break;
+                case "mDead":
+                    anim.CrossFade("Dead");
+                    if (anim["Dead"].time >= anim["Dead"].length - 0.1f)
+                    {
+                        bioAnimation = "mJump";
+                    }
+                    break;
                 case "mWait":
                     anim.CrossFade("Wait");
                     runBack = false; //todo: 不該寫在這裡
@@ -432,7 +462,7 @@ public class biologyCS : MonoBehaviour
                     break;
             }
         }
-        if (anim.IsPlaying("Wait"))
+        if (anim.IsPlaying("Wait") && HP > 0)
         {
             this.bioAnimation = "mWait";
         }
