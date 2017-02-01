@@ -194,6 +194,8 @@ public class biologyCS : MonoBehaviour
                 target.GetComponent<biologyCS>().anim["Damage"].speed = 0.0f;
                 // target.GetComponent<biologyCS>().anim["Wait"].speed = 0.0f;
                 anim["Attack"].speed = 0.0f;
+                if (transform.FindChild("hitEffect"))
+                    transform.FindChild("hitEffect").gameObject.GetComponent<hitEffect>().playEffect();
 
             }
         }
