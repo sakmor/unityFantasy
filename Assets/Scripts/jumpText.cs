@@ -1,10 +1,11 @@
 ﻿
 using UnityEngine;
-using myMath;
+
 [RequireComponent(typeof(Rigidbody))]
 public class jumpText : MonoBehaviour
 {
     public string number;
+    public Vector3 direct;
     float startTime = 0;
     Vector3 startPOS;
     GameObject text2D;
@@ -15,7 +16,7 @@ public class jumpText : MonoBehaviour
     {
 
         startTime = Time.time;
-        this.GetComponent<Rigidbody>().AddForce(new Vector3(0, 3, 0), ForceMode.Impulse);
+        this.GetComponent<Rigidbody>().AddForce(direct * 2 + new Vector3(0, 2, 0), ForceMode.Impulse);
         text2D = Instantiate(GameObject.Find("jumpText2D"));
         text2D.transform.parent = GameObject.Find("Canvas").transform;
         startPOS = this.transform.position;

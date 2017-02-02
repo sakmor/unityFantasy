@@ -36,14 +36,15 @@ public class hitEffect : MonoBehaviour
             {
                 if (Time.time - startTime > sec)
                 {
+                    transform.LookAt(GameObject.Find("mainCamera").transform);
                     rend.material.mainTextureOffset += new Vector2(0.2f, 0);
                     startTime = Time.time;
                 }
+
             }
             else
             {
                 rend.material.mainTextureOffset = new Vector2(0.8f, 0);
-
                 isPlay = false;
             }
         }

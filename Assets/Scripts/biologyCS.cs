@@ -42,7 +42,7 @@ public class biologyCS : MonoBehaviour
     * Attack
     *
     *
-    
+
     *
     * [系統相關變數]
     * dectefrequency	偵測頻率
@@ -179,7 +179,7 @@ public class biologyCS : MonoBehaviour
             target.GetComponent<biologyCS>().anim.CrossFade("Damage");
             if (Time.time - lastHitTime > anim["Attack"].length)
             {
-                target.GetComponent<biologyCS>().takeDAMAGE(ATTACK);
+                target.GetComponent<biologyCS>().takeDAMAGE(ATTACK, transform.forward);
                 lastHitTime = Time.time;
                 target.GetComponent<biologyCS>().rend.material.SetFloat("_RimPower", 0);
 
@@ -188,6 +188,7 @@ public class biologyCS : MonoBehaviour
         }
 
 
+        //打擊中目標的瞬間(0.15秒)
         if (Time.time - lastHitTime < 0.15)
         {
             if (target != null)
@@ -198,11 +199,11 @@ public class biologyCS : MonoBehaviour
                 anim["Attack"].speed = 0.0f;
                 if (transform.FindChild("hitEffect"))
                     transform.FindChild("hitEffect").gameObject.GetComponent<hitEffect>().playEffect();
-
             }
         }
         else
         {
+
             if (target != null)
             {
                 target.GetComponent<biologyCS>().anim["Damage"].speed = 1.0f;
@@ -220,11 +221,12 @@ public class biologyCS : MonoBehaviour
         }
 
     }
-    void getjumpText(float n)
+    void getjumpText(float n, Vector3 direct)
     {
         GameObject jumpText = Instantiate(GameObject.Find("jumpText"));
         jumpText.AddComponent<jumpText>();
         jumpText.GetComponent<jumpText>().number = n.ToString("F0");
+        jumpText.GetComponent<jumpText>().direct = direct;
         jumpText.transform.position = this.transform.position;
         jumpText.transform.position += new Vector3(0, 1.5f, 0);
     }
@@ -285,13 +287,14 @@ public class biologyCS : MonoBehaviour
     {
         Sphere3 = this.transform.position;
     }
-    public void takeDAMAGE(float n)
+    public void takeDAMAGE(float n, Vector3 direct)
     {
+        var r = UnityEngine.Random.Range(0.8f, 1.2f);
         if (n - DEF > 0)
         {
-            HP -= n - DEF;
+            HP -= (n - DEF) * r;
         }
-        getjumpText(n - DEF);
+        getjumpText((n - DEF) * r, direct);
         if (HP <= 0)
         {
             this.setDead();
@@ -411,6 +414,7 @@ public class biologyCS : MonoBehaviour
         else
         {
             bioStop();
+            faceTarget(target.transform.position, 100);
             setBioAnimation("mAttack");
             return true;
         }
@@ -450,6 +454,10 @@ public class biologyCS : MonoBehaviour
                     anim.CrossFade("Dead");
                     if (anim["Dead"].time >= anim["Dead"].length - 0.1f)
                     {
+                        var boom = Instantiate(GameObject.Find("explosion"));
+                        boom.transform.parent = this.transform;
+                        boom.transform.localPosition = new Vector3(0, 0, 0);
+                        boom.GetComponent<Explosion>().Play();
                         bioAnimation = "mJump";
                     }
                     break;
@@ -459,6 +467,7 @@ public class biologyCS : MonoBehaviour
                     Sphere2 = this.transform.position;//todo: 不該寫在這裡
                     break;
                 case "mJump":
+                    this.transform.position -= new Vector3(0, 99, 0);
                     //todo:目前沒有使用
                     break;
             }
@@ -558,10 +567,7 @@ public class biologyCS : MonoBehaviour
             Sphere.y = this.transform.position.y;
             if (target == null)
             {
-                Vector3 targetDir = Sphere2 - this.transform.position;
-                float step = rotateSpeed * Time.deltaTime;
-                Vector3 newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0f);
-                this.transform.rotation = Quaternion.LookRotation(newDir);
+                faceTarget(Sphere2, rotateSpeed);
             }
             else
             {
@@ -590,6 +596,13 @@ public class biologyCS : MonoBehaviour
             //調整步伐
             anim["Walk"].speed = 1f + WalkSteptweek * moveSpeed;
         }
+    }
+    void faceTarget(Vector3 etarget, float espeed)
+    {
+        Vector3 targetDir = etarget - this.transform.position;
+        float step = espeed * Time.deltaTime;
+        Vector3 newDir = Vector3.RotateTowards(this.transform.forward, targetDir, step, 0.0f);
+        this.transform.rotation = Quaternion.LookRotation(newDir);
     }
 
     public void updateUI()
