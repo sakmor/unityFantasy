@@ -179,7 +179,11 @@ public class biologyCS : MonoBehaviour
             {
                 target.GetComponent<biologyCS>().takeDAMAGE(ATTACK, transform.forward);
                 lastHitTime = Time.time;
-                target.GetComponent<biologyCS>().rend.material.SetFloat("_RimPower", 0);
+                var temp = target.GetComponent<biologyCS>().rend;
+                foreach (var t in temp.materials)
+                {
+                    t.SetFloat("_RimPower", 0f);
+                }
 
             }
 
@@ -195,6 +199,7 @@ public class biologyCS : MonoBehaviour
                 target.GetComponent<biologyCS>().shakeThisModel();
                 target.GetComponent<biologyCS>().anim["Damage"].speed = 0.0f;
                 // target.GetComponent<biologyCS>().anim["Wait"].speed = 0.0f;
+                // Debug.Break();
                 anim["Attack"].speed = 0.0f;
                 if (transform.FindChild("hitEffect"))
                     transform.FindChild("hitEffect").gameObject.GetComponent<hitEffect>().playEffect();
