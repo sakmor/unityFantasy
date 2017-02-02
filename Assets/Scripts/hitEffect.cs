@@ -19,7 +19,7 @@ public class hitEffect : MonoBehaviour
 
         if (!isPlay)
         {
-            var n = Random.Range(50f, 150f);
+            var n = Random.Range(50f, 250f);
             this.transform.Rotate(new Vector3(1, 1, Random.Range(1f, 180f)));
             this.transform.localScale = new Vector3(n, n, n);
             rend.material.mainTextureOffset = new Vector2(0.8f, 1);
