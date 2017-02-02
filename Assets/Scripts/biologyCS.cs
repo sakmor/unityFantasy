@@ -380,6 +380,7 @@ public class biologyCS : MonoBehaviour
                 setBioAnimation("mWait");
                 break;
             case "":
+                setTarget(null);
                 setBioAnimation("mWait");
                 break;
             default:
@@ -399,7 +400,7 @@ public class biologyCS : MonoBehaviour
 
     bool actionAttack()
     {
-        if (target.GetComponent<biologyCS>().HP < 0) return true;
+        if (target.GetComponent<biologyCS>().HP < 0) return false;
         float targetDist = Vector3.Distance(target.position, this.transform.position);
 
         if (targetDist > attackDistance)

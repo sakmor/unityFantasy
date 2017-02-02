@@ -79,6 +79,7 @@ public class gameBits
 
             }
             changeTarget(null);
+            parent.setBioAction("");
             return false;
         }
         else
@@ -176,8 +177,15 @@ public class gameBits
     }
     bool actionAttack()
     {
-        parent.setBioAction("actionAttack");
-        return true;
+        if (target.GetComponent<biologyCS>().getHP() > 0)
+        {
+            parent.setBioAction("actionAttack");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 
     }
 

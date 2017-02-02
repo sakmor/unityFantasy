@@ -8,14 +8,14 @@ public class jumpText : MonoBehaviour
     float startTime = 0;
     Vector3 startPOS;
     GameObject text2D;
-    float liveTime = 1.5f;
+    float liveTime = 1f;
     float alpha = 1;
     // Use this for initialization
     void Start()
     {
 
         startTime = Time.time;
-        this.GetComponent<Rigidbody>().AddForce(new Vector3(0, 5, 0), ForceMode.Impulse);
+        this.GetComponent<Rigidbody>().AddForce(new Vector3(0, 3, 0), ForceMode.Impulse);
         text2D = Instantiate(GameObject.Find("jumpText2D"));
         text2D.transform.parent = GameObject.Find("Canvas").transform;
         startPOS = this.transform.position;
