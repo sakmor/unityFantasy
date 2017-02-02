@@ -3,7 +3,7 @@ using UnityEngine;
 public class gameBits
 {
     Transform target, _target;
-    float targetDist, lastActionTime, nowActionTime;
+    float lastSeeMaxBioTime, lastActionTime, nowActionTime;
     public bool actionIsOn;
     List<GameObject> battleBios = new List<GameObject>();
     List<string> decideList = new List<string>();
@@ -14,7 +14,7 @@ public class gameBits
     int bioCamp, gameBitsNO;
     string leaderName;
     Transform Transform;
-    float seeMax, bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 4f)); //-4~6
+    float seeMax, bais = Mathf.Floor(UnityEngine.Random.Range(0.8f, 1.6f)); //-4~6
 
     public gameBits(biologyCS parent)
     {
@@ -72,7 +72,6 @@ public class gameBits
                 if (decideIS && str2Function(actionList[i]))
                 {
                     setActionIsOn(true);
-                    targetDist = Vector3.Distance(Transform.position, target.position);
                     changeTarget(target);
                     parent.drawTargetLine();
                     return true;
@@ -163,8 +162,9 @@ public class gameBits
 
     void getSeeMaxBio(float bais)
     {
-        if (Time.time % bais < 0.5)
+        if (Time.time - lastSeeMaxBioTime > bais)
         {
+            lastSeeMaxBioTime = Time.time;
             List<GameObject> tempNew = new List<GameObject>();
             foreach (var t in allBiologys)
             {

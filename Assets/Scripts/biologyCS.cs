@@ -86,7 +86,6 @@ public class biologyCS : MonoBehaviour
     }
     void Start()
     {
-        _position = transform.position;
         //如果該生物在玩家清單，改變陣營為玩家。
         LV = 50;                    //todo:應該記錄在生物表
         checkBioCamp();
@@ -119,7 +118,6 @@ public class biologyCS : MonoBehaviour
 
         moveSpeedMax = moveSpeed;
         startPos = this.transform.position;
-        bais = Mathf.Floor(UnityEngine.Random.Range(-4f, 6f)); //-4~6
 
         setNameText();
 
@@ -144,10 +142,9 @@ public class biologyCS : MonoBehaviour
 
         if (this.name == maingameCS.Player.name)
         {
-            // this._catchMonster(1);
             this._movment();
             this._bioAnimation();
-            this._bioAction(bioAction);
+            this._bioAction();
             this.gameBits.Update();
             this.updateUI();
             this.effect();
@@ -155,11 +152,10 @@ public class biologyCS : MonoBehaviour
         else
         {
 
-            GameObject.Find("Sphere3").transform.position = Sphere3;
             this._movment();
             this._bioAnimation();
-            // this.gameBits.Update();
-            // GameObject.Find("nodeINFO").transform.position = Sphere3;
+            this._bioAction();
+            this.gameBits.Update();
             this.updateUI();
             this.effect();
         }
@@ -282,6 +278,7 @@ public class biologyCS : MonoBehaviour
     public void bioGoto(Vector3 v)
     {
         Sphere3 = v;
+
     }
     public void bioStop()
     {
@@ -367,10 +364,10 @@ public class biologyCS : MonoBehaviour
 
     }
 
-    bool _bioAction(string n)
+    bool _bioAction()
     {
         bool actionIsDone = false;
-        switch (n)
+        switch (bioAction)
         {
             case "actionAttack":
                 actionIsDone = actionAttack();
@@ -403,7 +400,8 @@ public class biologyCS : MonoBehaviour
 
     bool actionAttack()
     {
-        if (target.GetComponent<biologyCS>().HP < 0) return false;
+        if (target.GetComponent<biologyCS>().HP < 0)
+            return false;
         float targetDist = Vector3.Distance(target.position, this.transform.position);
 
         if (targetDist > attackDistance)
@@ -483,6 +481,9 @@ public class biologyCS : MonoBehaviour
     {
 
         float SphereDistance = 0;
+        SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
+        if (SphereDistance > 0.05f)
+            this.bioAnimation = "mWalk";
 
         // if (this.bioAnimation == "Walk")
         // {
@@ -528,12 +529,11 @@ public class biologyCS : MonoBehaviour
             else
             {
 
-                SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
-                var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
-                if (SphereDistance > 0.05f)
-                {
-                    this.bioAnimation = "mWalk";
 
+                var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
+
+                if (this.bioAnimation == "mWalk")
+                {
                     //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
                     if (SphereDistance < 1 ||
                         maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
@@ -592,6 +592,9 @@ public class biologyCS : MonoBehaviour
 
             //移動生物到目標點
             this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
+
+            //紀錄移動座標:shakeThisModel使用
+            _position = transform.position;
 
             //調整步伐
             anim["Walk"].speed = 1f + WalkSteptweek * moveSpeed;
