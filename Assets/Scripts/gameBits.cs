@@ -216,7 +216,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             target = t.transform;
             return true;
 
@@ -232,7 +232,7 @@ public class gameBits
         Vector3 currentPos = Transform.transform.position;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
 
             float dist = Vector3.Distance(t.transform.position, currentPos);
             if (dist < minDist)
@@ -242,7 +242,7 @@ public class gameBits
             }
         }
         target = tMin;
-        return true;
+        return tMin == null ? false : true;
     }
     //回傳離我最遠敵方
     bool decideFurthestEnemy()
@@ -252,7 +252,7 @@ public class gameBits
         Vector3 currentPos = Transform.position;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float dist = Vector3.Distance(t.transform.position, currentPos);
             if (dist > maxDist)
             {
@@ -261,7 +261,7 @@ public class gameBits
             }
         }
         target = tMax;
-        return true;
+        return tMax == null ? false : true;
     }
     //回傳敵方中血量最高者
     bool decideHighestHPEnemy()
@@ -270,7 +270,7 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float tempHP = t.GetComponent<biologyCS>().getHP();
             if (tempHP > highestHP)
             {
@@ -280,7 +280,7 @@ public class gameBits
 
         }
         target = tMax;
-        return true;
+        return tMax == null ? false : true;
     }
     //回傳敵方中血量最低者
     bool decideLowestHPEnemy()
@@ -289,7 +289,7 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float tempHP = t.GetComponent<biologyCS>().getHP();
             if (tempHP < lowestHP)
             {
@@ -298,7 +298,7 @@ public class gameBits
             }
         }
         target = tMin;
-        return true;
+        return tMin == null ? false : true;
     }
     //回傳敵方中血量上限最高者
     bool decideHighestHPMaxEnemy()
@@ -307,7 +307,7 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float tempHP = t.GetComponent<biologyCS>().getHPMAX();
             if (tempHP > highestHP)
             {
@@ -316,7 +316,7 @@ public class gameBits
             }
         }
         target = tMax;
-        return true;
+        return tMax == null ? false : true;
     }
     //回傳敵方中血量上限最低者
     bool decideLowestHPMaxEnemy()
@@ -325,7 +325,7 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float tempHP = t.GetComponent<biologyCS>().getHPMAX();
             if (tempHP < lowestHP)
             {
@@ -334,7 +334,7 @@ public class gameBits
             }
         }
         target = tMin;
-        return true;
+        return tMin == null ? false : true;
     }
     //回傳敵方等級最低者
     bool decideLowestLevelEnemy()
@@ -343,7 +343,7 @@ public class gameBits
         Transform tMin = null;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float tempHP = t.GetComponent<biologyCS>().getHP();
             if (tempHP < lowestLevel)
             {
@@ -353,7 +353,7 @@ public class gameBits
 
         }
         target = tMin;
-        return true;
+        return tMin == null ? false : true;
     }
     //回傳敵方等級最高者
     bool decideHighestLevelEnemy()
@@ -362,8 +362,8 @@ public class gameBits
         Transform tMax = null;
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             float tempHP = t.GetComponent<biologyCS>().getHP();
             if (tempHP > highestLevel)
             {
@@ -373,14 +373,14 @@ public class gameBits
 
         }
         target = tMax;
-        return true;
+        return tMax == null ? false : true;
     }
     //回傳隊長的目標(玩家專用)
     bool decideLeaderTarget()
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getTarget().name == leaderName)
             {
                 target = t.transform;
@@ -394,7 +394,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getTarget().name == parent.name)
             {
                 target = t.transform;
@@ -409,7 +409,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getTarget().name == parent.name)
             {
                 target = t.transform;
@@ -423,7 +423,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.9)
             {
                 target = t.transform;
@@ -437,7 +437,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.7)
             {
                 target = t.transform;
@@ -451,8 +451,8 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             target = t.transform;
             return true;
 
@@ -466,7 +466,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.3)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -480,7 +480,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() >= 0.1)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -494,7 +494,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.9)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -508,7 +508,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.7)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -520,7 +520,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.5)
             {
                 target = t.transform;
@@ -534,7 +534,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.3)
             {
                 target = t.transform;
@@ -548,7 +548,7 @@ public class gameBits
     {
         foreach (var t in battleBios)
         {
-            if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+            if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
             if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.1)
             {
                 target = t.transform;
@@ -564,7 +564,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 100000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -577,7 +577,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 50000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -590,7 +590,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 10000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -603,7 +603,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 5000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -617,7 +617,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 3000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -630,7 +630,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 2000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -643,7 +643,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 1000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -656,7 +656,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 500)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -669,7 +669,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() >= 500)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -683,7 +683,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 100000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -708,7 +708,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 10000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -721,7 +721,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 5000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -735,7 +735,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 3000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -748,7 +748,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 2000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -761,7 +761,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 1000)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -774,7 +774,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 500)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
@@ -787,7 +787,7 @@ public class gameBits
         {
             if (t.GetComponent<biologyCS>().getHP() <= 500)
             {
-                if (isTargetSameCompare(t) && targetIsAlive(t)) continue;
+                if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
                 target = t.transform;
                 return true;
             }
