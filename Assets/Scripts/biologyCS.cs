@@ -168,6 +168,8 @@ public class biologyCS : MonoBehaviour
 
     void effect()
     {
+        //紀錄移動座標:shakeThisModel使用
+        _position = transform.position;
 
         if (anim.IsPlaying("Attack") && anim["Attack"].time > hitTime)
         {
@@ -189,6 +191,7 @@ public class biologyCS : MonoBehaviour
         {
             if (target != null)
             {
+                target.GetComponent<biologyCS>().bioStop();
                 target.GetComponent<biologyCS>().shakeThisModel();
                 target.GetComponent<biologyCS>().anim["Damage"].speed = 0.0f;
                 // target.GetComponent<biologyCS>().anim["Wait"].speed = 0.0f;
@@ -212,7 +215,7 @@ public class biologyCS : MonoBehaviour
         {
             if (t.GetFloat("_RimPower") < 3)
             {
-                t.SetFloat("_RimPower", t.GetFloat("_RimPower") + 0.5f);
+                t.SetFloat("_RimPower", t.GetFloat("_RimPower") + 0.25f);
             }
         }
 
@@ -278,11 +281,13 @@ public class biologyCS : MonoBehaviour
     public void bioGoto(Vector3 v)
     {
         Sphere3 = v;
+        Sphere2 = v;
 
     }
     public void bioStop()
     {
         Sphere3 = this.transform.position;
+        Sphere2 = this.transform.position;
     }
     public void takeDAMAGE(float n, Vector3 direct)
     {
@@ -342,9 +347,11 @@ public class biologyCS : MonoBehaviour
     }
     void shakeThisModel()
     {
-        this.transform.position = _position;
-        this.transform.position += new Vector3(
-            UnityEngine.Random.Range(-0.15f, 0.15f), 0, UnityEngine.Random.Range(-0.15f, 0.15f));
+        if (this.name != maingameCS.Player.name)
+        {
+            this.transform.position += new Vector3(
+                UnityEngine.Random.Range(-0.15f, 0.15f), 0, UnityEngine.Random.Range(-0.15f, 0.15f));
+        }
     }
     void NumCalculate()
     {
@@ -592,9 +599,6 @@ public class biologyCS : MonoBehaviour
 
             //移動生物到目標點
             this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
-
-            //紀錄移動座標:shakeThisModel使用
-            _position = transform.position;
 
             //調整步伐
             anim["Walk"].speed = 1f + WalkSteptweek * moveSpeed;
