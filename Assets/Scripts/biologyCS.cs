@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using myMath;
 using UnityEngine;
 using UnityEngine.UI;
-using myMath;
 
 [RequireComponent(typeof(Animation))]
 [RequireComponent(typeof(Rigidbody))]
@@ -42,7 +42,7 @@ public class biologyCS : MonoBehaviour
     * Attack
     *
     *
-
+    
     *
     * [系統相關變數]
     * dectefrequency	偵測頻率
@@ -64,8 +64,7 @@ public class biologyCS : MonoBehaviour
     float lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
     public float targetDistance;
-    Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3, _position
-    ;
+    Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3, _position;
     bool runBack;
     internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
     GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
@@ -171,7 +170,22 @@ public class biologyCS : MonoBehaviour
         //紀錄移動座標:shakeThisModel使用
         _position = transform.position;
 
-        if (anim.IsPlaying("Attack") && anim["Attack"].time > hitTime)
+        //治療
+        if (bioAction == "actionHeal"
+            && anim.IsPlaying("Attack")
+            && anim["Attack"].time > hitTime)
+        {
+            if (Time.time - lastHitTime > anim["Attack"].length)
+            {
+                lastHitTime = Time.time;
+                target.GetComponent<biologyCS>().takeHeal(ATTACK);
+            }
+        }
+
+        //攻擊
+        if (bioAction == "actionAttack"
+            && anim.IsPlaying("Attack")
+            && anim["Attack"].time > hitTime)
         {
 
             target.GetComponent<biologyCS>().anim.CrossFade("Damage");
@@ -188,7 +202,6 @@ public class biologyCS : MonoBehaviour
             }
 
         }
-
 
         //打擊中目標的瞬間(0.15秒)
         if (Time.time - lastHitTime < 0.15)
@@ -225,11 +238,33 @@ public class biologyCS : MonoBehaviour
         }
 
     }
-    void getjumpText(float n, Vector3 direct)
+    void getjumpText(float n, Vector3 direct, string color)
     {
+        string text;
+        switch (color)
+        {
+            case "GREEN":
+                text = "<color=green>" + n.ToString("F0") + "</color>";
+                break;
+            case "WHITE":
+                text = "<color=white>" + n.ToString("F0") + "</color>";
+                break;
+            case "ORANGE":
+                text = "<color=orange>" + n.ToString("F0") + "</color>";
+                break;
+            case "RED":
+                text = "<color=red>" + n.ToString("F0") + "</color>";
+                break;
+            case "YELLOW":
+                text = "<color=yellow>" + n.ToString("F0") + "</color>";
+                break;
+            default:
+                text = "<color=white>" + n.ToString("F0") + "</color>";
+                break;
+        }
         GameObject jumpText = Instantiate(GameObject.Find("jumpText"));
         jumpText.AddComponent<jumpText>();
-        jumpText.GetComponent<jumpText>().number = n.ToString("F0");
+        jumpText.GetComponent<jumpText>().number = text;
         jumpText.GetComponent<jumpText>().direct = direct;
         jumpText.transform.position = this.transform.position;
         jumpText.transform.position += new Vector3(0, 1.5f, 0);
@@ -294,18 +329,63 @@ public class biologyCS : MonoBehaviour
         Sphere3 = this.transform.position;
         Sphere2 = this.transform.position;
     }
+    public void takeHeal(float n)
+    {
+        var finalHeal = n * UnityEngine.Random.Range(0.8f, 1f);
+        if (HP + finalHeal < HPMAX)
+        {
+            HP += finalHeal;
+        }
+        else
+        {
+            HP = HPMAX;
+        }
+        getjumpText(finalHeal, new Vector3(), "GREEN");
+    }
     public void takeDAMAGE(float n, Vector3 direct)
     {
-        var r = UnityEngine.Random.Range(0.8f, 1.2f);
-        if (n - DEF > 0)
+        //是否爆擊判定
+        bool gritical = MathS.chancePersent(10);
+        //爆擊時傷害加乘
+        n = gritical ? n * 1.5f : n;
+
+        //是否穿刺判定
+        bool puncture = MathS.chancePersent(10);
+        //穿刺時傷害加乘
+        float p = puncture ? p = n * 0.1f : 0;
+
+        //爆擊時跳字變色
+        //爆擊黃色、穿刺紅色、同時發生橘色
+        string color;
+        if (gritical && puncture)
         {
-            HP -= (n - DEF) * r;
+            color = "ORANGE";
         }
-        getjumpText((n - DEF) * r, direct);
+        else
+        if (gritical)
+        {
+            color = "YELLOW";
+        }
+        else
+        if (puncture)
+        {
+            color = "RED";
+        }
+        else
+        {
+            color = "WHITE";
+        }
+
+        var r = UnityEngine.Random.Range(0.8f, 1.2f);
+        var finalDamage = (p + n - DEF) * r;
+        if (finalDamage > 0)
+        {
+            HP -= finalDamage;
+        }
+        getjumpText(finalDamage, direct, color);
         if (HP <= 0)
         {
             this.setDead();
-
         }
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
         // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
@@ -381,6 +461,9 @@ public class biologyCS : MonoBehaviour
         bool actionIsDone = false;
         switch (bioAction)
         {
+            case "actionHeal":
+                actionIsDone = actionHeal();
+                break;
             case "actionAttack":
                 actionIsDone = actionAttack();
                 break;
@@ -399,11 +482,10 @@ public class biologyCS : MonoBehaviour
                 Debug.Log("biologyCS:_bioAction()--收到無效指令指令");
                 return false;
         }
-        //有目標但是尚未時間到
+        //已正確執行完畢action時
         if (actionIsDone)
         {
             gameBits.resetActionTime();
-            setBioAction("DanceTatget");
             return true;
         }
         return false;
@@ -411,6 +493,26 @@ public class biologyCS : MonoBehaviour
     }
 
     bool actionAttack()
+    {
+        if (target.GetComponent<biologyCS>().HP < 0)
+            return false;
+        float targetDist = Vector3.Distance(target.position, this.transform.position);
+
+        if (targetDist > attackDistance)
+        {
+            bioGoto(target.position);
+            return false;
+        }
+        else
+        {
+            bioStop();
+            faceTarget(target.transform.position, 100);
+            setBioAnimation("mAttack");
+            return true;
+        }
+
+    }
+    bool actionHeal()
     {
         if (target.GetComponent<biologyCS>().HP < 0)
             return false;
@@ -541,7 +643,6 @@ public class biologyCS : MonoBehaviour
             else
             {
 
-
                 var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
 
                 if (this.bioAnimation == "mWalk")
@@ -623,9 +724,9 @@ public class biologyCS : MonoBehaviour
         if (isVisible)
         {
             nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
-                    this.transform.position.x,
-                    this.transform.position.y + 2.5f,
-                    this.transform.position.z));
+                this.transform.position.x,
+                this.transform.position.y + 2.5f,
+                this.transform.position.z));
             nameText.transform.position = nametextScreenPos;
         }
 

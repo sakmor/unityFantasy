@@ -15,7 +15,6 @@ namespace myMath
             return c * t / d + b;
         }
 
-
         // quadratic easing in - accelerating from zero velocity
         public static float easeInQuad(float t, float b, float c, float d)
         {
@@ -62,7 +61,6 @@ namespace myMath
             t -= 2;
             return c / 2 * (t * t * t + 2) + b;
         }
-
 
         // quartic easing in - accelerating from zero velocity
         public static float easeInQuart(float t, float b, float c, float d)
@@ -205,6 +203,19 @@ namespace myMath
             Vector3 diference = vec2 - vec1;
             float sign = (vec2.z < vec1.z) ? -1.0f : 1.0f;
             return Vector3.Angle(Vector2.right, diference) * sign;
+        }
+
+        public static bool chancePersent(float n)
+        {
+            var m = UnityEngine.Random.Range(1.0f, 100.0f);
+            if (m <= n)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

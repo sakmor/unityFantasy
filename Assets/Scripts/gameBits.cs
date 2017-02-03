@@ -27,9 +27,9 @@ public class gameBits
         Transform = parent.getTransform();
         this.parent = parent;
 
-        decideList.Add("decideHpUnder50percentEnemy");
-        actionList.Add("actionAttack");
-        decideList.Add("decideClosestEnemy");
+        decideList.Add("decideHpUnder50percentAlly");
+        actionList.Add("actionHeal");
+        decideList.Add("decideLowestHPEnemy");
         actionList.Add("actionAttack");
 
     }
@@ -63,7 +63,7 @@ public class gameBits
 
     bool decide2Action()
     {
-        if (actionIsOn == false && battleBios.Count > 1)
+        if (actionIsOn == false)
         {
             bool decideIS = false;
             for (var i = 0; i < decideList.Count; i++)
@@ -152,6 +152,7 @@ public class gameBits
             case "decideHpUnder30percentAlly": return decideHpUnder30percentAlly();
             case "decideHpUnder10percentAlly": return decideHpUnder10percentAlly();
             case "decideHpUnder0percentAlly": return decideHpUnder0percentAlly();
+            case "actionHeal": return actionHeal();
             case "actionAttack": return actionAttack();
 
             default:
@@ -189,7 +190,20 @@ public class gameBits
         }
 
     }
+    bool actionHeal()
+    {
+        var t = target.GetComponent<biologyCS>();
+        if (t.getHP() > 0 && t.getHPMAX() - t.getHP() >= 0)
+        {
+            parent.setBioAction("actionHeal");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 
+    }
     bool targetIsAlive(GameObject t)
     {
         if (t.GetComponent<biologyCS>().getHP() > 0)
@@ -521,7 +535,7 @@ public class gameBits
         foreach (var t in battleBios)
         {
             if (isTargetSameCompare(t) || !targetIsAlive(t)) continue;
-            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.5)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.5f)
             {
                 target = t.transform;
                 return true;
@@ -857,13 +871,13 @@ public class gameBits
         }
         return false;
     }
-    //回傳殘存血量高於50%目標
+    //回傳殘存血量低於50%目標
     bool decideHpUnder50percentAlly()
     {
         foreach (var t in battleBios)
         {
             if (!isTargetSameCompare(t)) continue;
-            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHP() <= 0.5)
+            if (t.GetComponent<biologyCS>().getHP() / t.GetComponent<biologyCS>().getHPMAX() <= 0.5f)
             {
                 target = t.transform;
                 return true;
@@ -871,7 +885,7 @@ public class gameBits
         }
         return false;
     }
-    //回傳殘存血量高於30%目標
+    //回傳殘存血量低於50%目標
     bool decideHpUnder30percentAlly()
     {
         foreach (var t in battleBios)
