@@ -56,6 +56,8 @@ public class gameBits
     }
     internal void resetActionTime()
     {
+        // parent.setTarget(null);
+        parent.setBioAction("");
         lastActionTime = Time.time;
         nowActionTime = 0;
         setActionIsOn(false);

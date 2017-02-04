@@ -61,22 +61,25 @@ public class biologyCS : MonoBehaviour
     * rotateSpeed		生物旋轉速度(未儲存)
     */
     public float LV, ATTACK, HP, DEF, HPMAX;
-    float lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    float lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
     public float targetDistance;
-    Vector3 nametextScreenPos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3, _position;
+    Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool runBack;
     internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
     GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
     gameCS maingameCS;
     BoxCollider bioCollider;
     string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
-    bool isVisible, isEnable = false;
+    bool isVisible, effectIsOn, isEnable = false;
     public Transform target;
     float[] biologyListData = new float[6];
     Animation anim;
     gameBits gameBits;
     Renderer rend;
+    public List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOvergAnims = new List<string>();
+
+    biologyCS targetCS;
 
     // Use this for initialization
     public biologyCS(gameCS parent)
@@ -85,6 +88,8 @@ public class biologyCS : MonoBehaviour
     }
     void Start()
     {
+        GetComponent<Animation>().playAutomatically = false;
+
         //如果該生物在玩家清單，改變陣營為玩家。
         LV = 50;                    //todo:應該記錄在生物表
         checkBioCamp();
@@ -97,7 +102,7 @@ public class biologyCS : MonoBehaviour
         allBiologys = maingameCS.getAllBiologys();
 
         attackCoolDown = 15;
-        actionSpeed = 20.2f;          //todo:應該記錄在c_biology.json
+        actionSpeed = 15.2f;          //todo:應該記錄在c_biology.json
         players = 3;
         target = null;
         rotateSpeed = 15;
@@ -154,9 +159,9 @@ public class biologyCS : MonoBehaviour
             this._movment();
             this._bioAnimation();
             this._bioAction();
-            this.gameBits.Update();
-            this.updateUI();
             this.effect();
+            // this.gameBits.Update();
+            this.updateUI();
         }
 
     }
@@ -165,79 +170,151 @@ public class biologyCS : MonoBehaviour
         rend = model.GetComponent<Renderer>();
     }
 
-    void effect()
+    bool effectPlay()
     {
-        //紀錄移動座標:shakeThisModel使用
-        _position = transform.position;
-
-        //治療
-        if (bioAction == "actionHeal"
-            && anim.IsPlaying("Attack")
-            && anim["Attack"].time > hitTime)
+        switch (bioAction)
         {
-            if (Time.time - lastHitTime > anim["Attack"].length)
-            {
-                lastHitTime = Time.time;
-                target.GetComponent<biologyCS>().takeHeal(ATTACK);
-            }
-        }
-
-        //攻擊
-        if (bioAction == "actionAttack"
-            && anim.IsPlaying("Attack")
-            && anim["Attack"].time > hitTime)
-        {
-
-            target.GetComponent<biologyCS>().anim.CrossFade("Damage");
-            if (Time.time - lastHitTime > anim["Attack"].length)
-            {
-                target.GetComponent<biologyCS>().takeDAMAGE(ATTACK, transform.forward);
-                lastHitTime = Time.time;
-                var temp = target.GetComponent<biologyCS>().rend;
-                foreach (var t in temp.materials)
+            case "actionAttack":
+                if (hitTimeIsGot("Attack", hitTime))
                 {
-                    t.SetFloat("_RimPower", 0f);
+                    targetCS.setBioAnimation("Damge");
+                    targetCS.takeDAMAGE(ATTACK, transform.forward);
+                    targetCS.addEffect("white");
+                    targetCS.addEffect("shake");
+                    targetCS.addEffect("aniPause");
+                    addEffect("aniPause");
+                    return true;
                 }
-
-            }
-
+                break;
+            case "actionHeal":
+                if (hitTimeIsGot("Attack", hitTime))
+                {
+                    targetCS.takeHeal(ATTACK * 0.5f);
+                    targetCS.addEffect("white");
+                    targetCS.addEffect("shake");
+                    targetCS.addEffect("aniPause");
+                    addEffect("aniPause");
+                    return true;
+                }
+                break;
         }
 
-        //打擊中目標的瞬間(0.15秒)
-        if (Time.time - lastHitTime < 0.15)
+        return false;
+
+    }
+
+    bool effect()
+    {
+        if (effectList.Count > 0 && !effectIsOn)
         {
-            if (target != null)
+            effectIsOn = true;
+            effectTime = Time.time;
+            beforeShakePos = transform.position;
+        }
+
+        if (!effectIsOn) return false;
+
+        if (Time.time - effectTime <= 0.5f)
+        {
+            foreach (var t in effectList)
             {
-                target.GetComponent<biologyCS>().bioStop();
-                target.GetComponent<biologyCS>().shakeThisModel();
-                target.GetComponent<biologyCS>().anim["Damage"].speed = 0.0f;
-                // target.GetComponent<biologyCS>().anim["Wait"].speed = 0.0f;
-                // Debug.Break();
-                anim["Attack"].speed = 0.0f;
-                if (transform.FindChild("hitEffect"))
-                    transform.FindChild("hitEffect").gameObject.GetComponent<hitEffect>().playEffect();
+                switch (t)
+                {
+                    case "white":
+                        setBioWhite();
+                        continue;
+                    case "shake":
+                        setBioShake();
+                        continue;
+                    case "aniPause":
+                        setBioAniPause();
+                        continue;
+                }
             }
         }
         else
         {
-
-            if (target != null)
+            foreach (var t in effectList)
             {
-                target.GetComponent<biologyCS>().anim["Damage"].speed = 1.0f;
-                anim["Attack"].speed = 1.0f;
+                switch (t)
+                {
+                    case "white":
+                        setBioNormal();
+                        continue;
+                    case "shake":
+                        //stopShake
+                        continue;
+                    case "aniPause":
+                        setBioAniPlay();
+                        continue;
+                }
             }
+            effectList.Clear();
+            effectIsOn = false;
 
         }
+        return true;
+    }
 
+    void addEffect(string effectName)
+    {
+        effectList.Add(effectName);
+    }
+
+    bool setBioWhite()
+    {
         foreach (var t in rend.materials)
         {
-            if (t.GetFloat("_RimPower") < 3)
-            {
-                t.SetFloat("_RimPower", t.GetFloat("_RimPower") + 0.25f);
-            }
+            t.SetFloat("_RimPower", 0);
         }
+        return true;
 
     }
+    bool setBioNormal()
+    {
+        foreach (var t in rend.materials)
+        {
+            t.SetFloat("_RimPower", 3);
+        }
+        return true;
+
+    }
+
+    bool setBioShake()
+    {
+        this.transform.position = beforeShakePos;
+        this.transform.position += new Vector3(
+            UnityEngine.Random.Range(-0.15f, 0.15f), 0, UnityEngine.Random.Range(-0.15f, 0.15f));
+
+        return true;
+    }
+    bool setBioAniPlay()
+    {
+        foreach (AnimationState state in anim)
+        {
+            state.speed = 1F;
+        }
+        return true;
+
+    }
+    bool setBioAniPause()
+    {
+        foreach (AnimationState state in anim)
+        {
+            state.speed = 0F;
+        }
+        return true;
+
+    }
+    bool hitTimeIsGot(string action, float htime)
+    {
+        if (anim[action].time > htime)
+        {
+            return true;
+        }
+        return false;
+    }
+
     void getjumpText(float n, Vector3 direct, string color)
     {
         string text;
@@ -305,6 +382,11 @@ public class biologyCS : MonoBehaviour
     internal void setTarget(Transform t)
     {
         target = t;
+        if (t != null)
+        {
+            targetCS = t.GetComponent<biologyCS>();
+        }
+
     }
     public float getSeeMax()
     {
@@ -475,8 +557,7 @@ public class biologyCS : MonoBehaviour
                 setBioAnimation("mWait");
                 break;
             case "":
-                setTarget(null);
-                setBioAnimation("mWait");
+
                 break;
             default:
                 Debug.Log("biologyCS:_bioAction()--收到無效指令指令");
@@ -485,8 +566,11 @@ public class biologyCS : MonoBehaviour
         //已正確執行完畢action時
         if (actionIsDone)
         {
-            gameBits.resetActionTime();
-            return true;
+            if (effectPlay())
+            {
+                gameBits.resetActionTime();
+                return true;
+            }
         }
         return false;
 
@@ -494,7 +578,7 @@ public class biologyCS : MonoBehaviour
 
     bool actionAttack()
     {
-        if (target.GetComponent<biologyCS>().HP < 0)
+        if (targetCS.HP < 0)
             return false;
         float targetDist = Vector3.Distance(target.position, this.transform.position);
 
@@ -514,7 +598,7 @@ public class biologyCS : MonoBehaviour
     }
     bool actionHeal()
     {
-        if (target.GetComponent<biologyCS>().HP < 0)
+        if (targetCS.HP < 0)
             return false;
         float targetDist = Vector3.Distance(target.position, this.transform.position);
 
@@ -542,48 +626,78 @@ public class biologyCS : MonoBehaviour
     void setDead()
     {
         bioAnimation = "mDead";
-        anim.Play("Dead");
+    }
+
+    void checkAnimation()
+    {
+        if (Time.time - lastCheckAnim > 0.005)
+        {
+            lastCheckAnim = Time.time;
+            //將該動畫列入剛播完清單
+            justOvergAnims.Clear();
+            foreach (AnimationState state in anim)
+            {
+                //如果之前清單有撥放這個動畫，但現在沒有撥了
+                if (!anim.IsPlaying(state.name)
+                    && _playingAnims.Contains(state.name))
+                {
+                    justOvergAnims.Add(state.name);
+                    _playingAnims.Remove(state.name);
+                }
+
+                //如果之前清單沒有撥放這個動畫，但現在正在撥了
+                if (anim.IsPlaying(state.name)
+                && !_playingAnims.Contains(state.name))
+                {
+                    _playingAnims.Add(state.name);
+                }
+
+            }
+        }
     }
     void _bioAnimation()
     {
-        //對應生物所處狀態，播放對應動作
-        if (!anim.IsPlaying("Attack"))
+        checkAnimation();
+        //如果攻擊動作剛播完，回到wait狀態
+        if (justOvergAnims.Contains("Attack"))
         {
-            switch (this.bioAnimation)
-            {
-                case "mAttack":
-                    anim.CrossFade("Attack");
-                    break;
-                case "mDamage":
-                    anim.CrossFade("Damage");
-                    break;
-                case "mWalk":
-                    anim.CrossFade("Walk");
-                    break;
-                case "mPicking":
-                    break;
-                case "mDead":
-                    anim.CrossFade("Dead");
-                    if (anim["Dead"].time >= anim["Dead"].length - 0.1f)
-                    {
-                        var boom = Instantiate(GameObject.Find("explosion"));
-                        boom.transform.parent = this.transform;
-                        boom.transform.localPosition = new Vector3(0, 0, 0);
-                        boom.GetComponent<Explosion>().Play();
-                        bioAnimation = "mJump";
-                    }
-                    break;
-                case "mWait":
-                    anim.CrossFade("Wait");
-                    runBack = false; //todo: 不該寫在這裡
-                    Sphere2 = this.transform.position;//todo: 不該寫在這裡
-                    break;
-                case "mJump":
-                    this.transform.position -= new Vector3(0, 99, 0);
-                    //todo:目前沒有使用
-                    break;
-            }
+            this.bioAnimation = "mWait";
         }
+
+        //對應生物所處狀態，播放對應動作
+        switch (this.bioAnimation)
+        {
+            case "mAttack":
+                anim.CrossFade("Attack");
+                break;
+            case "mDamage":
+                anim.CrossFade("Damage");
+                break;
+            case "mWalk":
+                anim.Play("Walk");
+                break;
+            case "mPicking":
+                break;
+            case "mDead":
+                anim.CrossFade("Dead");
+                if (anim["Dead"].time >= anim["Dead"].length - 0.1f)
+                {
+                    var boom = Instantiate(GameObject.Find("explosion"));
+                    boom.transform.parent = this.transform;
+                    boom.transform.localPosition = new Vector3(0, 0, 0);
+                    boom.GetComponent<Explosion>().Play();
+                    bioAnimation = "mJump";
+                }
+                break;
+            case "mWait":
+                anim.CrossFade("Wait");
+                break;
+            case "mJump":
+                this.transform.position -= new Vector3(0, 99, 0);
+                //todo:目前沒有使用
+                break;
+        }
+
         if (anim.IsPlaying("Wait") && HP > 0)
         {
             this.bioAnimation = "mWait";
@@ -598,11 +712,6 @@ public class biologyCS : MonoBehaviour
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
         if (SphereDistance > 0.05f)
             this.bioAnimation = "mWalk";
-
-        // if (this.bioAnimation == "Walk")
-        // {
-        //     this.bioAnimation = "Wait";
-        // }
 
         //如果該生物是被使用者操控的
         if (maingameCS.Player.name == this.name)
