@@ -27,9 +27,9 @@ public class gameBits
         Transform = parent.getTransform();
         this.parent = parent;
 
-        decideList.Add("decideHpUnder50percentAlly");
-        actionList.Add("actionHeal");
-        decideList.Add("decideLowestHPEnemy");
+        // decideList.Add("decideHpUnder50percentAlly");
+        // actionList.Add("actionHeal");
+        decideList.Add("decideClosestEnemy");
         actionList.Add("actionAttack");
 
     }
@@ -50,7 +50,8 @@ public class gameBits
         }
         else
         {
-            decide2Action();
+            if (parent.HP > 0)
+                decide2Action();
         }
 
     }

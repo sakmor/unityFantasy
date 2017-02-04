@@ -77,7 +77,7 @@ public class biologyCS : MonoBehaviour
     Animation anim;
     gameBits gameBits;
     Renderer rend;
-    public List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOvergAnims = new List<string>();
+    public List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOverAnimList = new List<string>();
 
     biologyCS targetCS;
 
@@ -160,7 +160,7 @@ public class biologyCS : MonoBehaviour
             this._bioAnimation();
             this._bioAction();
             this.effect();
-            // this.gameBits.Update();
+            this.gameBits.Update();
             this.updateUI();
         }
 
@@ -179,10 +179,12 @@ public class biologyCS : MonoBehaviour
                 {
                     targetCS.setBioAnimation("Damge");
                     targetCS.takeDAMAGE(ATTACK, transform.forward);
+                    targetCS.addEffect("playDamage");
                     targetCS.addEffect("white");
                     targetCS.addEffect("shake");
                     targetCS.addEffect("aniPause");
                     addEffect("aniPause");
+                    GameObject.Find("hitEffect").GetComponent<hitEffect>().playEffect();
                     return true;
                 }
                 break;
@@ -214,7 +216,7 @@ public class biologyCS : MonoBehaviour
 
         if (!effectIsOn) return false;
 
-        if (Time.time - effectTime <= 0.5f)
+        if (Time.time - effectTime <= 0.25f)
         {
             foreach (var t in effectList)
             {
@@ -224,10 +226,17 @@ public class biologyCS : MonoBehaviour
                         setBioWhite();
                         continue;
                     case "shake":
-                        setBioShake();
+                        if (bioCamp != 0)
+                            setBioShake();
                         continue;
                     case "aniPause":
                         setBioAniPause();
+                        continue;
+                    case "playDamage":
+                        if (bioCamp != 0)
+                        {
+                            setBioAnimation("Damage"); anim.Play("Damage");
+                        }
                         continue;
                 }
             }
@@ -265,7 +274,7 @@ public class biologyCS : MonoBehaviour
     {
         foreach (var t in rend.materials)
         {
-            t.SetFloat("_RimPower", 0);
+            t.SetFloat("_RimPower", 1);
         }
         return true;
 
@@ -284,7 +293,8 @@ public class biologyCS : MonoBehaviour
     {
         this.transform.position = beforeShakePos;
         this.transform.position += new Vector3(
-            UnityEngine.Random.Range(-0.15f, 0.15f), 0, UnityEngine.Random.Range(-0.15f, 0.15f));
+            UnityEngine.Random.Range(-0.1f, 0.1f), 0, UnityEngine.Random.Range(-0.1f, 0.1f));
+        bioStop();
 
         return true;
     }
@@ -465,12 +475,7 @@ public class biologyCS : MonoBehaviour
             HP -= finalDamage;
         }
         getjumpText(finalDamage, direct, color);
-        if (HP <= 0)
-        {
-            this.setDead();
-        }
-        // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().targNU = HP;
-        // HID.transform.FindChild("HP").gameObject.GetComponent<changeN>().go = true;
+
     }
 
     void setValueByBioType()
@@ -625,7 +630,8 @@ public class biologyCS : MonoBehaviour
 
     void setDead()
     {
-        bioAnimation = "mDead";
+        setBioAction("");
+        setBioAnimation("mDead");
     }
 
     void checkAnimation()
@@ -634,20 +640,20 @@ public class biologyCS : MonoBehaviour
         {
             lastCheckAnim = Time.time;
             //將該動畫列入剛播完清單
-            justOvergAnims.Clear();
+            justOverAnimList.Clear();
             foreach (AnimationState state in anim)
             {
                 //如果之前清單有撥放這個動畫，但現在沒有撥了
                 if (!anim.IsPlaying(state.name)
                     && _playingAnims.Contains(state.name))
                 {
-                    justOvergAnims.Add(state.name);
+                    justOverAnimList.Add(state.name);
                     _playingAnims.Remove(state.name);
                 }
 
                 //如果之前清單沒有撥放這個動畫，但現在正在撥了
                 if (anim.IsPlaying(state.name)
-                && !_playingAnims.Contains(state.name))
+                    && !_playingAnims.Contains(state.name))
                 {
                     _playingAnims.Add(state.name);
                 }
@@ -659,9 +665,25 @@ public class biologyCS : MonoBehaviour
     {
         checkAnimation();
         //如果攻擊動作剛播完，回到wait狀態
-        if (justOvergAnims.Contains("Attack"))
+        if (justOverAnimList.Contains("Attack")
+            && HP > 0)
         {
             this.bioAnimation = "mWait";
+        }
+
+        if (justOverAnimList.Contains("Damage")
+            && HP <= 0)
+        {
+            this.bioAnimation = "mDead";
+        }
+
+        //如果死亡動作剛播完，撥放爆炸
+        if (justOverAnimList.Contains("Dead"))
+        {
+            var boom = Instantiate(GameObject.Find("explosion"));
+            boom.transform.position = this.transform.position;
+            boom.GetComponent<Explosion>().Play();
+            bioAnimation = "mJump";
         }
 
         //對應生物所處狀態，播放對應動作
@@ -679,15 +701,7 @@ public class biologyCS : MonoBehaviour
             case "mPicking":
                 break;
             case "mDead":
-                anim.CrossFade("Dead");
-                if (anim["Dead"].time >= anim["Dead"].length - 0.1f)
-                {
-                    var boom = Instantiate(GameObject.Find("explosion"));
-                    boom.transform.parent = this.transform;
-                    boom.transform.localPosition = new Vector3(0, 0, 0);
-                    boom.GetComponent<Explosion>().Play();
-                    bioAnimation = "mJump";
-                }
+                anim.Play("Dead");
                 break;
             case "mWait":
                 anim.CrossFade("Wait");
@@ -696,6 +710,11 @@ public class biologyCS : MonoBehaviour
                 this.transform.position -= new Vector3(0, 99, 0);
                 //todo:目前沒有使用
                 break;
+        }
+
+        if (!anim.IsPlaying("mWalk"))
+        {
+            bioStop();
         }
 
         if (anim.IsPlaying("Wait") && HP > 0)
