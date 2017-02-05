@@ -9,19 +9,21 @@ public class hitEffect : MonoBehaviour
 
     void Start()
     {
+
+    }
+
+    public void playEffect(Transform giver, float scale)
+    {
         rend = GetComponent<Renderer>();
         rend.material.mainTextureScale = new Vector2(0.2f, 1);
         rend.material.mainTextureOffset = new Vector2(0.8f, 1);
-    }
-
-    public void playEffect()
-    {
 
         if (!isPlay)
         {
-            var n = Random.Range(50f, 250f);
+            var n = Random.Range(1, 1.5f);
             this.transform.Rotate(new Vector3(1, 1, Random.Range(1f, 180f)));
             this.transform.localScale = new Vector3(n, n, n);
+            this.transform.position += new Vector3(0, 1, 0) + (giver.position - transform.position) * scale;
             rend.material.mainTextureOffset = new Vector2(0.8f, 1);
             startTime = Time.time;
             isPlay = true;
@@ -46,6 +48,7 @@ public class hitEffect : MonoBehaviour
             {
                 rend.material.mainTextureOffset = new Vector2(0.8f, 0);
                 isPlay = false;
+                Destroy(this.gameObject);
             }
         }
     }

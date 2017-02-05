@@ -184,7 +184,9 @@ public class biologyCS : MonoBehaviour
                     targetCS.addEffect("shake");
                     targetCS.addEffect("aniPause");
                     addEffect("aniPause");
-                    GameObject.Find("hitEffect").GetComponent<hitEffect>().playEffect();
+                    targetCS.addEffect("hitEffect");
+                    // transform.FindChild("hitEffect");
+                    // GameObject.Find("hitEffect").GetComponent<hitEffect>().playEffect();
                     return true;
                 }
                 break;
@@ -222,12 +224,15 @@ public class biologyCS : MonoBehaviour
             {
                 switch (t)
                 {
+                    case "hitEffect":
+                        effectHiteffect();
+                        continue;
                     case "white":
-                        setBioWhite();
+                        effectWhite();
                         continue;
                     case "shake":
                         if (bioCamp != 0)
-                            setBioShake();
+                            effectShake();
                         continue;
                     case "aniPause":
                         setBioAniPause();
@@ -270,7 +275,7 @@ public class biologyCS : MonoBehaviour
         effectList.Add(effectName);
     }
 
-    bool setBioWhite()
+    bool effectWhite()
     {
         foreach (var t in rend.materials)
         {
@@ -289,7 +294,21 @@ public class biologyCS : MonoBehaviour
 
     }
 
-    bool setBioShake()
+    bool effectHiteffect()
+    {
+        if (target.transform.Find("hitEffect") == null)
+        {
+            GameObject hitEffect = Instantiate(GameObject.Find("hitEffect"));
+            hitEffect.name = "hitEffect";
+            hitEffect.transform.parent = target.transform;
+            hitEffect.transform.localPosition = new Vector3(0, 0, 0);
+            hitEffect.GetComponent<hitEffect>().playEffect(transform, targetCS.biologyListData[3]);
+        }
+
+        return true;
+    }
+
+    bool effectShake()
     {
         this.transform.position = beforeShakePos;
         this.transform.position += new Vector3(
@@ -712,7 +731,7 @@ public class biologyCS : MonoBehaviour
                 break;
         }
 
-        if (!anim.IsPlaying("mWalk"))
+        if (!anim.IsPlaying("mWalk") && !anim.IsPlaying("mWait"))
         {
             bioStop();
         }
@@ -806,14 +825,8 @@ public class biologyCS : MonoBehaviour
             this.transform.position = new Vector3(this.transform.position.x, 0.5f, this.transform.position.z);
             Sphere2.y = this.transform.position.y;
             Sphere.y = this.transform.position.y;
-            if (target == null)
-            {
-                faceTarget(Sphere2, rotateSpeed);
-            }
-            else
-            {
-                this.transform.LookAt(new Vector3(target.transform.position.x, this.transform.position.y, target.transform.position.z));
-            }
+
+            faceTarget(Sphere2, rotateSpeed);
 
             //依照目標距離調整移動速度
             moveSpeed = moveSpeedMax;
