@@ -60,20 +60,26 @@ public class mouseOrbit : MonoBehaviour
             mouseOrbitSet();
         }
     }
-    public void right()
+    public void _right()
     {
-        stime = Time.time;
-        finalX = 90;
-        startX = x;
-        orbitCamera = true;
+        if (!orbitCamera)
+        {
+            stime = Time.time;
+            finalX = 90;
+            startX = x;
+            orbitCamera = true;
+        }
     }
 
-    public void left()
+    public void _left()
     {
-        stime = Time.time;
-        finalX = -90;
-        startX = x;
-        orbitCamera = true;
+        if (!orbitCamera)
+        {
+            stime = Time.time;
+            finalX = -90;
+            startX = x;
+            orbitCamera = true;
+        }
     }
 
 

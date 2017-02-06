@@ -86,7 +86,19 @@ public class gameCS : MonoBehaviour
         lineDecte();
         buttonDetect();
         clickPointPos();
+        keyboard();
 
+    }
+    void keyboard()
+    {
+        if (Input.GetKeyDown("e"))
+        {
+            rightCamera();
+        }
+        if (Input.GetKeyDown("q"))
+        {
+            leftCamera();
+        }
     }
 
     void setPlayerBioCSList()
@@ -121,7 +133,7 @@ public class gameCS : MonoBehaviour
 
         logText.transform.position = getuiPosByScreen(logText, 0, "right", "center");
         GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower");
-        GameObject.Find("ActionBar").transform.position = getuiPosByScreen(GameObject.Find("ActionBar"), 15, "right", "upper") + c;
+        GameObject.Find("ActionBar").transform.position = getuiPosByScreen(GameObject.Find("ActionBar"), 15, "right", "upper");
 
         // GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
 
@@ -318,12 +330,12 @@ public class gameCS : MonoBehaviour
     }
     public void rightCamera()
     {
-        mainCamera.GetComponent<mouseOrbit>().right();
+        mainCamera.GetComponent<mouseOrbit>()._right();
     }
 
     public void leftCamera()
     {
-        mainCamera.GetComponent<mouseOrbit>().left();
+        mainCamera.GetComponent<mouseOrbit>()._left();
     }
 
     //todo:要在角色或攝影機有移動時才徵測
