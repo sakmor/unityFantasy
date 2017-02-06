@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class gameCS : MonoBehaviour
 {
     Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
-    Vector2>();
+        Vector2>();
 
     //GameObject
     public GameObject mainCamera, mainCamera2, Player, cameraRightBTN, cameraLeftBTN;
@@ -121,6 +121,8 @@ public class gameCS : MonoBehaviour
 
         logText.transform.position = getuiPosByScreen(logText, 0, "right", "center");
         GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower");
+        GameObject.Find("ActionBar").transform.position = getuiPosByScreen(GameObject.Find("ActionBar"), 15, "right", "upper") + c;
+
         // GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
 
     }
@@ -314,6 +316,15 @@ public class gameCS : MonoBehaviour
         }
 
     }
+    public void rightCamera()
+    {
+        mainCamera.GetComponent<mouseOrbit>().right();
+    }
+
+    public void leftCamera()
+    {
+        mainCamera.GetComponent<mouseOrbit>().left();
+    }
 
     //todo:要在角色或攝影機有移動時才徵測
     void lineDecte()
@@ -384,16 +395,22 @@ public class gameCS : MonoBehaviour
         //滑鼠滾輪縮放攝影機
         if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
         {
-            if (Camera.main.fieldOfView > 1)
+            if (Camera.main.fieldOfView > 1
+                && Camera.main.orthographicSize > 1)
             {
                 Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView - 1, 60);
                 Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize - 1, 60);
             }
+
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
         {
-            Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
-            Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 60);
+            if (Camera.main.fieldOfView < 50
+                && Camera.main.orthographicSize < 6)
+            {
+                Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
+                Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 60);
+            }
         }
     }
     void fellowPlayerCameraMove()

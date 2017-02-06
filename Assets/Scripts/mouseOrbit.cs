@@ -1,4 +1,4 @@
-using System.Collections;
+using myMath;
 using UnityEngine;
 
 //http://wiki.unity3d.com/index.php?title=MouseOrbitImproved
@@ -17,12 +17,14 @@ public class mouseOrbit : MonoBehaviour
 
     public float distanceMin = 3f;
     public float distanceMax = 15f;
-
+    bool orbitCamera = false;
     private Rigidbody rigidbody;
 
     private gameCS maingameCS;
-    float x = 0.0f;
+    float x = 0.0f, startX = 0.0f, finalX = 0.0f;
     float y = 0.0f;
+
+    float stime = 0.0f;
 
     // Use this for initialization
     void Start()
@@ -31,6 +33,7 @@ public class mouseOrbit : MonoBehaviour
         var angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
+        finalX = x;
 
         // Make the rigid body not change rotation
         if (GetComponent<Rigidbody>())
@@ -38,6 +41,9 @@ public class mouseOrbit : MonoBehaviour
             GetComponent<Rigidbody>().freezeRotation = true;
         }
         mouseOrbitSet();
+        x = angles.y;
+        y = angles.x;
+        finalX = x;
     }
 
     void LateUpdate()
@@ -47,22 +53,48 @@ public class mouseOrbit : MonoBehaviour
             maingameCS.hitUIObjectName == "")
         {
             mouseOrbitSet();
+        }
 
+        if (orbitCamera)
+        {
+            mouseOrbitSet();
         }
     }
+    public void right()
+    {
+        stime = Time.time;
+        finalX = 90;
+        startX = x;
+        orbitCamera = true;
+    }
+
+    public void left()
+    {
+        stime = Time.time;
+        finalX = -90;
+        startX = x;
+        orbitCamera = true;
+    }
+
 
     void mouseOrbitSet()
     {
-        x += Input.GetAxis("Mouse X") * xSpeed;
-        y -= Input.GetAxis("Mouse Y") * ySpeed;
+        // x += Input.GetAxis("Mouse X") * xSpeed;
+        // y -= Input.GetAxis("Mouse Y") * ySpeed;
 
+        if (orbitCamera)
+            x = MathS.easeInOutExpo(Time.time - stime, startX, finalX, 0.5f);
         y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+        if (Time.time - stime >= 0.5)
+        {
+            orbitCamera = false;
+        }
 
         Quaternion rotation = Quaternion.Euler(y, x, 0);
 
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 
-        RaycastHit hit;
 
         Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.position + targetMove;
 
