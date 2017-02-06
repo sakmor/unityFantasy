@@ -9,7 +9,7 @@ public class gameCS : MonoBehaviour
     Vector2>();
 
     //GameObject
-    public GameObject mainCamera, mainCamera2, Player;
+    public GameObject mainCamera, mainCamera2, Player, cameraRightBTN, cameraLeftBTN;
     GameObject clickPoint, cammeraStickMouse, Cube, hitUIObject, moveStickMouse, moveStick, cammeraStick, logText, fpsText;
     GameObject[] players = new GameObject[2];
 
@@ -111,10 +111,53 @@ public class gameCS : MonoBehaviour
     }
     void setUIpos()
     {
-        moveStick.transform.position = new Vector3(moveStick.GetComponent<RectTransform>().sizeDelta.x, moveStick.GetComponent<RectTransform>().sizeDelta.y, 0);
-        fpsText.transform.position = new Vector3(fpsText.GetComponent<RectTransform>().sizeDelta.x * 0.5f + 15, UnityEngine.Screen.height - 60, 0);
-        logText.transform.position = new Vector3(logText.GetComponent<RectTransform>().sizeDelta.x + 10, 370, 0);
-        GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
+        cameraRightBTN = GameObject.Find("cameraRightBTN");
+        cameraLeftBTN = GameObject.Find("cameraLeftBTN");
+
+        cameraLeftBTN.transform.position = getuiPosByScreen(cameraLeftBTN, 1, "left", "upper");
+        cameraRightBTN.transform.position = getuiPosByScreen(cameraRightBTN, 1, "right", "upper");
+        moveStick.transform.position = getuiPosByScreen(moveStick, 15, "left", "lower");
+        fpsText.transform.position = getuiPosByScreen(fpsText, 1, "left", "lower");
+
+        logText.transform.position = getuiPosByScreen(logText, 0, "right", "center");
+        GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower");
+        // GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
+
+    }
+
+    Vector3 getuiPosByScreen(GameObject uiobj, float cap, string alignX, string alignY)
+    {
+        var screenHeight = UnityEngine.Screen.height;
+        var screenWidth = UnityEngine.Screen.width;
+        var objHeight = uiobj.GetComponent<RectTransform>().sizeDelta.y * uiobj.GetComponent<RectTransform>().localScale.y;
+        var objWidth = uiobj.GetComponent<RectTransform>().sizeDelta.x * uiobj.GetComponent<RectTransform>().localScale.x;
+        Vector3 pos = new Vector3(0, 0, 0);
+        switch (alignX)
+        {
+            case "left":
+                pos = new Vector3(cap + objWidth * 0.5f, 0, 0);
+                break;
+            case "right":
+                pos = new Vector3(screenWidth - cap - objWidth * 0.5f, 0, 0);
+                break;
+            case "middie":
+                pos = new Vector3(screenWidth * 0.5f, 0, 0);
+                break;
+        }
+        switch (alignY)
+        {
+            case "upper":
+                pos += new Vector3(0, screenHeight - cap - objHeight * 0.5f + cap, 0);
+                break;
+            case "center":
+                pos += new Vector3(0, screenHeight * 0.5f + cap, 0);
+                break;
+            case "lower":
+                pos += new Vector3(0, objHeight * 0.5f + cap, 0);
+                break;
+        }
+
+        return pos;
 
     }
     void cameraUpdate()
