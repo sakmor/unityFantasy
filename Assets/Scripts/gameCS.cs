@@ -70,6 +70,7 @@ public class gameCS : MonoBehaviour
         loadGame();
         mouseOrbitSet();
         setUIpos();
+        setPlayerBioCSList();
         // GameObject.Find("nodeInfo").AddComponent<nodeInfo>();
     }
 
@@ -87,6 +88,15 @@ public class gameCS : MonoBehaviour
         clickPointPos();
 
     }
+
+    void setPlayerBioCSList()
+    {
+        playerBioCSList[0].gameObject.AddComponent<DrawCircle>();
+        playerBioCSList[0].gameObject.GetComponent<LineRenderer>().startWidth = 0.3f;
+        playerBioCSList[0].gameObject.GetComponent<LineRenderer>().endWidth = 0.3f;
+        playerBioCSList[0].gameObject.GetComponent<LineRenderer>().material = Resources.Load("item/model/Materials/LineBeam", typeof(Material)) as Material;
+    }
+
     void clickPointPos()
     {
         if (playerBioCSList[0].getBioAnimation() == "mWalk")
@@ -332,11 +342,15 @@ public class gameCS : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
         {
             if (Camera.main.fieldOfView > 1)
+            {
                 Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView - 1, 60);
+                Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize - 1, 60);
+            }
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
         {
             Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
+            Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 60);
         }
     }
     void fellowPlayerCameraMove()

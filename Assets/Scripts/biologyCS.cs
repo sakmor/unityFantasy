@@ -82,9 +82,9 @@ public class biologyCS : MonoBehaviour
     biologyCS targetCS;
 
     // Use this for initialization
-    public biologyCS(gameCS parent)
+    public biologyCS(gameCS aparent)
     {
-        maingameCS = parent;
+        maingameCS = aparent;
     }
     void Start()
     {
