@@ -37,6 +37,8 @@ public class DrawCircle : MonoBehaviour
     private float _previousOffsetValue;
     private Axis _previousAxisValue;
 
+    public float linePrecent = 0;
+    float _linePrecent = 0;
     private LineRenderer _line;
 
     void Start()
@@ -59,7 +61,8 @@ public class DrawCircle : MonoBehaviour
                 _previousHorizRadiusValue != _horizRadius ||
                 _previousVertRadiusValue != _vertRadius ||
                 _previousOffsetValue != _offset ||
-                _previousAxisValue != _axis)
+                _previousAxisValue != _axis ||
+                _linePrecent != linePrecent)
             {
                 CreatePoints();
             }
@@ -75,6 +78,7 @@ public class DrawCircle : MonoBehaviour
         _previousVertRadiusValue = _vertRadius;
         _previousOffsetValue = _offset;
         _previousAxisValue = _axis;
+        _linePrecent = linePrecent;
     }
 
     void CreatePoints()
@@ -111,7 +115,7 @@ public class DrawCircle : MonoBehaviour
                     break;
             }
 
-            angle += (360f / _segments);
+            angle += (360f / _segments * linePrecent);
         }
     }
 }

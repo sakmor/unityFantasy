@@ -731,10 +731,7 @@ public class biologyCS : MonoBehaviour
                 break;
         }
 
-        if (!anim.IsPlaying("mWalk") && !anim.IsPlaying("mWait"))
-        {
-            bioStop();
-        }
+
 
         if (anim.IsPlaying("Wait") && HP > 0)
         {
@@ -790,7 +787,7 @@ public class biologyCS : MonoBehaviour
             else
             {
 
-                var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere2);
+                var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere3);
 
                 if (this.bioAnimation == "mWalk")
                 {
@@ -802,7 +799,7 @@ public class biologyCS : MonoBehaviour
                     }
                     else
                     {
-                        if (Sphere2Distance < 1)
+                        if (Sphere2Distance > 1)
                         {
                             // Debug.Log("PathfindingCS");
                             Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
