@@ -10,6 +10,7 @@ public class gameBits
     List<string> actionList = new List<string>();
     GameObject[] allBiologys;
     biologyCS parent;
+    DrawCircle DrawCircle;
 
     int bioCamp, gameBitsNO;
     string leaderName;
@@ -18,6 +19,7 @@ public class gameBits
 
     public gameBits(biologyCS parent)
     {
+        DrawCircle = parent.GetComponent<DrawCircle>();
         actionIsOn = false;
         allBiologys = parent.allBiologys;
         // target = parent.getTarget();
@@ -43,13 +45,14 @@ public class gameBits
     void actionTimeRun()
     {
 
-        if (nowActionTime <= 1)
+        if (nowActionTime < 1)
         {
             nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26; //todo:26應該改為自動換算介面長度
-            GameObject.Find("ActionBarLine").transform.localScale = new Vector3(Mathf.Floor(nowActionTime * 26), 1, 1);
+            DrawCircle.setLinePrecent(nowActionTime);
         }
         else
         {
+            DrawCircle.blink();
             if (parent.HP > 0)
                 decide2Action();
         }

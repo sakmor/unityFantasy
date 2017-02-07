@@ -104,9 +104,6 @@ public class gameCS : MonoBehaviour
     void setPlayerBioCSList()
     {
         playerBioCSList[0].gameObject.AddComponent<DrawCircle>();
-        playerBioCSList[0].gameObject.GetComponent<LineRenderer>().startWidth = 0.3f;
-        playerBioCSList[0].gameObject.GetComponent<LineRenderer>().endWidth = 0.3f;
-        playerBioCSList[0].gameObject.GetComponent<LineRenderer>().material = Resources.Load("item/model/Materials/LineBeam", typeof(Material)) as Material;
     }
 
     void clickPointPos()
@@ -133,7 +130,6 @@ public class gameCS : MonoBehaviour
 
         logText.transform.position = getuiPosByScreen(logText, 0, "right", "center");
         GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower");
-        GameObject.Find("ActionBar").transform.position = getuiPosByScreen(GameObject.Find("ActionBar"), 15, "right", "upper");
 
         // GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
 

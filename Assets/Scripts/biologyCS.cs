@@ -8,6 +8,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Animation))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(DrawCircle))]
 // [RequireComponent(typeof(BoxCollider))]
 
 public class biologyCS : MonoBehaviour
@@ -89,12 +90,12 @@ public class biologyCS : MonoBehaviour
     void Start()
     {
         GetComponent<Animation>().playAutomatically = false;
-
+        maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         //如果該生物在玩家清單，改變陣營為玩家。
         LV = 50;                    //todo:應該記錄在生物表
         checkBioCamp();
         bioAction = "";
-        maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+
 
         if (bioCamp == 1) model = this.transform.FindChild("Model").gameObject; //todo:因為美術資源用別人的，只好先寫死
         if (bioCamp == 0) model = this.transform.FindChild("Group Locator/Knight").gameObject; //todo:因為美術資源用別人的，只好先寫死
@@ -963,6 +964,7 @@ public class biologyCS : MonoBehaviour
         biologyListData[5] = maingameCS.biologyList.biodata[biologyNumber + 5 + biologyNumber * biologyListData.Length - biologyNumber]; //hitTime
         hitTime = biologyListData[5];                                                                                                             //調整生物縮放值
         transform.localScale = new Vector3(biologyListData[4], biologyListData[4], biologyListData[4]);
+        GetComponent<DrawCircle>().setScale(biologyListData[2]);
         this.WalkSteptweek = biologyListData[0];
     }
     void setTargeLine()
@@ -1023,7 +1025,6 @@ public class biologyCS : MonoBehaviour
     }
     void checkBioCamp()
     {
-        maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
         bioType = (bioCamp == 0) ? 0 : 1;
         setValueByBioType();

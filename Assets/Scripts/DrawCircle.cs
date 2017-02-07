@@ -1,4 +1,5 @@
 using UnityEngine;
+using myMath;
 
 [RequireComponent(typeof(LineRenderer))]
 
@@ -21,7 +22,7 @@ public class DrawCircle : MonoBehaviour
 
     [SerializeField]
     [Tooltip("The offset will be applied in the direction of the axis.")]
-    private float _offset = 30;
+    private float _offset = 0.75f;
 
     [SerializeField]
     [Tooltip("The axis about which the circle is drawn.")]
@@ -37,21 +38,52 @@ public class DrawCircle : MonoBehaviour
     private float _previousOffsetValue;
     private Axis _previousAxisValue;
 
-    public float linePrecent = 0;
-    float _linePrecent = 0;
+    private float linePrecent = 0;
+    private float _linePrecent = 0;
     private LineRenderer _line;
+    private Renderer rend;
+    private float lastBlinkTime;
 
     void Start()
     {
+        rend = GetComponent<Renderer>();
         _line = gameObject.GetComponent<LineRenderer>();
-
         _line.SetVertexCount(_segments + 1);
         _line.useWorldSpace = false;
-
+        _line.startWidth = 0.3f;
+        _line.endWidth = 0.3f;
+        _line.material = Resources.Load("item/model/Materials/LineBeam", typeof(Material)) as Material;
         UpdateValuesChanged();
-
         CreatePoints();
     }
+
+    public void setLinePrecent(float n)
+    {
+        linePrecent = Mathf.Clamp(n, 0, 1);
+
+    }
+    public void setScale(float nA)
+    {
+
+        nA *= 0.05f;
+        _horizRadius *= nA;
+        _vertRadius *= nA;
+
+    }
+    public void blink()
+    {
+        Color tempColor = rend.material.GetColor("_Color");
+        if (tempColor.a >= 1f)
+            tempColor -= new Color(0, 0, 0, 0.1f);
+
+        if (tempColor.a <= 0f)
+            tempColor += new Color(0, 0, 0, 0.1f);
+
+        rend.material.SetColor("_Color", tempColor);
+
+    }
+
+
 
     void Update()
     {
@@ -91,7 +123,8 @@ public class DrawCircle : MonoBehaviour
 
         float x;
         float y;
-        float z = _offset;
+        //除localScale，目的是讓高度不隨模型放大縮小改變
+        float z = _offset / transform.localScale.y;
 
         float angle = 0f;
 
