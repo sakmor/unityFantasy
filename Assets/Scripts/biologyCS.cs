@@ -64,14 +64,14 @@ public class biologyCS : MonoBehaviour
     public float LV, ATTACK, HP, DEF, HPMAX;
     float lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players;
-    public float targetDistance;
+
     Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
-    bool runBack;
+    public bool isPlayer = false, runBack;
     internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
     GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
     gameCS maingameCS;
     BoxCollider bioCollider;
-    string bioAnimation, nameShort, bioDataPath, leaderName, bioAction;
+    string bioAnimation, nameShort, bioDataPath, leaderNumber, bioAction;
     bool isVisible, effectIsOn, isEnable = false;
     public Transform target;
     float[] biologyListData = new float[6];
@@ -89,6 +89,7 @@ public class biologyCS : MonoBehaviour
     }
     void Start()
     {
+        bioStop();
         GetComponent<Animation>().playAutomatically = false;
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         //如果該生物在玩家清單，改變陣營為玩家。
@@ -145,25 +146,13 @@ public class biologyCS : MonoBehaviour
     void Update()
     {
 
-        if (this.name == maingameCS.Player.name)
-        {
-            this._movment();
-            this._bioAnimation();
-            this._bioAction();
-            this.gameBits.Update();
-            this.updateUI();
-            this.effect();
-        }
-        else
-        {
+        this._movment();
+        this._bioAnimation();
+        this._bioAction();
+        this.effect();
+        this.gameBits.Update();
+        this.updateUI();
 
-            this._movment();
-            this._bioAnimation();
-            this._bioAction();
-            this.effect();
-            this.gameBits.Update();
-            this.updateUI();
-        }
 
     }
     void setEffect()
@@ -422,9 +411,9 @@ public class biologyCS : MonoBehaviour
     {
         return seeMax;
     }
-    public string getLeadername()
+    public string getleaderNumber()
     {
-        return leaderName;
+        return leaderNumber;
     }
     public int getBioCamp()
     {
@@ -539,7 +528,7 @@ public class biologyCS : MonoBehaviour
     }
     void shakeThisModel()
     {
-        if (this.name != maingameCS.Player.name)
+        if (isPlayer)
         {
             this.transform.position += new Vector3(
                 UnityEngine.Random.Range(-0.15f, 0.15f), 0, UnityEngine.Random.Range(-0.15f, 0.15f));
@@ -750,7 +739,7 @@ public class biologyCS : MonoBehaviour
             this.bioAnimation = "mWalk";
 
         //如果該生物是被使用者操控的
-        if (maingameCS.Player.name == this.name)
+        if (isPlayer)
         {
             //如果使用者操作搖桿
             if (maingameCS.clickStart &&
@@ -1012,6 +1001,11 @@ public class biologyCS : MonoBehaviour
         }
         return true;
     }
+
+    public void setIsPlayer(bool n)
+    {
+        isPlayer = n;
+    }
     void OnCollisionEnter(Collision collision)
     {
         if (this.bioType == 0)
@@ -1025,9 +1019,10 @@ public class biologyCS : MonoBehaviour
     }
     void checkBioCamp()
     {
-        bioCamp = (maingameCS.checkPlayerBioCSListByName(this.name)) ? 0 : 1;
+        bioCamp = (this.tag == "Player") ? 0 : 1;
         bioType = (bioCamp == 0) ? 0 : 1;
         setValueByBioType();
+
     }
 
 }

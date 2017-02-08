@@ -22,9 +22,8 @@ public class gameBits
         DrawCircle = parent.GetComponent<DrawCircle>();
         actionIsOn = false;
         allBiologys = parent.allBiologys;
-        // target = parent.getTarget();
         bioCamp = parent.getBioCamp();
-        leaderName = parent.getLeadername();
+        leaderName = parent.getleaderNumber();
         seeMax = parent.getSeeMax();
         Transform = parent.getTransform();
         this.parent = parent;

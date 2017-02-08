@@ -6,7 +6,7 @@ using UnityEngine;
 public class mouseOrbit : MonoBehaviour
 {
 
-    public Transform target;
+
     public float distance = 10.0f;
     public float xSpeed = 5.0f;
     public float ySpeed = 5.0f;
@@ -102,13 +102,13 @@ public class mouseOrbit : MonoBehaviour
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 
 
-        Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.position + targetMove;
+        Vector3 position = rotation * new Vector3(0.0f, 0.0f, -distance) + maingameCS.getPlayerPos() + targetMove;
 
         transform.rotation = rotation;
         transform.position = position;
 
         //更新攝影機與目標的相對位置
-        maingameCS.cameraRELtarget = maingameCS.mainCamera.transform.position - maingameCS.Player.transform.position;
+        maingameCS.cameraRELtarget = maingameCS.mainCamera.transform.position - maingameCS.getPlayerPos();
 
     }
 

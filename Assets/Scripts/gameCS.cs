@@ -9,7 +9,7 @@ public class gameCS : MonoBehaviour
         Vector2>();
 
     //GameObject
-    public GameObject mainCamera, mainCamera2, Player, cameraRightBTN, cameraLeftBTN;
+    public GameObject mainCamera, mainCamera2, cameraRightBTN, cameraLeftBTN;
     GameObject clickPoint, cammeraStickMouse, Cube, hitUIObject, moveStickMouse, moveStick, cammeraStick, logText, fpsText;
     GameObject[] players = new GameObject[2];
 
@@ -22,6 +22,9 @@ public class gameCS : MonoBehaviour
 
     //float----------------------------
     float stickSensitive = 5;
+
+    //int-------------------------------
+    public int playerNumber = 0;
 
     //String----------------------------
     public string hitUIObjectName = "";
@@ -39,10 +42,13 @@ public class gameCS : MonoBehaviour
     //UnityEngine ----------------------------
     Camera camera1, camera2;
     // Use this for initialization
+    Transform Player;
     void Start()
     {
+        setBio(); //替場景所有生物加上biologyCS.cs
+        setPlayer(0);
+
         clickPoint = GameObject.Find("Sphere3");
-        setBio();
         logText = GameObject.Find("logText");
         fpsText = GameObject.Find("fpsText");
         fpsText.AddComponent<FramesPerSecond>();
@@ -53,14 +59,11 @@ public class gameCS : MonoBehaviour
         moveStick = GameObject.Find("moveStick");
         Cube = GameObject.Find("Cube");
 
-        Player = GameObject.Find("Cha_Knight");//todo:玩家不一定是用Cha_Knight
-
         mainCamera = GameObject.Find("mainCamera");
         mainCamera2 = GameObject.Find("mainCamera2");
-        playerBioCSList.Add(Player.GetComponent<biologyCS>());
         cammeraStick = GameObject.Find("cammeraStick");
 
-        cameraRELtarget = mainCamera.transform.position - Player.transform.position;
+        cameraRELtarget = mainCamera.transform.position - Player.position;
         camera1 = mainCamera.GetComponent<Camera>();
         camera2 = mainCamera2.GetComponent<Camera>();
         camera1.enabled = true;
@@ -71,13 +74,13 @@ public class gameCS : MonoBehaviour
         mouseOrbitSet();
         setUIpos();
         setPlayerBioCSList();
-        // GameObject.Find("nodeInfo").AddComponent<nodeInfo>();
+        // GameObject.Find ("nodeInfo").AddComponent<nodeInfo>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // allBioupdate(1);
+        // allBioupdate (1);
         cameraUpdate();
         mouseOrTouch();
         inputHitScene();
@@ -131,7 +134,7 @@ public class gameCS : MonoBehaviour
         logText.transform.position = getuiPosByScreen(logText, 0, "right", "center");
         GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower");
 
-        // GameObject.Find("playerINFO").transform.position = new Vector3(UnityEngine.Screen.width - 230, 30, 0);
+        // GameObject.Find ("playerINFO").transform.position = new Vector3 (UnityEngine.Screen.width - 230, 30, 0);
 
     }
 
@@ -238,10 +241,10 @@ public class gameCS : MonoBehaviour
                 }
 
                 //控制攝影機--香菇頭左右
-                mainCamera.transform.RotateAround(Player.transform.position, Vector3.up, (hitUIObject.transform.position.x - cammeraStickMouse.transform.position.x) * Time.deltaTime);
+                mainCamera.transform.RotateAround(Player.position, Vector3.up, (hitUIObject.transform.position.x - cammeraStickMouse.transform.position.x) * Time.deltaTime);
 
                 //控制攝影機--香菇頭上下
-                var camera2PlayerVector = mainCamera.transform.position - Player.transform.position;
+                var camera2PlayerVector = mainCamera.transform.position - Player.position;
                 var tempVector = camera2PlayerVector;
                 tempVector.y = 0;
                 tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
@@ -251,17 +254,17 @@ public class gameCS : MonoBehaviour
                 {
                     if (Vector3.Angle(camera2PlayerVector, Vector3.up) >= 10)
                     {
-                        mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
+                        mainCamera.transform.RotateAround(Player.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                     }
                 }
                 else
                 if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
                 {
-                    mainCamera.transform.RotateAround(Player.transform.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
+                    mainCamera.transform.RotateAround(Player.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                 }
 
                 //更新攝影機與目標的相對位置
-                cameraRELtarget = mainCamera.transform.position - Player.transform.position;
+                cameraRELtarget = mainCamera.transform.position - Player.position;
 
             }
             //如果點選到了移動搖桿
@@ -338,7 +341,7 @@ public class gameCS : MonoBehaviour
     void lineDecte()
     {
         float yScaleUP = mainCamera.GetComponent<mouseOrbit>().targetMove.y;
-        Vector3 target = Player.transform.position;
+        Vector3 target = Player.position;
         target.y += yScaleUP;
 
         Vector3 tempPick;
@@ -367,29 +370,29 @@ public class gameCS : MonoBehaviour
         }
     }
     //todo:好像沒用到了
-    // void mouseLineDecte()
+    // void mouseLineDecte ()
     // {
-    //     if (Input.GetMouseButtonUp(0))
+    //     if (Input.GetMouseButtonUp (0))
     //     {
     //         Vector3 tempPick, tempPick2;
     //         //滑鼠點擊取得做標點
-    //         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //         Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
     //         if (hitUIObjectName == "" &&
-    //             5.0f > Vector2.Distance(mouseStartPOS, Input.mousePosition))
+    //             5.0f > Vector2.Distance (mouseStartPOS, Input.mousePosition))
     //         {
-    //             for (var i = 0; i < Mathf.Floor(mainCamera.transform.position.y); i++)
+    //             for (var i = 0; i < Mathf.Floor (mainCamera.transform.position.y); i++)
     //             {
-    //                 tempPick = ray.GetPoint(i);
-    //                 tempPick2.x = Mathf.Floor(tempPick.x + 0.5f);
-    //                 tempPick2.z = Mathf.Floor(tempPick.z + 0.5f);
-    //                 tempPick2.y = Mathf.Floor(tempPick.y) + 0.5f;
+    //                 tempPick = ray.GetPoint (i);
+    //                 tempPick2.x = Mathf.Floor (tempPick.x + 0.5f);
+    //                 tempPick2.z = Mathf.Floor (tempPick.z + 0.5f);
+    //                 tempPick2.y = Mathf.Floor (tempPick.y) + 0.5f;
 
-    //                 if (GameObject.Find(tempPick2.ToString("F0")))
+    //                 if (GameObject.Find (tempPick2.ToString ("F0")))
     //                 {
-    //                     groundPlane.Set3Points(
-    //                         new Vector3(1.0f, tempPick.y + 0.5f, 0.0f),
-    //                         new Vector3(0.0f, tempPick.y + 0.5f, 1.0f),
-    //                         new Vector3(1.0f, tempPick.y + 0.5f, 1.0f));
+    //                     groundPlane.Set3Points (
+    //                         new Vector3 (1.0f, tempPick.y + 0.5f, 0.0f),
+    //                         new Vector3 (0.0f, tempPick.y + 0.5f, 1.0f),
+    //                         new Vector3 (1.0f, tempPick.y + 0.5f, 1.0f));
     //                     break;
     //                 }
     //             }
@@ -403,8 +406,8 @@ public class gameCS : MonoBehaviour
         //滑鼠滾輪縮放攝影機
         if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
         {
-            if (Camera.main.fieldOfView > 1
-                && Camera.main.orthographicSize > 1)
+            if (Camera.main.fieldOfView > 1 &&
+                Camera.main.orthographicSize > 1)
             {
                 Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView - 1, 60);
                 Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize - 1, 60);
@@ -413,8 +416,8 @@ public class gameCS : MonoBehaviour
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
         {
-            if (Camera.main.fieldOfView < 50
-                && Camera.main.orthographicSize < 6)
+            if (Camera.main.fieldOfView < 50 &&
+                Camera.main.orthographicSize < 6)
             {
                 Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
                 Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 60);
@@ -423,8 +426,8 @@ public class gameCS : MonoBehaviour
     }
     void fellowPlayerCameraMove()
     {
-        mainCamera.transform.position = cameraRELtarget + Player.transform.position;
-        mainCamera.transform.LookAt(new Vector3(Player.transform.position.x, Player.transform.position.y + 2.0f, Player.transform.position.z));
+        mainCamera.transform.position = cameraRELtarget + Player.position;
+        mainCamera.transform.LookAt(new Vector3(Player.position.x, Player.position.y + 2.0f, Player.position.z));
 
     }
 
@@ -466,25 +469,35 @@ public class gameCS : MonoBehaviour
         Mesh tempMesh = new Mesh();
 
         //todo：之後要讀設定檔
-        // cubeArrayTxt.Add("10001");
-        // cubeArrayTxt.Add("10002");
-        // cubeArrayTxt.Add("10003");
-        // cubeArrayTxt.Add("10004");
-        // cubeArrayTxt.Add("10005");
-        // cubeArrayTxt.Add("10017");
-        // cubeArrayTxt.Add("10020");
-        // cubeArrayTxt.Add("10045");
-        // cubeArrayTxt.Add("10098");
+        // cubeArrayTxt.Add ("10001");
+        // cubeArrayTxt.Add ("10002");
+        // cubeArrayTxt.Add ("10003");
+        // cubeArrayTxt.Add ("10004");
+        // cubeArrayTxt.Add ("10005");
+        // cubeArrayTxt.Add ("10017");
+        // cubeArrayTxt.Add ("10020");
+        // cubeArrayTxt.Add ("10045");
+        // cubeArrayTxt.Add ("10098");
 
     }
     void setBio()
-    {        //將所有生物套上biologyCS;
+    { //將所有生物套上biologyCS;
         allBiologys = GameObject.FindGameObjectsWithTag("biology");
         foreach (GameObject thisBiology in allBiologys)
         {
             biologyCS temp = new biologyCS(this);
             thisBiology.AddComponent<biologyCS>();
         }
+
+        allBiologys = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject thisBiology in allBiologys)
+        {
+            biologyCS temp = new biologyCS(this);
+            thisBiology.AddComponent<biologyCS>();
+            addPlayerBioList(thisBiology.GetComponent<biologyCS>());
+        }
+        Debug.Log(playerBioCSList.Count);
+
         TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
         biologyList = JsonUtility.FromJson<biologyList>(json.text);
     }
@@ -504,18 +517,18 @@ public class gameCS : MonoBehaviour
             string name = tempVector3.ToString("F0");
 
             //檢查是否已經存在於unity scene中
-            // if (GameObject.Find(name))
+            // if (GameObject.Find (name))
             // {
-            //     string meshname = GameObject.Find(name).GetComponent<MeshFilter>().sharedMesh.name;
-            //     if (meshname == scene.cubeArray[i + 3].ToString("F0"))
+            //     string meshname = GameObject.Find (name).GetComponent<MeshFilter>().sharedMesh.name;
+            //     if (meshname == scene.cubeArray [i + 3].ToString ("F0"))
             //     {
-            //         Debug.Log("break");
+            //         Debug.Log ("break");
             //         break;
             //     }
             // }
 
             //新增CUBE
-            GameObject temp = Instantiate(GameObject.Find("Cube"));//todo:Cube可以不需要用Find的方式
+            GameObject temp = Instantiate(GameObject.Find("Cube")); //todo:Cube可以不需要用Find的方式
             temp.transform.parent = Cubes.transform;
             temp.transform.position = tempVector3;
             temp.name = name;
@@ -545,7 +558,6 @@ public class gameCS : MonoBehaviour
     void mouseOrbitSet()
     {
         mainCamera.AddComponent<mouseOrbit>();
-        mainCamera.GetComponent<mouseOrbit>().target = Player.transform;
         mainCamera.GetComponent<mouseOrbit>().targetMove = new Vector3(0, 2, 0);
     }
     void mouseOrTouch()
@@ -568,14 +580,14 @@ public class gameCS : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             groundPlane.Set3Points(
-                new Vector3(1.0f, Player.transform.position.y, 0.0f),
-                new Vector3(0.0f, Player.transform.position.y, 1.0f),
-                new Vector3(1.0f, Player.transform.position.y, 1.0f));
-            //        mouseLineDecte();
+                new Vector3(1.0f, Player.position.y, 0.0f),
+                new Vector3(0.0f, Player.position.y, 1.0f),
+                new Vector3(1.0f, Player.position.y, 1.0f));
+            //        mouseLineDecte ();
 
             //滑鼠點擊取得做標點
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            float rayDistance;      //todo:這裡沒有指定距離真的沒問題？
+            float rayDistance; //todo:這裡沒有指定距離真的沒問題？
             if (hitUIObjectName == "" &&
                 5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
                 groundPlane.Raycast(ray, out rayDistance))
@@ -583,9 +595,9 @@ public class gameCS : MonoBehaviour
                 var tempVector3 = ray.GetPoint(rayDistance);
                 tempVector3 = normalized(tempVector3);
                 //todo:留者參考用，沒問題可刪除
-                //tempVector3.x = Mathf.Floor(tempVector3.x + 0.5f);
-                //tempVector3.z = Mathf.Floor(tempVector3.z + 0.5f);
-                //tempVector3.y = Mathf.Floor(tempVector3.y) - 0.5f;
+                //tempVector3.x = Mathf.Floor (tempVector3.x + 0.5f);
+                //tempVector3.z = Mathf.Floor (tempVector3.z + 0.5f);
+                //tempVector3.y = Mathf.Floor (tempVector3.y) - 0.5f;
 
                 if (cubesDictionary.ContainsKey(normalized(tempVector3)))
                 {
@@ -593,7 +605,7 @@ public class gameCS : MonoBehaviour
                     if (tag == 1)
                     {
                         var temp3 = ray.GetPoint(rayDistance);
-                        playerBioCSList[0].bioGoto(ray.GetPoint(rayDistance));
+                        playerBioCSList[playerNumber].bioGoto(ray.GetPoint(rayDistance));
                         logg("前往座標：x:" + temp3.x.ToString("f2") + ",y:" + temp3.z.ToString("f2"));
                     }
                     else
@@ -612,7 +624,7 @@ public class gameCS : MonoBehaviour
             )
             {
 
-                // Debug.Log('' + mouseHitPlane.transform.tag);
+                // Debug.Log ('' + mouseHitPlane.transform.tag);
                 switch (mouseHitPlane.transform.tag)
                 {
                     case "Cube":
@@ -642,7 +654,10 @@ public class gameCS : MonoBehaviour
         float eDistAtoB = Mathf.Sqrt(Mathf.Pow(b[0] - a[0], 2) + Mathf.Pow(b[1] - a[1], 2));
 
         // compute the direction vector d from a to b
-        float[] d = { (b[0] - a[0]) / eDistAtoB, (b[1] - a[1]) / eDistAtoB };
+        float[] d = {
+            (b [0] - a [0]) / eDistAtoB,
+            (b [1] - a [1]) / eDistAtoB
+        };
 
         // Now the line equation is x = dx*t + ax, y = dy*t + ay with 0 <= t <= 1.
 
@@ -666,7 +681,7 @@ public class gameCS : MonoBehaviour
             var fcoords0 = ((t - dt) * d[0]) + a[0];
             var fcoords1 = ((t - dt) * d[1]) + a[1];
             // check if f lies on the line
-            //        f.onLine = is_on(a, b, f.coords);
+            //        f.onLine = is_on (a, b, f.coords);
 
             // compute second intersection point
             var gcoords0 = ((t + dt) * d[0]) + a[0];
@@ -689,23 +704,60 @@ public class gameCS : MonoBehaviour
     {
         return cubesDictionary;
     }
-    public bool checkPlayerBioCSListByName(string n)
-    {
-        foreach (var i in playerBioCSList)
-        {
-            if (i.name == n)
-            {
-                return true;
-            }
 
-        }
-        return false;
+    void addPlayerBioList(biologyCS n)
+    {
+        playerBioCSList.Add(n);
     }
+
     public GameObject[] getAllBiologys()
     {
         return allBiologys;
+    }
+
+    public string getPlayerName()
+    {
+        return Player.name;
 
     }
+    public Vector3 getPlayerPos()
+    {
+        return Player.position;
+
+    }
+    public void changePlayerLeft()
+    {
+        playerBioCSList[playerNumber].setIsPlayer(false);
+        playerNumber -= 1;
+        if (playerNumber < 0)
+        {
+            Debug.Log(playerBioCSList.Count);
+            playerNumber = playerBioCSList.Count - 1;
+            Debug.Log(playerNumber);
+        }
+
+        setPlayer(playerNumber);
+    }
+
+    public void changePlayerRight()
+    {
+        playerBioCSList[playerNumber].setIsPlayer(false);
+        playerNumber += 1;
+        if (playerNumber > (playerBioCSList.Count - 1))
+        {
+            playerNumber = 0;
+        }
+        setPlayer(playerNumber);
+    }
+
+    public void setPlayer(int n)
+    {
+        playerBioCSList[n].setIsPlayer(true);
+        Player = playerBioCSList[n].transform;
+
+    }
+
+
 
 }
 public class scene
