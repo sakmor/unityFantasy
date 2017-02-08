@@ -36,6 +36,8 @@ public class DrawCircle : MonoBehaviour
     private float _previousHorizRadiusValue;
     private float _previousVertRadiusValue;
     private float _previousOffsetValue;
+
+    private float blinkDirect;
     private Axis _previousAxisValue;
 
     private float linePrecent = 0;
@@ -73,14 +75,21 @@ public class DrawCircle : MonoBehaviour
     public void blink()
     {
         Color tempColor = rend.material.GetColor("_Color");
+
         if (tempColor.a >= 1f)
-            tempColor -= new Color(0, 0, 0, 0.1f);
-
+            blinkDirect = -0.025f;
         if (tempColor.a <= 0f)
-            tempColor += new Color(0, 0, 0, 0.1f);
+            blinkDirect = 0.025f;
 
+        tempColor += new Color(0, 0, 0, blinkDirect);
         rend.material.SetColor("_Color", tempColor);
 
+    }
+
+    public void setAlpha()
+    {
+        Color tempColor = rend.material.GetColor("_Color");
+        rend.material.SetColor("_Color", new Color(tempColor.r, tempColor.g, tempColor.b, 1));
     }
 
 

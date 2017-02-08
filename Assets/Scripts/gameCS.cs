@@ -637,6 +637,7 @@ public class gameCS : MonoBehaviour
 
         }
     }
+    
     public Vector3 normalized(Vector3 pos)
     {
         Vector3 temp;

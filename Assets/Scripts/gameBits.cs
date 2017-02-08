@@ -48,6 +48,7 @@ public class gameBits
         {
             nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26; //todo:26應該改為自動換算介面長度
             DrawCircle.setLinePrecent(nowActionTime);
+            DrawCircle.setAlpha();
         }
         else
         {
