@@ -88,7 +88,7 @@ public class mouseOrbit : MonoBehaviour
         // y -= Input.GetAxis("Mouse Y") * ySpeed;
 
         if (orbitCamera)
-            x = MathS.easeInOutExpo(Time.time - orbitCameratime, startX, finalX, 0.5f);
+            x = MathS.easeInOutExpo(Time.time - orbitCameratime, startX, finalX, 0.25f);
         y = ClampAngle(y, yMinLimit, yMaxLimit);
 
         if (Time.time - orbitCameratime >= 0.5)

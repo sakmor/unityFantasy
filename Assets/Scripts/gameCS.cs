@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using myMath;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using myMath;
+
 
 public class gameCS : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class gameCS : MonoBehaviour
     GameObject[] players = new GameObject[2];
 
     //Dictionary、Array----------------------------
-    GameObject[] allBiologys;
+    List<GameObject> allBiologys = new List<GameObject>();
 
     //boolean----------------------------
     public bool touchScreen;
@@ -493,19 +494,21 @@ public class gameCS : MonoBehaviour
     }
     void setBio()
     { //將所有生物套上biologyCS;
-        allBiologys = GameObject.FindGameObjectsWithTag("biology");
-        foreach (GameObject thisBiology in allBiologys)
+        var tempAll = GameObject.FindGameObjectsWithTag("biology");
+        foreach (GameObject thisBiology in tempAll)
         {
             biologyCS temp = new biologyCS(this);
             thisBiology.AddComponent<biologyCS>();
+            allBiologys.Add(thisBiology);
         }
 
-        allBiologys = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject thisBiology in allBiologys)
+        tempAll = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject thisBiology in tempAll)
         {
             biologyCS temp = new biologyCS(this);
             thisBiology.AddComponent<biologyCS>();
             addPlayerBioList(thisBiology.GetComponent<biologyCS>());
+            allBiologys.Add(thisBiology);
         }
         Debug.Log(playerBioCSList.Count);
 
@@ -722,7 +725,7 @@ public class gameCS : MonoBehaviour
         playerBioCSList.Add(n);
     }
 
-    public GameObject[] getAllBiologys()
+    public List<GameObject> getAllBiologys()
     {
         return allBiologys;
     }
@@ -768,8 +771,6 @@ public class gameCS : MonoBehaviour
         Player = playerBioCSList[n].transform;
 
     }
-
-
 
 }
 public class scene

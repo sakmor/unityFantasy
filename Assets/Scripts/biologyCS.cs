@@ -67,7 +67,8 @@ public class biologyCS : MonoBehaviour
 
     Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     public bool isPlayer = false, runBack;
-    internal GameObject[] collisionCubes = new GameObject[28], allBiologys;
+    internal GameObject[] collisionCubes = new GameObject[28];
+    internal List<GameObject> allBiologys;
     GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
     gameCS maingameCS;
     BoxCollider bioCollider;

@@ -8,7 +8,7 @@ public class gameBits
     List<GameObject> battleBios = new List<GameObject>();
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
-    GameObject[] allBiologys;
+    List<GameObject> allBiologys;
     biologyCS parent;
     DrawCircle DrawCircle;
 
@@ -177,7 +177,7 @@ public class gameBits
             {
                 if (Vector3.Distance(Transform.position, t.transform.position) < seeMax)
                 {
-                    tempNew.Add(t);
+                    tempNew.Add(t.gameObject);
                 }
             }
             battleBios = tempNew;
