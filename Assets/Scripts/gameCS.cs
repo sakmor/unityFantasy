@@ -434,7 +434,7 @@ public class gameCS : MonoBehaviour
         //todo:可改為有必要才更新
         if (finalPosDist >= 0.01f)
         {
-            mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, finalPos, finalPosDist * 10 * Time.deltaTime + 0.01f);
+            mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, finalPos, finalPosDist * 10 * Time.deltaTime + 0.05f);
         }
         else
         {
@@ -510,7 +510,6 @@ public class gameCS : MonoBehaviour
             addPlayerBioList(thisBiology.GetComponent<biologyCS>());
             allBiologys.Add(thisBiology);
         }
-        Debug.Log(playerBioCSList.Count);
 
         TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
         biologyList = JsonUtility.FromJson<biologyList>(json.text);

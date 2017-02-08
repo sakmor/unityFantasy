@@ -9,7 +9,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(DrawCircle))]
-// [RequireComponent(typeof(BoxCollider))]
+// [RequireComponent (typeof (BoxCollider))]
 
 public class biologyCS : MonoBehaviour
 {
@@ -94,10 +94,9 @@ public class biologyCS : MonoBehaviour
         GetComponent<Animation>().playAutomatically = false;
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         //如果該生物在玩家清單，改變陣營為玩家。
-        LV = 50;                    //todo:應該記錄在生物表
+        LV = 50; //todo:應該記錄在生物表
         checkBioCamp();
         bioAction = "";
-
 
         if (bioCamp == 1) model = this.transform.FindChild("Model").gameObject; //todo:因為美術資源用別人的，只好先寫死
         if (bioCamp == 0) model = this.transform.FindChild("Group Locator/Knight").gameObject; //todo:因為美術資源用別人的，只好先寫死
@@ -105,18 +104,18 @@ public class biologyCS : MonoBehaviour
         allBiologys = maingameCS.getAllBiologys();
 
         attackCoolDown = 15;
-        actionSpeed = 15.2f;          //todo:應該記錄在c_biology.json
+        actionSpeed = 15.2f; //todo:應該記錄在c_biology.json
         players = 3;
         target = null;
         rotateSpeed = 15;
         runBack = false;
 
-        WalkSteptweek = 40;         //todo:應該記錄在biologyList.json
-        moveSpeed = 0.12f;          //todo:應該記錄在c_ai.json
-        runBackDist = 10f;           //todo:應該記錄在c_ai.json
-        seeMax = 15f;               //todo:應該記錄在c_ai.json
-        attackDistance = 2;         //todo:應該記錄在c_ai.json
-        catchSpeed = 0.05f;          //todo:應該記錄在c_ai.json
+        WalkSteptweek = 40; //todo:應該記錄在biologyList.json
+        moveSpeed = 0.12f; //todo:應該記錄在c_ai.json
+        runBackDist = 10f; //todo:應該記錄在c_ai.json
+        seeMax = 15f; //todo:應該記錄在c_ai.json
+        attackDistance = 2; //todo:應該記錄在c_ai.json
+        catchSpeed = 0.05f; //todo:應該記錄在c_ai.json
 
         GameObject.Find("playerINFO/P3/name").GetComponent<Text>().text = this.name;
         GameObject.Find("playerINFO/P3/HPMAX").GetComponent<Text>().text = HPMAX.ToString("F0");
@@ -154,7 +153,6 @@ public class biologyCS : MonoBehaviour
         this.gameBits.Update();
         this.updateUI();
 
-
     }
     void setEffect()
     {
@@ -176,8 +174,8 @@ public class biologyCS : MonoBehaviour
                     targetCS.addEffect("aniPause");
                     addEffect("aniPause");
                     targetCS.addEffect("hitEffect");
-                    // transform.FindChild("hitEffect");
-                    // GameObject.Find("hitEffect").GetComponent<hitEffect>().playEffect();
+                    // transform.FindChild ("hitEffect");
+                    // GameObject.Find ("hitEffect").GetComponent<hitEffect>().playEffect ();
                     return true;
                 }
                 break;
@@ -231,7 +229,8 @@ public class biologyCS : MonoBehaviour
                     case "playDamage":
                         if (bioCamp != 0)
                         {
-                            setBioAnimation("Damage"); anim.Play("Damage");
+                            setBioAnimation("Damage");
+                            anim.Play("Damage");
                         }
                         continue;
                 }
@@ -423,7 +422,6 @@ public class biologyCS : MonoBehaviour
     public void bioGoto(Vector3 v)
     {
         Sphere3 = v;
-        Sphere2 = v;
 
     }
     public void bioStop()
@@ -575,7 +573,7 @@ public class biologyCS : MonoBehaviour
 
                 break;
             default:
-                Debug.Log("biologyCS:_bioAction()--收到無效指令指令");
+                Debug.Log("biologyCS:_bioAction ()--收到無效指令指令");
                 return false;
         }
         //已正確執行完畢action時
@@ -654,16 +652,16 @@ public class biologyCS : MonoBehaviour
             foreach (AnimationState state in anim)
             {
                 //如果之前清單有撥放這個動畫，但現在沒有撥了
-                if (!anim.IsPlaying(state.name)
-                    && _playingAnims.Contains(state.name))
+                if (!anim.IsPlaying(state.name) &&
+                    _playingAnims.Contains(state.name))
                 {
                     justOverAnimList.Add(state.name);
                     _playingAnims.Remove(state.name);
                 }
 
                 //如果之前清單沒有撥放這個動畫，但現在正在撥了
-                if (anim.IsPlaying(state.name)
-                    && !_playingAnims.Contains(state.name))
+                if (anim.IsPlaying(state.name) &&
+                    !_playingAnims.Contains(state.name))
                 {
                     _playingAnims.Add(state.name);
                 }
@@ -675,14 +673,14 @@ public class biologyCS : MonoBehaviour
     {
         checkAnimation();
         //如果攻擊動作剛播完，回到wait狀態
-        if (justOverAnimList.Contains("Attack")
-            && HP > 0)
+        if (justOverAnimList.Contains("Attack") &&
+            HP > 0)
         {
             this.bioAnimation = "mWait";
         }
 
-        if (justOverAnimList.Contains("Damage")
-            && HP <= 0)
+        if (justOverAnimList.Contains("Damage") &&
+            HP <= 0)
         {
             this.bioAnimation = "mDead";
         }
@@ -722,8 +720,6 @@ public class biologyCS : MonoBehaviour
                 break;
         }
 
-
-
         if (anim.IsPlaying("Wait") && HP > 0)
         {
             this.bioAnimation = "mWait";
@@ -739,70 +735,67 @@ public class biologyCS : MonoBehaviour
         if (SphereDistance > 0.05f)
             this.bioAnimation = "mWalk";
 
-        //如果該生物是被使用者操控的
-        if (isPlayer)
+        //如果使用者操作搖桿
+        if (maingameCS.clickStart &&
+            isPlayer &&
+            maingameCS.hitUIObjectName == "moveStick")
         {
-            //如果使用者操作搖桿
-            if (maingameCS.clickStart &&
-                maingameCS.hitUIObjectName == "moveStick")
+
+            this.bioAnimation = "mWalk";
+
+            //自搖桿取得的移動向量直
+            Sphere.x = maingameCS.mouseDragVector.x;
+            Sphere.z = maingameCS.mouseDragVector.z;
+
+            //轉換搖桿向量至角色位置
+            float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 270;
+            float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
+
+            float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+            tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+
+            Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Angle + tempAngel * Mathf.Rad2Deg, r);
+            Sphere2.x = temp.x;
+            Sphere2.z = temp.z;
+            Sphere2.y = this.transform.position.y;
+
+            // //將spere2依據攝影機位置做座標轉換
+            // float tempAngel = Vector3.Angle (maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+            // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+            // Sphere2.x = Sphere.x * Mathf.Cos (tempAngel) - Sphere.z * Mathf.Sin (tempAngel) + this.transform.position.x;
+            // Sphere2.z = Sphere.x * Mathf.Sin (tempAngel) + Sphere.z * Mathf.Cos (tempAngel) + this.transform.position.z;
+            // Sphere2.y = this.transform.position.y;
+
+            SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
+        }
+        //如果使用者點擊螢幕操作
+        else
+        {
+
+            var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere3);
+
+            if (this.bioAnimation == "mWalk")
             {
-
-                this.bioAnimation = "mWalk";
-
-                //自搖桿取得的移動向量直
-                Sphere.x = maingameCS.mouseDragVector.x;
-                Sphere.z = maingameCS.mouseDragVector.z;
-
-                //轉換搖桿向量至角色位置
-                float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 270;
-                float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
-
-                float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-                tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-
-                Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Angle + tempAngel * Mathf.Rad2Deg, r);
-                Sphere2.x = temp.x;
-                Sphere2.z = temp.z;
-                Sphere2.y = this.transform.position.y;
-
-                // //將spere2依據攝影機位置做座標轉換
-                // float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-                // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-                // Sphere2.x = Sphere.x * Mathf.Cos(tempAngel) - Sphere.z * Mathf.Sin(tempAngel) + this.transform.position.x;
-                // Sphere2.z = Sphere.x * Mathf.Sin(tempAngel) + Sphere.z * Mathf.Cos(tempAngel) + this.transform.position.z;
-                // Sphere2.y = this.transform.position.y;
-
-                SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
-            }
-            //如果使用者點擊螢幕操作
-            else
-            {
-
-                var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere3);
-
-                if (this.bioAnimation == "mWalk")
+                //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
+                if (SphereDistance < 1 ||
+                    maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
                 {
-                    //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
-                    if (SphereDistance < 1 ||
-                        maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
+                    Sphere2 = Sphere3;
+                }
+                else
+                {
+                    if (Sphere2Distance > 1)
                     {
-                        Sphere2 = Sphere3;
-                    }
-                    else
-                    {
-                        if (Sphere2Distance > 1)
+                        // Debug.Log ("PathfindingCS");
+                        Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
+                        if (Sphere2 == new Vector3(-999, -999, -999))
                         {
-                            // Debug.Log("PathfindingCS");
-                            Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
-                            if (Sphere2 == new Vector3(-999, -999, -999))
-                            {
-                                maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
-                                Sphere2 = this.transform.position;
-                                Sphere3 = this.transform.position;
-                            }
+                            maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
+                            Sphere2 = this.transform.position;
+                            Sphere3 = this.transform.position;
                         }
-
                     }
+
                 }
             }
         }
@@ -932,7 +925,7 @@ public class biologyCS : MonoBehaviour
     void loadBiologyList()
     {
         string bioName = this.name;
-        if (bioName[0] == 'm')  //todo:生物角色有可能不是C開的
+        if (bioName[0] == 'm') //todo:生物角色有可能不是C開的
         {
             bioDataPath = "Biology";
             nameShort = "" + bioName[0] + bioName[1] + bioName[2] + bioName[3];
@@ -946,13 +939,13 @@ public class biologyCS : MonoBehaviour
         string[] drawNumbers = maingameCS.biologyList.drawNumber;
 
         int biologyNumber = Array.FindIndex(drawNumbers, n => n.Contains(nameShort));
-        biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length - biologyNumber];     //walkSteptweek
+        biologyListData[0] = maingameCS.biologyList.biodata[biologyNumber + biologyNumber * biologyListData.Length - biologyNumber]; //walkSteptweek
         biologyListData[1] = maingameCS.biologyList.biodata[biologyNumber + 1 + biologyNumber * biologyListData.Length - biologyNumber]; //center.y
         biologyListData[2] = maingameCS.biologyList.biodata[biologyNumber + 2 + biologyNumber * biologyListData.Length - biologyNumber]; //size.x
         biologyListData[3] = maingameCS.biologyList.biodata[biologyNumber + 3 + biologyNumber * biologyListData.Length - biologyNumber]; //size.y
         biologyListData[4] = maingameCS.biologyList.biodata[biologyNumber + 4 + biologyNumber * biologyListData.Length - biologyNumber]; //size.z
         biologyListData[5] = maingameCS.biologyList.biodata[biologyNumber + 5 + biologyNumber * biologyListData.Length - biologyNumber]; //hitTime
-        hitTime = biologyListData[5];                                                                                                             //調整生物縮放值
+        hitTime = biologyListData[5]; //調整生物縮放值
         transform.localScale = new Vector3(biologyListData[4], biologyListData[4], biologyListData[4]);
         GetComponent<DrawCircle>().setScale(biologyListData[2]);
         this.WalkSteptweek = biologyListData[0];

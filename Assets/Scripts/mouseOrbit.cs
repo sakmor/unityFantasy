@@ -53,20 +53,38 @@ public class mouseOrbit : MonoBehaviour
         {
             mouseOrbitSet();
         }
+        if (doLeftCount > 0)
+        {
+            _left();
+            doLeftCount--;
+        }
+
+        if (doRightCount > 0)
+        {
+            _right();
+            doRightCount--;
+        }
 
         if (orbitCamera)
         {
             mouseOrbitSet();
         }
     }
+    int doRightCount = 0;
+    int doLeftCount = 0;
     public void _right()
     {
         if (!orbitCamera)
         {
             orbitCameratime = Time.time;
-            finalX = 45;
+            finalX += 45;
             startX = x;
             orbitCamera = true;
+        }
+        else
+        {
+            doRightCount += 1;
+            doLeftCount = 0;
         }
     }
 
@@ -75,9 +93,14 @@ public class mouseOrbit : MonoBehaviour
         if (!orbitCamera)
         {
             orbitCameratime = Time.time;
-            finalX = -45;
+            finalX -= -45;
             startX = x;
             orbitCamera = true;
+        }
+        else
+        {
+            doLeftCount += 1;
+            doRightCount = 0;
         }
     }
 
