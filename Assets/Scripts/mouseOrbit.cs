@@ -21,10 +21,9 @@ public class mouseOrbit : MonoBehaviour
     private Rigidbody rigidbody;
 
     private gameCS maingameCS;
-    float x = 0.0f, startX = 0.0f, finalX = 0.0f;
-    float y = 0.0f;
+    float x = 0.0f, startX = 0.0f, finalX = 0.0f, y = 0.0f;
 
-    float stime = 0.0f;
+    float orbitCameratime = 0.0f, traceTime = 0.0f;
 
     // Use this for initialization
     void Start()
@@ -64,7 +63,7 @@ public class mouseOrbit : MonoBehaviour
     {
         if (!orbitCamera)
         {
-            stime = Time.time;
+            orbitCameratime = Time.time;
             finalX = 45;
             startX = x;
             orbitCamera = true;
@@ -75,7 +74,7 @@ public class mouseOrbit : MonoBehaviour
     {
         if (!orbitCamera)
         {
-            stime = Time.time;
+            orbitCameratime = Time.time;
             finalX = -45;
             startX = x;
             orbitCamera = true;
@@ -89,10 +88,10 @@ public class mouseOrbit : MonoBehaviour
         // y -= Input.GetAxis("Mouse Y") * ySpeed;
 
         if (orbitCamera)
-            x = MathS.easeInOutExpo(Time.time - stime, startX, finalX, 0.5f);
+            x = MathS.easeInOutExpo(Time.time - orbitCameratime, startX, finalX, 0.5f);
         y = ClampAngle(y, yMinLimit, yMaxLimit);
 
-        if (Time.time - stime >= 0.5)
+        if (Time.time - orbitCameratime >= 0.5)
         {
             orbitCamera = false;
         }

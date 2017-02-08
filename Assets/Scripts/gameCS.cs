@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using myMath;
 
 public class gameCS : MonoBehaviour
 {
@@ -424,11 +425,21 @@ public class gameCS : MonoBehaviour
             }
         }
     }
+
     void fellowPlayerCameraMove()
     {
-        mainCamera.transform.position = cameraRELtarget + Player.position;
-        mainCamera.transform.LookAt(new Vector3(Player.position.x, Player.position.y + 2.0f, Player.position.z));
-
+        var finalPos = cameraRELtarget + Player.position;
+        var finalPosDist = Vector3.Distance(mainCamera.transform.position, finalPos);
+        //todo:可改為有必要才更新
+        if (finalPosDist >= 0.01f)
+        {
+            mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, finalPos, finalPosDist * 10 * Time.deltaTime + 0.01f);
+        }
+        else
+        {
+            mainCamera.transform.LookAt(new Vector3(Player.position.x, Player.position.y + 2.0f, Player.position.z));
+            mainCamera.transform.position = finalPos;
+        }
     }
 
     public void logg(string n)
@@ -637,7 +648,7 @@ public class gameCS : MonoBehaviour
 
         }
     }
-    
+
     public Vector3 normalized(Vector3 pos)
     {
         Vector3 temp;
