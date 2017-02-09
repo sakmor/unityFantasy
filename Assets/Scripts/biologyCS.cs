@@ -84,10 +84,7 @@ public class biologyCS : MonoBehaviour
     biologyCS targetCS;
 
     // Use this for initialization
-    public biologyCS(gameCS aparent)
-    {
-        maingameCS = aparent;
-    }
+
     void Start()
     {
         bioStop();
@@ -138,10 +135,7 @@ public class biologyCS : MonoBehaviour
         loadAnimation();
         setEffect();
     }
-    public biologyCS()
-    {
 
-    }
     // Update is called once per frame
     void Update()
     {
@@ -153,7 +147,12 @@ public class biologyCS : MonoBehaviour
         this.gameBits.Update();
         this.updateUI();
 
+
     }
+
+
+
+
     void setEffect()
     {
         rend = model.GetComponent<Renderer>();
@@ -691,7 +690,7 @@ public class biologyCS : MonoBehaviour
             var boom = Instantiate(GameObject.Find("explosion"));
             boom.transform.position = this.transform.position;
             boom.GetComponent<Explosion>().Play();
-            bioAnimation = "mJump";
+            bioAnimation = "mHide";
         }
 
         //對應生物所處狀態，播放對應動作
@@ -714,7 +713,7 @@ public class biologyCS : MonoBehaviour
             case "mWait":
                 anim.CrossFade("Wait");
                 break;
-            case "mJump":
+            case "mHide":
                 this.transform.position -= new Vector3(0, 99, 0);
                 //todo:目前沒有使用
                 break;
@@ -999,6 +998,12 @@ public class biologyCS : MonoBehaviour
     public void setIsPlayer(bool n)
     {
         isPlayer = n;
+    }
+
+    public void setActionCancel()
+    {
+        gameBits.resetActionTime();
+
     }
     void OnCollisionEnter(Collision collision)
     {

@@ -77,7 +77,7 @@ public class mouseOrbit : MonoBehaviour
         if (!orbitCamera)
         {
             orbitCameratime = Time.time;
-            finalX += 45;
+            finalX = 45;
             startX = x;
             orbitCamera = true;
         }
@@ -93,7 +93,7 @@ public class mouseOrbit : MonoBehaviour
         if (!orbitCamera)
         {
             orbitCameratime = Time.time;
-            finalX -= -45;
+            finalX = -45;
             startX = x;
             orbitCamera = true;
         }

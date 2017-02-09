@@ -108,14 +108,14 @@ public class gameCS : MonoBehaviour
 
     void setPlayerBioCSList()
     {
-        playerBioCSList[0].gameObject.AddComponent<DrawCircle>();
+        playerBioCSList[playerNumber].gameObject.AddComponent<DrawCircle>();
     }
 
     void clickPointPos()
     {
-        if (playerBioCSList[0].getBioAnimation() == "mWalk")
+        if (playerBioCSList[playerNumber].getBioAnimation() == "mWalk")
         {
-            clickPoint.transform.position = playerBioCSList[0].getDestination();
+            clickPoint.transform.position = playerBioCSList[playerNumber].getDestination();
             clickPoint.GetComponent<Renderer>().enabled = true;
         }
         else
@@ -301,6 +301,7 @@ public class gameCS : MonoBehaviour
                 //控制生物移動
                 if (Vector2.Distance(myIputPostion, hitUIObject.transform.position) > 0)
                 {
+                    playerBioCSList[playerNumber].setActionCancel();
                     mouseDragVector.x = moveStickMouse.transform.localPosition.x / (_rect.height * 0.5f);
                     mouseDragVector.z = moveStickMouse.transform.localPosition.y / (_rect.width * 0.5f);
                 }
@@ -319,7 +320,7 @@ public class gameCS : MonoBehaviour
 
                 if (hitUIObjectName == "moveStick")
                 {
-                    playerBioCSList[0].bioStop();
+                    playerBioCSList[playerNumber].bioStop();
                 }
                 hitUIObjectName = "";
             }
@@ -497,7 +498,7 @@ public class gameCS : MonoBehaviour
         var tempAll = GameObject.FindGameObjectsWithTag("biology");
         foreach (GameObject thisBiology in tempAll)
         {
-            biologyCS temp = new biologyCS(this);
+            biologyCS temp = new biologyCS();
             thisBiology.AddComponent<biologyCS>();
             allBiologys.Add(thisBiology);
         }
@@ -505,7 +506,7 @@ public class gameCS : MonoBehaviour
         tempAll = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject thisBiology in tempAll)
         {
-            biologyCS temp = new biologyCS(this);
+            biologyCS temp = new biologyCS();
             thisBiology.AddComponent<biologyCS>();
             addPlayerBioList(thisBiology.GetComponent<biologyCS>());
             allBiologys.Add(thisBiology);
@@ -619,6 +620,7 @@ public class gameCS : MonoBehaviour
                     {
                         var temp3 = ray.GetPoint(rayDistance);
                         playerBioCSList[playerNumber].bioGoto(ray.GetPoint(rayDistance));
+                        playerBioCSList[playerNumber].setActionCancel();
                         logg("前往座標：x:" + temp3.x.ToString("f2") + ",y:" + temp3.z.ToString("f2"));
                     }
                     else

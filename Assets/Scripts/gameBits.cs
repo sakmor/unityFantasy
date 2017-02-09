@@ -9,6 +9,7 @@ public class gameBits
     List<string> decideList = new List<string>();
     List<string> actionList = new List<string>();
     List<GameObject> allBiologys;
+
     biologyCS parent;
     DrawCircle DrawCircle;
 
