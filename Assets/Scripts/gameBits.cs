@@ -29,8 +29,10 @@ public class gameBits
         Transform = parent.getTransform();
         this.parent = parent;
 
-        // decideList.Add("decideHpUnder50percentAlly");
-        // actionList.Add("actionHeal");
+
+        //todo:之後要各生物儲存
+        decideList.Add("decideHpUnder90percentAlly");
+        actionList.Add("actionHeal");
         decideList.Add("decideClosestEnemy");
         actionList.Add("actionAttack");
 
