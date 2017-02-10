@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
 public class gameCS : MonoBehaviour
 {
     Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
@@ -133,8 +132,8 @@ public class gameCS : MonoBehaviour
         moveStick.transform.position = getuiPosByScreen(moveStick, 15, "left", "lower");
         fpsText.transform.position = getuiPosByScreen(fpsText, 1, "left", "lower");
 
-        logText.transform.position = getuiPosByScreen(logText, 0, "right", "center");
-        GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower");
+        logText.transform.position = getuiPosByScreen(logText, 0, "right", "center") + new Vector3(300, 0, 0);
+        GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower") + new Vector3(300, 0, 0); ;
 
         // GameObject.Find ("playerINFO").transform.position = new Vector3 (UnityEngine.Screen.width - 230, 30, 0);
 
@@ -372,37 +371,6 @@ public class gameCS : MonoBehaviour
 
         }
     }
-    //todo:好像沒用到了
-    // void mouseLineDecte ()
-    // {
-    //     if (Input.GetMouseButtonUp (0))
-    //     {
-    //         Vector3 tempPick, tempPick2;
-    //         //滑鼠點擊取得做標點
-    //         Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-    //         if (hitUIObjectName == "" &&
-    //             5.0f > Vector2.Distance (mouseStartPOS, Input.mousePosition))
-    //         {
-    //             for (var i = 0; i < Mathf.Floor (mainCamera.transform.position.y); i++)
-    //             {
-    //                 tempPick = ray.GetPoint (i);
-    //                 tempPick2.x = Mathf.Floor (tempPick.x + 0.5f);
-    //                 tempPick2.z = Mathf.Floor (tempPick.z + 0.5f);
-    //                 tempPick2.y = Mathf.Floor (tempPick.y) + 0.5f;
-
-    //                 if (GameObject.Find (tempPick2.ToString ("F0")))
-    //                 {
-    //                     groundPlane.Set3Points (
-    //                         new Vector3 (1.0f, tempPick.y + 0.5f, 0.0f),
-    //                         new Vector3 (0.0f, tempPick.y + 0.5f, 1.0f),
-    //                         new Vector3 (1.0f, tempPick.y + 0.5f, 1.0f));
-    //                     break;
-    //                 }
-    //             }
-    //         }
-
-    //     }
-    // }
 
     void fellowPlayerCameraContorl()
     {
@@ -599,39 +567,9 @@ public class gameCS : MonoBehaviour
                 new Vector3(1.0f, Player.position.y, 1.0f));
             //        mouseLineDecte ();
 
-            //滑鼠點擊取得做標點
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            float rayDistance; //todo:這裡沒有指定距離真的沒問題？
-            if (hitUIObjectName == "" &&
-                5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
-                groundPlane.Raycast(ray, out rayDistance))
-            {
-                var tempVector3 = ray.GetPoint(rayDistance);
-                tempVector3 = normalized(tempVector3);
-                //todo:留者參考用，沒問題可刪除
-                //tempVector3.x = Mathf.Floor (tempVector3.x + 0.5f);
-                //tempVector3.z = Mathf.Floor (tempVector3.z + 0.5f);
-                //tempVector3.y = Mathf.Floor (tempVector3.y) - 0.5f;
-
-                if (cubesDictionary.ContainsKey(normalized(tempVector3)))
-                {
-                    float tag = cubesDictionary[tempVector3].y;
-                    if (tag == 1)
-                    {
-                        var temp3 = ray.GetPoint(rayDistance);
-                        playerBioCSList[playerNumber].bioGoto(ray.GetPoint(rayDistance));
-                        playerBioCSList[playerNumber].setActionCancel();
-                        logg("前往座標：x:" + temp3.x.ToString("f2") + ",y:" + temp3.z.ToString("f2"));
-                    }
-                    else
-                    {
-                        logg("<color=red>點擊到不可走區域了</color>");
-                    }
-                }
-            }
-
             RaycastHit mouseHitPlane;
             //如果滑鼠左鍵按下，並點擊到plane，並沒有點擊到任何UI，也沒有從搖桿盤拖曳滑鼠出來
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out mouseHitPlane) &&
                 !EventSystem.current.IsPointerOverGameObject() &&
                 hitUIObjectName != "cammeraStick" &&
@@ -644,9 +582,41 @@ public class gameCS : MonoBehaviour
                 {
                     case "Cube":
                         break;
-                    case "biology":
-                        logg("已選取名叫" + mouseHitPlane.collider.name + " 的生物");
+                    case "Player":
+                        var hitBioCS = mouseHitPlane.transform.gameObject.GetComponent<biologyCS>();
+                        var index = playerBioCSList.FindIndex(o => o == hitBioCS);
+                        setPlayer(index);
                         break;
+                }
+            }
+
+            //滑鼠點擊取得做標點
+
+            float rayDistance = Mathf.Infinity;
+            if (hitUIObjectName == "" &&
+                5.0 > Vector2.Distance(mouseStartPOS, Input.mousePosition) &&
+                groundPlane.Raycast(ray, out rayDistance))
+            {
+                var tempVector3 = ray.GetPoint(rayDistance);
+                tempVector3 = normalized(tempVector3);
+
+                if (cubesDictionary.ContainsKey(normalized(tempVector3)))
+                {
+                    float tag = cubesDictionary[tempVector3].y;
+                    if (tag == 1)
+                    {
+                        if (mouseHitPlane.transform.tag != "Player")
+                        {
+                            var temp3 = ray.GetPoint(rayDistance);
+                            playerBioCSList[playerNumber].bioGoto(ray.GetPoint(rayDistance));
+                            playerBioCSList[playerNumber].setActionCancel();
+                            logg("前往座標：x:" + temp3.x.ToString("f2") + ",y:" + temp3.z.ToString("f2"));
+                        }
+                    }
+                    else
+                    {
+                        logg("<color=red>點擊到不可走區域了</color>");
+                    }
                 }
             }
 
@@ -671,8 +641,8 @@ public class gameCS : MonoBehaviour
 
         // compute the direction vector d from a to b
         float[] d = {
-            (b [0] - a [0]) / eDistAtoB,
-            (b [1] - a [1]) / eDistAtoB
+            (b[0] - a[0]) / eDistAtoB,
+            (b[1] - a[1]) / eDistAtoB
         };
 
         // Now the line equation is x = dx*t + ax, y = dy*t + ay with 0 <= t <= 1.
@@ -743,7 +713,6 @@ public class gameCS : MonoBehaviour
     }
     public void changePlayerLeft()
     {
-        playerBioCSList[playerNumber].setIsPlayer(false);
         playerNumber -= 1;
         if (playerNumber < 0)
         {
@@ -757,7 +726,7 @@ public class gameCS : MonoBehaviour
 
     public void changePlayerRight()
     {
-        playerBioCSList[playerNumber].setIsPlayer(false);
+
         playerNumber += 1;
         if (playerNumber > (playerBioCSList.Count - 1))
         {
@@ -768,6 +737,11 @@ public class gameCS : MonoBehaviour
 
     public void setPlayer(int n)
     {
+        foreach (var t in playerBioCSList)
+        {
+            t.setIsPlayer(false);
+        }
+        playerNumber = n;
         playerBioCSList[n].setIsPlayer(true);
         Player = playerBioCSList[n].transform;
 

@@ -110,7 +110,7 @@ public class biologyCS : MonoBehaviour
         WalkSteptweek = 40; //todo:應該記錄在biologyList.json
         moveSpeed = 0.12f; //todo:應該記錄在c_ai.json
         runBackDist = 10f; //todo:應該記錄在c_ai.json
-        seeMax = 15f; //todo:應該記錄在c_ai.json
+        seeMax = 10f; //todo:應該記錄在c_ai.json
         attackDistance = 2; //todo:應該記錄在c_ai.json
         catchSpeed = 0.05f; //todo:應該記錄在c_ai.json
 
