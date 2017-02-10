@@ -103,6 +103,35 @@ public class gameCS : MonoBehaviour
         {
             leftCamera();
         }
+        if (Input.GetKey("w"))
+        {
+            keyboardMove(new Vector3(0, 30, 0));
+        }
+        if (Input.GetKey("a"))
+        {
+            keyboardMove(new Vector3(-30, 0, 0));
+        }
+        if (Input.GetKey("s"))
+        {
+            keyboardMove(new Vector3(0, -30, 0));
+        }
+        if (Input.GetKey("d"))
+        {
+            keyboardMove(new Vector3(30, 0, 0));
+        }
+    }
+
+    void keyboardMove(Vector3 n)
+    {
+
+        moveStickMouse.transform.localPosition += n;
+
+        clickStart = true;
+        hitUIObjectName = "moveStick";
+        Rect _rect = moveStick.GetComponentInParent<RectTransform>().rect;
+        mouseDragVector.x = moveStickMouse.transform.localPosition.x / (_rect.height * 0.5f);
+        mouseDragVector.z = moveStickMouse.transform.localPosition.y / (_rect.width * 0.5f);
+
     }
 
     void setPlayerBioCSList()
