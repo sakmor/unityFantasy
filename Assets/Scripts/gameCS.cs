@@ -12,10 +12,11 @@ public class gameCS : MonoBehaviour
     //GameObject
     public GameObject mainCamera, mainCamera2, cameraRightBTN, cameraLeftBTN;
     GameObject clickPoint, cammeraStickMouse, Cube, hitUIObject, moveStickMouse, moveStick, cammeraStick, logText, fpsText;
-    GameObject[] players = new GameObject[2];
+
 
     //Dictionary、Array----------------------------
     List<GameObject> allBiologys = new List<GameObject>();
+    List<Vector3> formationList = new List<Vector3>();
 
     //boolean----------------------------
     public bool touchScreen;
@@ -43,11 +44,13 @@ public class gameCS : MonoBehaviour
     //UnityEngine ----------------------------
     Camera camera1, camera2;
     // Use this for initialization
-    Transform Player;
+    Transform Player, formation;
     void Start()
     {
+        formation = GameObject.Find("formation").transform;
         setBio(); //替場景所有生物加上biologyCS.cs
         setPlayer(0);
+
 
         clickPoint = GameObject.Find("Sphere3");
         logText = GameObject.Find("logText");
@@ -75,6 +78,7 @@ public class gameCS : MonoBehaviour
         mouseOrbitSet();
         setUIpos();
         setPlayerBioCSList();
+        setformation();
         // GameObject.Find ("nodeInfo").AddComponent<nodeInfo>();
     }
 
@@ -93,6 +97,11 @@ public class gameCS : MonoBehaviour
         keyboard();
 
     }
+    public Vector3 getLederOderPos(int n)
+    {
+        return Player.FindChild("formation/pos (" + n + ")").transform.position;
+    }
+
     void keyboard()
     {
         if (Input.GetKeyDown("e"))
@@ -119,11 +128,21 @@ public class gameCS : MonoBehaviour
         {
             keyboardMove(new Vector3(30, 0, 0));
         }
+        if (Input.GetKeyDown("z"))
+        {
+            changePlayerLeft();
+        }
+        if (Input.GetKeyDown("x"))
+        {
+            changePlayerRight();
+
+        }
     }
 
     void keyboardMove(Vector3 n)
     {
 
+        playerBioCSList[playerNumber].setActionCancel();
         moveStickMouse.transform.localPosition += n;
 
         clickStart = true;
@@ -134,6 +153,15 @@ public class gameCS : MonoBehaviour
 
     }
 
+
+    void setformation()
+    {
+
+        foreach (Transform child in formation)
+        {
+            child.gameObject.AddComponent<formation>();
+        }
+    }
     void setPlayerBioCSList()
     {
         playerBioCSList[playerNumber].gameObject.AddComponent<DrawCircle>();
@@ -766,14 +794,27 @@ public class gameCS : MonoBehaviour
 
     public void setPlayer(int n)
     {
-        foreach (var t in playerBioCSList)
-        {
-            t.setIsPlayer(false);
-        }
+        playerBioCSList[playerNumber].setIsPlayer(false);
         playerNumber = n;
         playerBioCSList[n].setIsPlayer(true);
         Player = playerBioCSList[n].transform;
+        formation.parent = Player;
+        formation.localPosition = new Vector3(0, 0, 0);
 
+        int oder = 1;
+        foreach (var t in playerBioCSList)
+        {
+
+            t.setLederOderPos(oder);
+            if (t.getIsPlayer())
+            {
+                t.setLederOderPos(0);
+            }
+            else
+            {
+                oder++;
+            }
+        }
     }
 
 }

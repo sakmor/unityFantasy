@@ -56,7 +56,7 @@ public class gameBits
         else
         {
             DrawCircle.blink();
-            if (parent.HP > 0)
+            if (parent.getHP() > 0)
                 decide2Action();
         }
 
