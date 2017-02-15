@@ -85,6 +85,7 @@ public class mouseOrbit : MonoBehaviour
         {
             doRightCount += 1;
             doLeftCount = 0;
+            doRightCount = Mathf.Clamp(doRightCount, 0, 2);
         }
     }
 
@@ -101,6 +102,7 @@ public class mouseOrbit : MonoBehaviour
         {
             doLeftCount += 1;
             doRightCount = 0;
+            doLeftCount = Mathf.Clamp(doLeftCount, 0, 2);
         }
     }
 
