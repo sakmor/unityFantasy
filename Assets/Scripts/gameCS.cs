@@ -552,9 +552,6 @@ public class gameCS : MonoBehaviour
             temp.GetComponent<Renderer>().sharedMaterial.mainTexture.filterMode = FilterMode.Point;
             temp.GetComponent<MeshFilter>().mesh = mesh;
 
-            //新增Cube碰撞(為了CreateLightProbes，遊戲運行時移除)
-            // temp.AddComponent<BoxCollider>();
-
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
                 case 0:
@@ -576,7 +573,7 @@ public class gameCS : MonoBehaviour
     void mouseOrbitSet()
     {
         mainCamera.AddComponent<mouseOrbit>();
-        mainCamera.GetComponent<mouseOrbit>().targetMove = new Vector3(0, 2, 0);
+        mainCamera.GetComponent<mouseOrbit>().targetMove = new Vector3(0, 1.2f, 0);
     }
     void mouseOrTouch()
     {

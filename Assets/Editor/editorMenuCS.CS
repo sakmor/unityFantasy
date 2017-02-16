@@ -17,6 +17,60 @@ public class editorMenuCS : MonoBehaviour
         public Vector3 playerPos;
         public List<float> cubeArray = new List<float>();
     }
+    [MenuItem("[Menu]/CombineChildren")]
+    static void CombineChildren()
+    {
+        GameObject Cubes = GameObject.Find("Cubes");
+        Matrix4x4 myTransform = Cubes.transform.worldToLocalMatrix;
+        Dictionary<string, List<CombineInstance>> combines = new Dictionary<string, List<CombineInstance>>();
+        Dictionary<string, Material> namedMaterials = new Dictionary<string, Material>();
+        MeshRenderer[] meshRenderers = GameObject.Find("Cubes").GetComponentsInChildren<MeshRenderer>();
+        foreach (var meshRenderer in meshRenderers)
+        {
+            foreach (var material in meshRenderer.sharedMaterials)
+                if (material != null && !combines.ContainsKey(material.name))
+                {
+                    combines.Add(material.name, new List<CombineInstance>());
+                    namedMaterials.Add(material.name, material);
+                }
+        }
+
+        MeshFilter[] meshFilters = Cubes.GetComponentsInChildren<MeshFilter>();
+        foreach (var filter in meshFilters)
+        {
+            if (filter.sharedMesh == null)
+                continue;
+            var filterRenderer = filter.GetComponent<Renderer>();
+            if (filterRenderer.sharedMaterial == null)
+                continue;
+            if (filterRenderer.sharedMaterials.Length > 1)
+                continue;
+            CombineInstance ci = new CombineInstance
+            {
+                mesh = filter.sharedMesh,
+                transform = myTransform * filter.transform.localToWorldMatrix
+            };
+            combines[filterRenderer.sharedMaterial.name].Add(ci);
+
+            //沒有要刪除
+            //DestroyImmediate(filterRenderer);
+        }
+
+        foreach (Material m in namedMaterials.Values)
+        {
+            var go = new GameObject("Combined mesh");
+            go.transform.parent = Cubes.transform;
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            go.transform.localScale = Vector3.one;
+
+            var filter = go.AddComponent<MeshFilter>();
+            filter.mesh.CombineMeshes(combines[m.name].ToArray(), true, true);
+
+            var arenderer = go.AddComponent<MeshRenderer>();
+            arenderer.material = m;
+        }
+    }
 
     [MenuItem("[Menu]/LoadJson")]
     static void LoadJson()
@@ -42,8 +96,7 @@ public class editorMenuCS : MonoBehaviour
             temp.GetComponent<MeshFilter>().mesh = mesh;
             temp.GetComponent<Renderer>().sharedMaterial.mainTexture.filterMode = FilterMode.Point;
 
-            //新增Cube碰撞(為了CreateLightProbes，遊戲運行時移除)
-            temp.AddComponent<BoxCollider>();
+
 
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
