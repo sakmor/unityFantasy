@@ -61,12 +61,12 @@ public class biologyCS : MonoBehaviour
     * WalkSteptweek	生物步伐()
     * rotateSpeed		生物旋轉速度(未儲存)
     */
-    public float LV, ATTACK, HP, DEF, HPMAX;
+    float LV, ATTACK, HP, DEF, HPMAX;
     float lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    public int bioType, bioCamp, players;
+    public int bioType, bioCamp, players, LederOderPos;
 
     Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
-    public bool isPlayer = false, runBack;
+    bool isPlayer = false, runBack;
     internal GameObject[] collisionCubes = new GameObject[28];
     internal List<GameObject> allBiologys;
     GameObject model, HPBarLine, nameText, targeLine, HID, HPbar;
@@ -74,12 +74,13 @@ public class biologyCS : MonoBehaviour
     BoxCollider bioCollider;
     string bioAnimation, nameShort, bioDataPath, leaderNumber, bioAction;
     bool isVisible, effectIsOn, isEnable = false;
-    public Transform target;
+    Transform target;
     float[] biologyListData = new float[6];
     Animation anim;
     gameBits gameBits;
     Renderer rend;
-    public List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOverAnimList = new List<string>();
+    List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOverAnimList = new List<string>();
+
 
     biologyCS targetCS;
 
@@ -146,12 +147,54 @@ public class biologyCS : MonoBehaviour
         this.effect();
         this.gameBits.Update();
         this.updateUI();
+        this.fellowLeader();
 
 
     }
 
 
+    void fellowLeader()
+    {
+        if (bioCamp == 0 && !isPlayer) //todo:目前這樣的寫法比較耗效能
+        {
+            float leaderDist = Vector3.Distance(maingameCS.getPlayerPos(), this.transform.position);
+            if (leaderDist > 6f)
+            {
+                bioGoto(maingameCS.getLederOderPos(LederOderPos));
+                setActionCancel();
+            }
+            else if (leaderDist < 2.0f)
+            {
 
+                // bioStop();
+            }
+        }
+    }
+
+    void keepDistWithFrontBio(float n)
+    {
+        //以生物的的正前方射出一條線
+        Ray ray = new Ray();
+        ray.origin = this.transform.position + new Vector3(0, 1, 0);
+        ray.direction = Sphere2 - this.transform.position;
+
+        //取得射線擊中的物件
+        RaycastHit rayHit;
+        if (Physics.Raycast(ray, out rayHit, n)
+        && rayHit.transform.tag == "Player")
+        {
+
+            biologyCS rayHitBioCS = rayHit.transform.gameObject.GetComponent<biologyCS>();
+
+            if (Vector3.Distance(rayHitBioCS.transform.position, this.transform.position) < 1.5f)
+            {
+                Debug.Log("stopShake");
+                bioStop();
+
+            }
+
+        }
+    }
 
     void setEffect()
     {
@@ -371,6 +414,10 @@ public class biologyCS : MonoBehaviour
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
         nameText.GetComponent<Text>().text = this.name;
         HPBarLine = nameText.gameObject.transform.FindChild("HPBar/HPBarLine").gameObject;
+    }
+    public void setLederOderPos(int n)
+    {
+        LederOderPos = n;
     }
     public string getBioAction()
     {
@@ -796,6 +843,10 @@ public class biologyCS : MonoBehaviour
                     }
 
                 }
+
+                //如果有人在我正前方的人是同陣營時
+                //我會停下來
+                // keepDistWithFrontBio(Sphere2Distance);
             }
         }
 
@@ -999,6 +1050,10 @@ public class biologyCS : MonoBehaviour
     {
         isPlayer = n;
     }
+    public bool getIsPlayer()
+    {
+        return isPlayer;
+    }
 
     public void setActionCancel()
     {
@@ -1007,11 +1062,18 @@ public class biologyCS : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
-        if (this.bioType == 0)
+        //如果該生物是玩家陣營
+        if (this.transform.tag == "Player")
         {
+            //該生物不會被怪物陣營擋住
             if (collision.gameObject.tag == "biology")
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
+            }
+            if (collision.gameObject.tag == "Player")
+            {
+                Physics.IgnoreCollision(collision.collider, bioCollider);
+                // bioStop();
             }
         }
 
