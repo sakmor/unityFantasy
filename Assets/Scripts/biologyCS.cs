@@ -147,7 +147,7 @@ public class biologyCS : MonoBehaviour
         this.effect();
         this.gameBits.Update();
         this.updateUI();
-        this.fellowLeader();
+        // this.fellowLeader();
 
 
     }

@@ -516,6 +516,7 @@ public class gameCS : MonoBehaviour
     }
     void loadGame()
     {
+        clearMap();
         //讀取json檔案
         TextAsset json = Resources.Load("scene/s998") as TextAsset;
         scene scene = new scene();
@@ -548,11 +549,11 @@ public class gameCS : MonoBehaviour
             temp.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent<Renderer>().enabled = true;
             Mesh mesh = (Mesh)Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3], typeof(Mesh));
-            // temp.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
+            temp.GetComponent<Renderer>().sharedMaterial.mainTexture.filterMode = FilterMode.Point;
             temp.GetComponent<MeshFilter>().mesh = mesh;
 
             //新增Cube碰撞(為了CreateLightProbes，遊戲運行時移除)
-            temp.AddComponent<BoxCollider>();
+            // temp.AddComponent<BoxCollider>();
 
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
