@@ -10,7 +10,7 @@ public class gameCS : MonoBehaviour
         Vector2>();
 
     //GameObject
-    public GameObject mainCamera, mainCamera2, cameraRightBTN, cameraLeftBTN;
+    public GameObject mainCamera, cameraRightBTN, cameraLeftBTN;
     GameObject clickPoint, cammeraStickMouse, Cube, hitUIObject, moveStickMouse, moveStick, cammeraStick, logText, fpsText;
     GameObject[] players = new GameObject[2];
 
@@ -61,14 +61,12 @@ public class gameCS : MonoBehaviour
         Cube = GameObject.Find("Cube");
 
         mainCamera = GameObject.Find("mainCamera");
-        mainCamera2 = GameObject.Find("mainCamera2");
         cammeraStick = GameObject.Find("cammeraStick");
 
         cameraRELtarget = mainCamera.transform.position - Player.position;
         camera1 = mainCamera.GetComponent<Camera>();
-        camera2 = mainCamera2.GetComponent<Camera>();
         camera1.enabled = true;
-        camera2.enabled = false;
+
 
         loadResources();
         loadGame();
@@ -82,12 +80,10 @@ public class gameCS : MonoBehaviour
     void Update()
     {
         // allBioupdate (1);
-        cameraUpdate();
         mouseOrTouch();
         inputHitScene();
         fellowPlayerCameraMove();
         fellowPlayerCameraContorl();
-        lineDecte();
         buttonDetect();
         clickPointPos();
         keyboard();
@@ -203,19 +199,12 @@ public class gameCS : MonoBehaviour
         return pos;
 
     }
-    void cameraUpdate()
-    {
-        mainCamera2.transform.position = mainCamera.transform.position;
-        mainCamera2.GetComponent<Camera>().fieldOfView = mainCamera.GetComponent<Camera>().fieldOfView;
-        mainCamera2.transform.rotation = mainCamera.transform.rotation;
-    }
 
     void buttonDetect()
     {
 
         if (touchScreen)
         {
-            lineDecte();
             //取得按壓的物件名稱
             if (EventSystem.current.IsPointerOverGameObject())
             {
@@ -274,21 +263,20 @@ public class gameCS : MonoBehaviour
                 mainCamera.transform.RotateAround(Player.position, Vector3.up, (hitUIObject.transform.position.x - cammeraStickMouse.transform.position.x) * Time.deltaTime);
 
                 //控制攝影機--香菇頭上下
-                var camera2PlayerVector = mainCamera.transform.position - Player.position;
-                var tempVector = camera2PlayerVector;
+                var tempVector = mainCamera.transform.position - Player.position;
                 tempVector.y = 0;
                 tempVector = Quaternion.Euler(0, 90, 0) * tempVector;
 
                 //限制攝影機上下移動的角度
                 if (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y < 0)
                 {
-                    if (Vector3.Angle(camera2PlayerVector, Vector3.up) >= 10)
+                    if (Vector3.Angle(tempVector, Vector3.up) >= 10)
                     {
                         mainCamera.transform.RotateAround(Player.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                     }
                 }
                 else
-                if (Vector3.Angle(camera2PlayerVector, Vector3.up) <= 160)
+                if (Vector3.Angle(tempVector, Vector3.up) <= 160)
                 {
                     mainCamera.transform.RotateAround(Player.position, tempVector, (hitUIObject.transform.position.y - cammeraStickMouse.transform.position.y) * Time.deltaTime);
                 }
@@ -369,37 +357,7 @@ public class gameCS : MonoBehaviour
     }
 
     //todo:要在角色或攝影機有移動時才徵測
-    void lineDecte()
-    {
-        float yScaleUP = mainCamera.GetComponent<mouseOrbit>().targetMove.y;
-        Vector3 target = Player.position;
-        target.y += yScaleUP;
 
-        Vector3 tempPick;
-        tempPick = target;
-        Vector3 myVector = target - mainCamera.transform.position;
-        float mylength = Mathf.Round(Vector3.Distance(target, mainCamera.transform.position));
-        Debug.DrawLine(target, mainCamera.transform.position);
-
-        for (var i = 0; i < mylength; i++)
-        {
-            tempPick = target - myVector.normalized * i;
-
-            if (cubesDictionary.ContainsKey(normalized(tempPick)))
-            {
-                mainCamera2.transform.position = tempPick;
-                camera2.enabled = true;
-                camera1.enabled = false;
-                break;
-            }
-            else
-            {
-                camera1.enabled = true;
-                camera2.enabled = false;
-            }
-
-        }
-    }
 
     void fellowPlayerCameraContorl()
     {
@@ -512,7 +470,22 @@ public class gameCS : MonoBehaviour
         TextAsset json = Resources.Load("db/biologyList", typeof(TextAsset)) as TextAsset;
         biologyList = JsonUtility.FromJson<biologyList>(json.text);
     }
+    void clearMap()
+    {
+        //讀取json檔案
+        TextAsset json = Resources.Load("scene/s998") as TextAsset;
+        scene scene = new scene();
+        scene = JsonUtility.FromJson<scene>(json.text);
 
+        for (var i = 0; i < scene.cubeArray.Count; i += 5)
+        {
+            Vector3 temp;
+            temp.x = scene.cubeArray[i];
+            temp.y = scene.cubeArray[i + 1];
+            temp.z = scene.cubeArray[i + 2];
+            DestroyImmediate(GameObject.Find(temp.ToString("F1")));
+        }
+    }
     void loadGame()
     {
         //讀取json檔案
@@ -547,7 +520,11 @@ public class gameCS : MonoBehaviour
             temp.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent<Renderer>().enabled = true;
             Mesh mesh = (Mesh)Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3], typeof(Mesh));
+            // temp.GetComponent<Renderer>().material.mainTexture.filterMode = FilterMode.Point;
             temp.GetComponent<MeshFilter>().mesh = mesh;
+
+            //新增Cube碰撞(為了CreateLightProbes，遊戲運行時移除)
+            temp.AddComponent<BoxCollider>();
 
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {
@@ -563,6 +540,7 @@ public class gameCS : MonoBehaviour
             }
 
         }
+        Cubes.AddComponent<DCM.DrawCallMinimizer>();
         GameObject.Find("aStart").AddComponent<Pathfinding>();
         PathfindingCS = GameObject.Find("aStart").GetComponent<Pathfinding>();
     }
@@ -789,3 +767,4 @@ public class biologyList
     public string[] drawNumber;
     public float[] biodata;
 }
+

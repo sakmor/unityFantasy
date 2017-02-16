@@ -38,9 +38,12 @@ public class editorMenuCS : MonoBehaviour
             temp.GetComponent<MeshRenderer>().receiveShadows = true;
             temp.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
             temp.GetComponent<Renderer>().enabled = true;
-
             Mesh mesh = (Mesh)Resources.Load("item/model/CUBE/" + scene.cubeArray[i + 3], typeof(Mesh));
             temp.GetComponent<MeshFilter>().mesh = mesh;
+            temp.GetComponent<Renderer>().sharedMaterial.mainTexture.filterMode = FilterMode.Point;
+
+            //新增Cube碰撞(為了CreateLightProbes，遊戲運行時移除)
+            temp.AddComponent<BoxCollider>();
 
             switch (Mathf.FloorToInt(scene.cubeArray[i + 4]))
             {

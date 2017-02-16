@@ -7,9 +7,9 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Cha_Knight-Face
-  m_Shader: {fileID: 4800000, guid: 8555b9e5fa327a74b9babb4b87111bff, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION _GLOSSYREFLECTIONS_OFF
+  m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
@@ -84,13 +84,13 @@ Material:
       second: 0
     - first:
         name: _GlossMapScale
-      second: 1
+      second: 0.747
     - first:
         name: _Glossiness
-      second: 0.5
+      second: 0.812
     - first:
         name: _GlossyReflections
-      second: 1
+      second: 0
     - first:
         name: _Metallic
       second: 0
@@ -125,6 +125,9 @@ Material:
         name: _selfillum
       second: 1.5
     m_Colors:
+    - first:
+        name: _Ambient
+      second: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - first:
         name: _Color
       second: {r: 1, g: 1, b: 1, a: 1}

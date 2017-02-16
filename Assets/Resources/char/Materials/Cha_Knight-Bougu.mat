@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Cha_Knight-Bougu
-  m_Shader: {fileID: 4800000, guid: 8555b9e5fa327a74b9babb4b87111bff, type: 3}
-  m_ShaderKeywords: _EMISSION
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -90,10 +90,10 @@ Material:
       second: 0.5
     - first:
         name: _GlossyReflections
-      second: 1
+      second: 0
     - first:
         name: _Metallic
-      second: 0
+      second: 0.2
     - first:
         name: _Mode
       second: 0
@@ -111,7 +111,7 @@ Material:
       second: 0
     - first:
         name: _SpecularHighlights
-      second: 1
+      second: 0
     - first:
         name: _SrcBlend
       second: 1
@@ -125,6 +125,9 @@ Material:
         name: _selfillum
       second: 1.5
     m_Colors:
+    - first:
+        name: _Ambient
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _Color
       second: {r: 1, g: 1, b: 1, a: 1}
