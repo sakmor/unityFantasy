@@ -20,7 +20,8 @@ public class editorMenuCS : MonoBehaviour
     [MenuItem("[Menu]/CombineChildren")]
     static void CombineChildren()
     {
-        GameObject Cubes = GameObject.Find("Cubes");
+        GameObject Cubes = GameObject.Find("Cubes");//todo:要改成選取的物件
+
         Matrix4x4 myTransform = Cubes.transform.worldToLocalMatrix;
         Dictionary<string, List<CombineInstance>> combines = new Dictionary<string, List<CombineInstance>>();
         Dictionary<string, Material> namedMaterials = new Dictionary<string, Material>();
@@ -56,9 +57,17 @@ public class editorMenuCS : MonoBehaviour
             //DestroyImmediate(filterRenderer);
         }
 
+        if (GameObject.Find("CubesLighted") != null)
+        {
+            DestroyImmediate(GameObject.Find("CubesLighted"));
+        }
+        GameObject go = new GameObject("CubesLighted");
+        go.isStatic = true;
+
+
+
         foreach (Material m in namedMaterials.Values)
         {
-            var go = new GameObject("Combined mesh");
             go.transform.parent = Cubes.transform;
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
@@ -70,6 +79,9 @@ public class editorMenuCS : MonoBehaviour
             var arenderer = go.AddComponent<MeshRenderer>();
             arenderer.material = m;
         }
+        go.transform.parent = GameObject.Find("5-場景").transform;
+        // Object prefab = PrefabUtility.CreateEmptyPrefab("Assets/Resources/scene/s998.prefab");
+        // PrefabUtility.ReplacePrefab(go, prefab, ReplacePrefabOptions.ConnectToPrefab);
     }
 
     [MenuItem("[Menu]/LoadJson")]
@@ -82,6 +94,8 @@ public class editorMenuCS : MonoBehaviour
 
         //產生場景
         GameObject Cubes = GameObject.Find("Cubes");
+
+
         for (var i = 0; i < scene.cubeArray.Count; i += 5)
         {
             GameObject temp = Instantiate(GameObject.Find("Cube"));//todo:Cube可以不需要用Find的方式

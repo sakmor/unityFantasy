@@ -1,28 +1,15 @@
 fileFormatVersion: 2
-guid: 14e16c954ab709549ba584042b1add0c
-timeCreated: 1483268281
+guid: 1a0d8b08afce6124fb1a7049c83c554e
+timeCreated: 1487387009
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Cylinder001
-    100002: Cylinder002
-    100004: PhysCamera001
-    100006: PhysCamera001.Target
-    100008: //RootNode
-    400000: Cylinder001
-    400002: Cylinder002
-    400004: PhysCamera001
-    400006: PhysCamera001.Target
-    400008: //RootNode
-    2300000: Cylinder001
-    2300002: Cylinder002
-    2300004: //RootNode
-    3300000: Cylinder001
-    3300002: Cylinder002
-    3300004: //RootNode
-    4300000: Cylinder001
-    4300002: Cylinder002
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: 10357
   materials:
     importMaterials: 1
     materialName: 0
