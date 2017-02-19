@@ -33,7 +33,7 @@ public class gameCS : MonoBehaviour
 
     //Vector2、Vector3----------------------------
     public Vector2 myIputPostion;
-    public Vector3 cameraRELtarget, mouseDragVector;
+    public Vector3 cameraRELtarget, mouseDragVector, cameraOffset;
     Vector3 lastCameraPos, mouseStartPOS;
 
     //Script 自定義----------------------------
@@ -51,7 +51,7 @@ public class gameCS : MonoBehaviour
         setBio(); //替場景所有生物加上biologyCS.cs
         setPlayer(0);
 
-
+        cameraOffset = new Vector3(0, 1.2f, 0);
         clickPoint = GameObject.Find("Sphere3");
         logText = GameObject.Find("logText");
         fpsText = GameObject.Find("fpsText");
@@ -73,11 +73,12 @@ public class gameCS : MonoBehaviour
 
         loadResources();
         loadGame();
-        mouseOrbitSet();
+        setMouseOrbit();
         setUIpos();
         setPlayerBioCSList();
         setformation();
-        // GameObject.Find ("nodeInfo").AddComponent<nodeInfo>();
+        GameObject.Find("Cubes").SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -422,7 +423,7 @@ public class gameCS : MonoBehaviour
         }
         else
         {
-            mainCamera.transform.LookAt(new Vector3(Player.position.x, Player.position.y + 2.0f, Player.position.z));
+            mainCamera.transform.LookAt(new Vector3(Player.position.x, Player.position.y + cameraOffset.y, Player.position.z));
             mainCamera.transform.position = finalPos;
         }
     }
@@ -566,14 +567,17 @@ public class gameCS : MonoBehaviour
             }
 
         }
-        Cubes.AddComponent<DCM.DrawCallMinimizer>();
+        // Cubes.AddComponent<DCM.DrawCallMinimizer>();
         GameObject.Find("aStart").AddComponent<Pathfinding>();
         PathfindingCS = GameObject.Find("aStart").GetComponent<Pathfinding>();
     }
-    void mouseOrbitSet()
+    public Vector3 getCameraOffset()
+    {
+        return cameraOffset;
+    }
+    void setMouseOrbit()
     {
         mainCamera.AddComponent<mouseOrbit>();
-        mainCamera.GetComponent<mouseOrbit>().targetMove = new Vector3(0, 1.2f, 0);
     }
     void mouseOrTouch()
     {

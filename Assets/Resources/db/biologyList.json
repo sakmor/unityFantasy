@@ -18,5 +18,5 @@
         0.235
     ],
     "bioDataStep": 6,
-    "_comment": "0. WalkSteptweek,1. collider.center, 2.  collider.size.XZ 3, collider.size .Y,4. localScale,5.hitTime"
+    "_comment": "0. WalkSteptweek,1. collider.center, 2.  collider.size.XZ 3, collider.size.Y,4. localScale,5. hitTime"
 }

@@ -29,11 +29,13 @@ public class mouseOrbit : MonoBehaviour
     void Start()
     {
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
+        targetMove = maingameCS.getCameraOffset();
         var angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
         finalX = x;
 
+        transform.position = new Vector3(0.0f, 0.0f, -distance) + maingameCS.getPlayerPos() + targetMove;
         // Make the rigid body not change rotation
         if (GetComponent<Rigidbody>())
         {

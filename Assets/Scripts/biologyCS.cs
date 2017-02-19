@@ -1070,11 +1070,11 @@ public class biologyCS : MonoBehaviour
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
             }
-            if (collision.gameObject.tag == "Player")
-            {
-                Physics.IgnoreCollision(collision.collider, bioCollider);
-                // bioStop();
-            }
+            // if (collision.gameObject.tag == "Player")
+            // {
+            //     Physics.IgnoreCollision(collision.collider, bioCollider);
+            //     // bioStop();
+            // }
         }
 
     }
