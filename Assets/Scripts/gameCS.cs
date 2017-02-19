@@ -186,7 +186,7 @@ public class gameCS : MonoBehaviour
         fpsText.transform.position = getuiPosByScreen(fpsText, 1, "left", "lower");
 
         logText.transform.position = getuiPosByScreen(logText, 0, "right", "center") + new Vector3(300, 0, 0);
-        GameObject.Find("playerINFO").transform.position = getuiPosByScreen(GameObject.Find("playerINFO"), 1, "right", "lower") + new Vector3(300, 0, 0); ;
+        GameObject.Find("buttonPalte").transform.position = getuiPosByScreen(GameObject.Find("buttonPalte"), 1, "right", "lower");
 
         // GameObject.Find ("playerINFO").transform.position = new Vector3 (UnityEngine.Screen.width - 230, 30, 0);
 
@@ -403,7 +403,7 @@ public class gameCS : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // forward
         {
             if (Camera.main.fieldOfView < 50 &&
-                Camera.main.orthographicSize < 6)
+                Camera.main.orthographicSize < 4)
             {
                 Camera.main.fieldOfView = Mathf.Min(Camera.main.fieldOfView + 1, 60);
                 Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize + 1, 60);
@@ -746,26 +746,24 @@ public class gameCS : MonoBehaviour
     }
     public void changePlayerLeft()
     {
-        playerNumber -= 1;
-        if (playerNumber < 0)
+        var n = playerNumber - 1;
+        if (n < 0)
         {
-            Debug.Log(playerBioCSList.Count);
-            playerNumber = playerBioCSList.Count - 1;
-            Debug.Log(playerNumber);
+            n = playerBioCSList.Count - 1;
         }
 
-        setPlayer(playerNumber);
+        setPlayer(n);
     }
 
     public void changePlayerRight()
     {
 
-        playerNumber += 1;
-        if (playerNumber > (playerBioCSList.Count - 1))
+        var n = playerNumber + 1;
+        if (n > (playerBioCSList.Count - 1))
         {
-            playerNumber = 0;
+            n = 0;
         }
-        setPlayer(playerNumber);
+        setPlayer(n);
     }
 
     public void setPlayer(int n)
