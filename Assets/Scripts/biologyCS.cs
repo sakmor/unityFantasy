@@ -778,7 +778,7 @@ public class biologyCS : MonoBehaviour
 
         float SphereDistance = 0;
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
-        if (SphereDistance > 0.05f)
+        if (SphereDistance > 1f)
             this.bioAnimation = "mWalk";
 
         //如果使用者操作搖桿
@@ -1065,6 +1065,7 @@ public class biologyCS : MonoBehaviour
         //如果該生物是玩家陣營
         if (this.transform.tag == "Player")
         {
+            bioStop();
             //該生物不會被怪物陣營擋住
             if (collision.gameObject.tag == "biology")
             {
