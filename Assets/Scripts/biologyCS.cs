@@ -81,7 +81,6 @@ public class biologyCS : MonoBehaviour
     Renderer rend;
     List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOverAnimList = new List<string>();
 
-
     biologyCS targetCS;
 
     // Use this for initialization
@@ -149,9 +148,7 @@ public class biologyCS : MonoBehaviour
         this.updateUI();
         // this.fellowLeader();
 
-
     }
-
 
     void fellowLeader()
     {
@@ -180,8 +177,8 @@ public class biologyCS : MonoBehaviour
 
         //取得射線擊中的物件
         RaycastHit rayHit;
-        if (Physics.Raycast(ray, out rayHit, n)
-        && rayHit.transform.tag == "Player")
+        if (Physics.Raycast(ray, out rayHit, n) &&
+            rayHit.transform.tag == "Player")
         {
 
             biologyCS rayHitBioCS = rayHit.transform.gameObject.GetComponent<biologyCS>();
@@ -775,10 +772,12 @@ public class biologyCS : MonoBehaviour
 
     void _movment()
     {
+        //生物站立處為不可尋路點
+        GameObject.Find("aStart").GetComponent<Grid>().grid[0, 0].walkable = false;
 
         float SphereDistance = 0;
         SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
-        if (SphereDistance > 1f)
+        if (SphereDistance > 0.5f)
             this.bioAnimation = "mWalk";
 
         //如果使用者操作搖桿
@@ -1065,17 +1064,16 @@ public class biologyCS : MonoBehaviour
         //如果該生物是玩家陣營
         if (this.transform.tag == "Player")
         {
-            bioStop();
             //該生物不會被怪物陣營擋住
             if (collision.gameObject.tag == "biology")
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
             }
-            // if (collision.gameObject.tag == "Player")
-            // {
-            //     Physics.IgnoreCollision(collision.collider, bioCollider);
-            //     // bioStop();
-            // }
+            if (collision.gameObject.tag == "Player"
+                && collision.gameObject.GetComponent<biologyCS>().getBioAction() == "mWait")
+            {
+                collision.gameObject.GetComponent<biologyCS>().bioStop();
+            }
         }
 
     }

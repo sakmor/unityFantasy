@@ -7,7 +7,8 @@ public class Grid : MonoBehaviour
 
     public Vector2 gridWorldSize = new Vector2(64, 64);
     public Vector2 gridWorldSizeShift;
-    public float nodeRadius = 1f;
+    public bool DrawGizmos = false;
+    public float nodeRadius = 0.25f;
 
     public Dictionary<Vector3, Vector2> cubesDictionary = new Dictionary<Vector3,
     Vector2>();
@@ -101,20 +102,24 @@ public class Grid : MonoBehaviour
     }
 
     public List<Node> path;
-    void OnDrawGizmosAA()
+    void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
-
-        if (grid != null)
+        if (DrawGizmos)
         {
-            foreach (Node n in grid)
+            Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+
+            if (grid != null)
             {
-                Gizmos.color = (n.walkable) ? Color.white : Color.red;
-                if (path != null)
-                    if (path.Contains(n))
-                        Gizmos.color = Color.black;
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+                foreach (Node n in grid)
+                {
+                    Gizmos.color = (n.walkable) ? Color.white : Color.red;
+                    if (path != null)
+                        if (path.Contains(n))
+                            Gizmos.color = Color.black;
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+                }
             }
         }
     }
+
 }
