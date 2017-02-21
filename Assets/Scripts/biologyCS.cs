@@ -212,7 +212,7 @@ public class biologyCS : MonoBehaviour
                     targetCS.addEffect("shake");
                     targetCS.addEffect("aniPause");
                     addEffect("aniPause");
-                    targetCS.addEffect("hitEffect");
+                    addEffect("hitEffect");
                     // transform.FindChild ("hitEffect");
                     // GameObject.Find ("hitEffect").GetComponent<hitEffect>().playEffect ();
                     return true;
@@ -326,13 +326,13 @@ public class biologyCS : MonoBehaviour
     bool effectHiteffect()
     {
         // Debug.Log(target.name);
-        if (transform.Find("hitEffect") == null)
+        if (target.transform.Find("hitEffect") == null)
         {
             GameObject hitEffect = Instantiate(GameObject.Find("hitEffect"));
             hitEffect.name = "hitEffect";
-            hitEffect.transform.parent = transform;
+            hitEffect.transform.parent = target.transform;
             hitEffect.transform.localPosition = new Vector3(0, 0, 0);
-            hitEffect.GetComponent<hitEffect>().playEffect(transform, biologyListData[3]);
+            hitEffect.GetComponent<hitEffect>().playEffect(target.transform, targetCS.biologyListData[3]);
         }
 
         return true;

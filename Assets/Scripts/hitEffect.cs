@@ -22,7 +22,7 @@ public class hitEffect : MonoBehaviour
         {
             var n = Random.Range(1, 1.5f);
             this.transform.Rotate(new Vector3(1, 1, Random.Range(1f, 180f)));
-            this.transform.localScale = new Vector3(n, n, n);
+            this.transform.localScale = new Vector3(this.transform.localScale.x * n, this.transform.localScale.y * n, this.transform.localScale.z * n);
             this.transform.position += new Vector3(0, 1, 0) + (giver.position - transform.position) * scale;
             rend.material.mainTextureOffset = new Vector2(0.8f, 1);
             startTime = Time.time;
