@@ -74,7 +74,7 @@ public class biologyCS : MonoBehaviour
     BoxCollider bioCollider;
     string bioAnimation, nameShort, bioDataPath, leaderNumber, bioAction;
     bool isVisible, effectIsOn, isEnable = false;
-    Transform target;
+    public Transform target;
     float[] biologyListData = new float[6];
     Animation anim;
     gameBits gameBits;
@@ -325,13 +325,14 @@ public class biologyCS : MonoBehaviour
 
     bool effectHiteffect()
     {
-        if (target.transform.Find("hitEffect") == null)
+        // Debug.Log(target.name);
+        if (transform.Find("hitEffect") == null)
         {
             GameObject hitEffect = Instantiate(GameObject.Find("hitEffect"));
             hitEffect.name = "hitEffect";
-            hitEffect.transform.parent = target.transform;
+            hitEffect.transform.parent = transform;
             hitEffect.transform.localPosition = new Vector3(0, 0, 0);
-            hitEffect.GetComponent<hitEffect>().playEffect(transform, targetCS.biologyListData[3]);
+            hitEffect.GetComponent<hitEffect>().playEffect(transform, biologyListData[3]);
         }
 
         return true;
