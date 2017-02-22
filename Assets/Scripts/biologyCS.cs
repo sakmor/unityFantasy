@@ -213,8 +213,6 @@ public class biologyCS : MonoBehaviour
                     targetCS.addEffect("aniPause");
                     addEffect("aniPause");
                     addEffect("hitEffect");
-                    // transform.FindChild ("hitEffect");
-                    // GameObject.Find ("hitEffect").GetComponent<hitEffect>().playEffect ();
                     return true;
                 }
                 break;
@@ -329,7 +327,7 @@ public class biologyCS : MonoBehaviour
             hitEffect.name = "hitEffect";
             hitEffect.transform.parent = target.transform;
             hitEffect.transform.localPosition = new Vector3(0, 0, 0);
-            hitEffect.GetComponent<hitEffect>().playEffect(target.transform, targetCS.biologyListData[3], 1, 2.5f, 360);
+            hitEffect.GetComponent<hitEffect>().playEffect(0.05f, 5, target.transform, targetCS.biologyListData[3], 1, 2.5f, 180);
         }
 
         return true;
@@ -374,31 +372,34 @@ public class biologyCS : MonoBehaviour
 
     void getjumpText(float n, Vector3 direct, string color)
     {
-        string text;
+        GameObject jumpText = Instantiate(GameObject.Find("jumpText"));
+        jumpText.AddComponent<jumpText>();
+
+        Color tempColor;
         switch (color)
         {
             case "GREEN":
-                text = "<color=green>" + n.ToString("F0") + "</color>";
+                tempColor = Color.green;
                 break;
             case "WHITE":
-                text = "<color=white>" + n.ToString("F0") + "</color>";
+                tempColor = Color.white;
                 break;
             case "ORANGE":
-                text = "<color=orange>" + n.ToString("F0") + "</color>";
+                tempColor = new Color(1, 0.5f, 0, 1);
                 break;
             case "RED":
-                text = "<color=red>" + n.ToString("F0") + "</color>";
+                tempColor = Color.red;
                 break;
             case "YELLOW":
-                text = "<color=yellow>" + n.ToString("F0") + "</color>";
+                tempColor = Color.yellow;
                 break;
             default:
-                text = "<color=white>" + n.ToString("F0") + "</color>";
+                tempColor = Color.black;
                 break;
         }
-        GameObject jumpText = Instantiate(GameObject.Find("jumpText"));
-        jumpText.AddComponent<jumpText>();
-        jumpText.GetComponent<jumpText>().number = text;
+
+        jumpText.GetComponent<jumpText>().color = tempColor;
+        jumpText.GetComponent<jumpText>().number = n.ToString("F0");
         jumpText.GetComponent<jumpText>().direct = direct;
         jumpText.transform.position = this.transform.position;
         jumpText.transform.position += new Vector3(0, 1.5f, 0);
