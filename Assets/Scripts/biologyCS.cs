@@ -266,11 +266,8 @@ public class biologyCS : MonoBehaviour
                         setBioAniPause();
                         continue;
                     case "playDamage":
-                        if (bioCamp != 0)
-                        {
-                            setBioAnimation("Damage");
-                            anim.Play("Damage");
-                        }
+                        setBioAnimation("Damage");
+                        anim.Play("Damage");
                         continue;
                 }
             }
@@ -332,11 +329,12 @@ public class biologyCS : MonoBehaviour
             hitEffect.name = "hitEffect";
             hitEffect.transform.parent = target.transform;
             hitEffect.transform.localPosition = new Vector3(0, 0, 0);
-            hitEffect.GetComponent<hitEffect>().playEffect(target.transform, targetCS.biologyListData[3]);
+            hitEffect.GetComponent<hitEffect>().playEffect(target.transform, targetCS.biologyListData[3], 1, 2.5f, 360);
         }
 
         return true;
     }
+
 
     bool effectShake()
     {
@@ -722,20 +720,25 @@ public class biologyCS : MonoBehaviour
         {
             this.bioAnimation = "mWait";
         }
-
+        //如果受傷動作剛播完，並血量等於下於0
         if (justOverAnimList.Contains("Damage") &&
             HP <= 0)
         {
             this.bioAnimation = "mDead";
-        }
 
+            //如果死亡的是隊長
+            if (isPlayer)
+                maingameCS.changePlayerRight();
+
+        }
         //如果死亡動作剛播完，撥放爆炸
         if (justOverAnimList.Contains("Dead"))
         {
             var boom = Instantiate(GameObject.Find("explosion"));
             boom.transform.position = this.transform.position;
-            boom.GetComponent<Explosion>().Play();
-            bioAnimation = "mHide";
+            // boom.GetComponent<Explosion>().Play();
+            this.transform.gameObject.SetActive(false);
+            this.bioAnimation = "mHide";
         }
 
         //對應生物所處狀態，播放對應動作
