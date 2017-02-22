@@ -52,6 +52,24 @@ public class hitEffect : MonoBehaviour
         }
     }
 
+    public void playEffect(float _sec, int maxPages)
+    {
+        sec = _sec;
+        startTiling = 1.0f / maxPages;
+        endTiling = 1 - startTiling;
+        rend = GetComponent<Renderer>();
+        rend.material.mainTextureScale = new Vector2(startTiling, 1);
+        rend.material.mainTextureOffset = new Vector2(endTiling, 1);
+
+        if (!isPlay)
+        {
+            rend.material.mainTextureOffset = new Vector2(endTiling, 1);
+            startTime = Time.time;
+            isPlay = true;
+        }
+    }
+
+
     void Update()
     {
         if (isPlay)

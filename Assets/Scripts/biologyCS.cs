@@ -250,6 +250,9 @@ public class biologyCS : MonoBehaviour
             {
                 switch (t)
                 {
+                    case "boomEffect":
+                        effectBoomeffect();
+                        continue;
                     case "hitEffect":
                         effectHiteffect();
                         continue;
@@ -328,6 +331,20 @@ public class biologyCS : MonoBehaviour
             hitEffect.transform.parent = target.transform;
             hitEffect.transform.localPosition = new Vector3(0, 0, 0);
             hitEffect.GetComponent<hitEffect>().playEffect(0.05f, 5, target.transform, targetCS.biologyListData[3], 1, 2.5f, 180);
+        }
+
+        return true;
+    }
+
+    bool effectBoomeffect()
+    {
+        // Debug.Log(target.name);
+        if (GameObject.Find(this.name + "boomEffect") == null)
+        {
+            GameObject hitEffect = Instantiate(GameObject.Find("boomEffect"));
+            hitEffect.name = this.name + "boomEffect";
+            hitEffect.transform.position = this.transform.position + new Vector3(0, 0.8f, 0);
+            hitEffect.GetComponent<hitEffect>().playEffect(0.08f, 10);
         }
 
         return true;
@@ -735,9 +752,7 @@ public class biologyCS : MonoBehaviour
         //如果死亡動作剛播完，撥放爆炸
         if (justOverAnimList.Contains("Dead"))
         {
-            var boom = Instantiate(GameObject.Find("explosion"));
-            boom.transform.position = this.transform.position;
-            // boom.GetComponent<Explosion>().Play();
+            this.addEffect("boomEffect");
             this.transform.gameObject.SetActive(false);
             this.bioAnimation = "mHide";
         }
@@ -763,7 +778,6 @@ public class biologyCS : MonoBehaviour
                 anim.CrossFade("Wait");
                 break;
             case "mHide":
-                this.transform.position -= new Vector3(0, 99, 0);
                 //todo:目前沒有使用
                 break;
         }
@@ -1074,10 +1088,11 @@ public class biologyCS : MonoBehaviour
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
             }
+            //玩家不會被停下來的玩家生物擋住
             if (collision.gameObject.tag == "Player"
-                && collision.gameObject.GetComponent<biologyCS>().getBioAction() == "mWait")
+                && collision.gameObject.GetComponent<biologyCS>().getBioAnimation() == "mWait")
             {
-                collision.gameObject.GetComponent<biologyCS>().bioStop();
+                Physics.IgnoreCollision(collision.collider, bioCollider);
             }
         }
 
