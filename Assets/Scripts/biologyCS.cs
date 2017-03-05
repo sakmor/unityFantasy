@@ -63,7 +63,7 @@ public class biologyCS : MonoBehaviour
     */
     float LV, ATTACK, HP, DEF, HPMAX;
     float lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
-    public int bioType, bioCamp, players, LederOderPos;
+    public int bioType, bioCamp, players, oder;
 
     Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
     bool isPlayer = false, runBack;
@@ -134,6 +134,7 @@ public class biologyCS : MonoBehaviour
         dynamicCollision();
         loadAnimation();
         setEffect();
+        checkOder();
     }
 
     // Update is called once per frame
@@ -146,19 +147,39 @@ public class biologyCS : MonoBehaviour
         this.effect();
         this.gameBits.Update();
         this.updateUI();
-        // this.fellowLeader();
+        this.fellowLeader();
 
     }
+    void checkOder()
+    {
+        int o = 1;
+        for (int i = 0; i < maingameCS.playerBioCSList.Count; i++)
+        {
+            if (maingameCS.playerBioCSList[i].oder == o)
+            {
+                o++;
+                i = 0;
+            }
+        }
+        oder = o;
+    }
+
 
     void fellowLeader()
     {
+
         if (bioCamp == 0 && !isPlayer) //todo:目前這樣的寫法比較耗效能
         {
             float leaderDist = Vector3.Distance(maingameCS.getPlayerPos(), this.transform.position);
             if (leaderDist > 6f)
             {
-                bioGoto(maingameCS.getLederOderPos(LederOderPos));
-                setActionCancel();
+                Vector3 go = GameObject.Find("postion (" + oder + ")").transform.position;
+                bool test = GameObject.Find("aStart").GetComponent<Grid>().NodeFromWorldPoint(go).walkable;
+                if (test)
+                {
+                    bioGoto(go);
+                }
+
             }
             else if (leaderDist < 2.0f)
             {
@@ -429,10 +450,7 @@ public class biologyCS : MonoBehaviour
         nameText.GetComponent<Text>().text = this.name;
         HPBarLine = nameText.gameObject.transform.FindChild("HPBar/HPBarLine").gameObject;
     }
-    public void setLederOderPos(int n)
-    {
-        LederOderPos = n;
-    }
+
     public string getBioAction()
     {
         return bioAction;
@@ -946,8 +964,8 @@ public class biologyCS : MonoBehaviour
         BoxCollider collider = bioCollider.GetComponent<BoxCollider>() as BoxCollider;
         collider.center = new Vector3(0, biologyListData[1], 0);
         collider.size = new Vector3(biologyListData[2], biologyListData[3], biologyListData[2]);
+        this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
         this.GetComponent<Rigidbody>().freezeRotation = true;
-
         GameObject collisionCubeOBJ;
         collisionCubeOBJ = new GameObject(this + "_collisionCubeOBJ");
         collisionCubeOBJ.transform.parent = GameObject.Find("Biology/Items").transform;
@@ -1094,14 +1112,11 @@ public class biologyCS : MonoBehaviour
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
             }
-            //被控制的玩家，可以任意穿越其他隊員
-            if (collision.gameObject.tag == "Player"
-                && isPlayer)
-            {
-                Physics.IgnoreCollision(collision.collider, bioCollider);
-            }
+            // if (collision.gameObject.tag == "Player")
+            // {
+            //     Physics.IgnoreCollision(collision.collider, bioCollider);
+            // }
         }
-
     }
     void checkBioCamp()
     {

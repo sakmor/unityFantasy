@@ -808,21 +808,7 @@ public class gameCS : MonoBehaviour
         Player = playerBioCSList[n].transform;
         formation.parent = Player;
         formation.localPosition = new Vector3(0, 0, 0);
-
-        int oder = 1;
-        foreach (var t in playerBioCSList)
-        {
-
-            t.setLederOderPos(oder);
-            if (t.getIsPlayer())
-            {
-                t.setLederOderPos(0);
-            }
-            else
-            {
-                oder++;
-            }
-        }
+        formation.localEulerAngles = new Vector3(0, 0, 0);
     }
 
 }
