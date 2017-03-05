@@ -56,8 +56,19 @@ public class gameBits
         else
         {
             DrawCircle.blink();
+
             if (parent.getHP() > 0)
+            {
                 decide2Action();
+                if (target != null)
+                {
+                    if (target.GetComponent<biologyCS>().getHP() <= 0)
+                    {
+                        resetActionTime();
+                        changeTarget(null);
+                    }
+                }
+            }
         }
 
     }

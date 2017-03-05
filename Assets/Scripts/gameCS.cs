@@ -750,26 +750,56 @@ public class gameCS : MonoBehaviour
     }
     public void changePlayerLeft()
     {
-        var n = playerNumber - 1;
-        if (n < 0)
+        if (!checkIsGameOver())
         {
-            n = playerBioCSList.Count - 1;
-        }
+            var n = playerNumber - 1;
+            if (n < 0)
+                n = playerBioCSList.Count - 1;
 
-        setPlayer(n);
+            while (playerBioCSList[n].getHP() < 0)
+            {
+                n -= 1;
+                if (n < 0)
+                    n = playerBioCSList.Count - 1;
+            }
+
+            setPlayer(n);
+        }
     }
 
     public void changePlayerRight()
     {
-
-        var n = playerNumber + 1;
-        if (n > (playerBioCSList.Count - 1))
+        if (!checkIsGameOver())
         {
-            n = 0;
+            var n = playerNumber + 1;
+            if (n > (playerBioCSList.Count - 1))
+                n = 0;
+
+
+            while (playerBioCSList[n].getHP() < 0)
+            {
+                n += 1;
+                if (n > (playerBioCSList.Count - 1))
+                    n = 0;
+
+            }
+            setPlayer(n);
         }
-        setPlayer(n);
     }
 
+    bool checkIsGameOver()
+    {
+        foreach (var i in playerBioCSList)
+        {
+            if (i.getHP() > 0)
+            {
+                return false;
+
+            }
+        }
+        Debug.Log("GameOver");
+        return true;
+    }
     public void setPlayer(int n)
     {
         playerBioCSList[playerNumber].setIsPlayer(false);

@@ -911,7 +911,7 @@ public class biologyCS : MonoBehaviour
     public void updateUI()
     {
         isVisible = GetComponent<Renderer>().isVisible;
-        if (isVisible)
+        if (isVisible && getHP() > 0)
         {
             nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
                 this.transform.position.x,
@@ -922,6 +922,12 @@ public class biologyCS : MonoBehaviour
 
         var n = HP > 0 ? HP / HPMAX * 12 : 0;
         HPBarLine.transform.localScale = new Vector3(n, 1, 1);
+
+        if (getHP() <= 0)
+        {
+            nameText.SetActive(false);
+
+        }
 
     }
 
@@ -1088,9 +1094,9 @@ public class biologyCS : MonoBehaviour
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
             }
-            //玩家不會被停下來的玩家生物擋住
+            //被控制的玩家，可以任意穿越其他隊員
             if (collision.gameObject.tag == "Player"
-                && collision.gameObject.GetComponent<biologyCS>().getBioAnimation() == "mWait")
+                && isPlayer)
             {
                 Physics.IgnoreCollision(collision.collider, bioCollider);
             }
