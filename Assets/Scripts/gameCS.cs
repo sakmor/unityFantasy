@@ -96,7 +96,7 @@ public class gameCS : MonoBehaviour
     }
     public Vector3 getLederOderPos(int n)
     {
-        return Player.FindChild("formation/pos (" + n + ")").transform.position;
+        return Player.Find("formation/pos (" + n + ")").transform.position;
     }
 
     void keyboard()

@@ -95,8 +95,8 @@ public class biologyCS : MonoBehaviour
         checkBioCamp();
         bioAction = "";
 
-        if (bioCamp == 1) model = this.transform.FindChild("Model").gameObject; //todo:因為美術資源用別人的，只好先寫死
-        if (bioCamp == 0) model = this.transform.FindChild("Group Locator/Knight").gameObject; //todo:因為美術資源用別人的，只好先寫死
+        if (bioCamp == 1) model = this.transform.Find("Model").gameObject; //todo:因為美術資源用別人的，只好先寫死
+        if (bioCamp == 0) model = this.transform.Find("Group Locator/Knight").gameObject; //todo:因為美術資源用別人的，只好先寫死
 
         allBiologys = maingameCS.getAllBiologys();
 
@@ -448,7 +448,7 @@ public class biologyCS : MonoBehaviour
         nameText.name = this.name + "_nameText";
         nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
         nameText.GetComponent<Text>().text = this.name;
-        HPBarLine = nameText.gameObject.transform.FindChild("HPBar/HPBarLine").gameObject;
+        HPBarLine = nameText.gameObject.transform.Find("HPBar/HPBarLine").gameObject;
     }
 
     public string getBioAction()
@@ -590,13 +590,13 @@ public class biologyCS : MonoBehaviour
             case 0:
                 break;
             case 1:
-                HID = GameObject.Find("playerINFO").gameObject.transform.FindChild("P1").gameObject;
+                HID = GameObject.Find("playerINFO").gameObject.transform.Find("P1").gameObject;
                 break;
             case 2:
-                HID = GameObject.Find("playerINFO").gameObject.transform.FindChild("P2").gameObject;
+                HID = GameObject.Find("playerINFO").gameObject.transform.Find("P2").gameObject;
                 break;
             case 3:
-                HID = GameObject.Find("playerINFO").gameObject.transform.FindChild("P3").gameObject;
+                HID = GameObject.Find("playerINFO").gameObject.transform.Find("P3").gameObject;
                 break;
         }
         NumCalculate();
