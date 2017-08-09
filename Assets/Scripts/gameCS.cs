@@ -74,7 +74,6 @@ public class gameCS : MonoBehaviour
         loadResources();
         loadGame();
         setMouseOrbit();
-        setUIpos();
         setPlayerBioCSList();
         setformation();
         GameObject.Find("Cubes").SetActive(false);
@@ -175,22 +174,6 @@ public class gameCS : MonoBehaviour
         {
             clickPoint.GetComponent<Renderer>().enabled = true;
         }
-    }
-    void setUIpos()
-    {
-        cameraRightBTN = GameObject.Find("cameraRightBTN");
-        cameraLeftBTN = GameObject.Find("cameraLeftBTN");
-
-        cameraLeftBTN.transform.position = getuiPosByScreen(cameraLeftBTN, 1, "left", "upper");
-        cameraRightBTN.transform.position = getuiPosByScreen(cameraRightBTN, 1, "right", "upper");
-        moveStick.transform.position = getuiPosByScreen(moveStick, 15, "left", "lower");
-        fpsText.transform.position = getuiPosByScreen(fpsText, 1, "left", "lower");
-
-        logText.transform.position = getuiPosByScreen(logText, 0, "right", "center") + new Vector3(300, 0, 0);
-        GameObject.Find("buttonPalte").transform.position = getuiPosByScreen(GameObject.Find("buttonPalte"), 1, "right", "lower");
-
-        // GameObject.Find ("playerINFO").transform.position = new Vector3 (UnityEngine.Screen.width - 230, 30, 0);
-
     }
 
     Vector3 getuiPosByScreen(GameObject uiobj, float cap, string alignX, string alignY)

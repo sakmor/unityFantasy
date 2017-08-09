@@ -75,11 +75,11 @@ public class biologyCS : MonoBehaviour
     string bioAnimation, nameShort, bioDataPath, leaderNumber, bioAction;
     bool isVisible, effectIsOn, isEnable = false;
     public Transform target;
-    float[] biologyListData = new float[6];
+    float[] biologyListData;
     Animation anim;
-    gameBits gameBits;
+    gamBits gamBits;
     Renderer rend;
-    List<string> effectList = new List<string>(), _playingAnims = new List<string>(), justOverAnimList = new List<string>();
+    List<string> effectList, _playingAnims, justOverAnimList;
 
     biologyCS targetCS;
 
@@ -87,6 +87,11 @@ public class biologyCS : MonoBehaviour
 
     void Start()
     {
+        GameObject[] collisionCubes = new GameObject[28];
+        biologyListData = new float[6];
+        effectList = new List<string>();
+        _playingAnims = new List<string>();
+        justOverAnimList = new List<string>();
         bioStop();
         GetComponent<Animation>().playAutomatically = false;
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
@@ -127,7 +132,7 @@ public class biologyCS : MonoBehaviour
         bioAnimation = "mWait";
 
         Sphere3 = this.transform.position;
-        gameBits = new gameBits(this);
+        gamBits = new gamBits(this);
         setTargeLine();
         loadBiologyList();
         setCollisionCubes();
@@ -145,7 +150,7 @@ public class biologyCS : MonoBehaviour
         this._bioAnimation();
         this._bioAction();
         this.effect();
-        this.gameBits.Update();
+        this.gamBits.Update();
         this.updateUI();
         this.fellowLeader();
 
@@ -446,7 +451,7 @@ public class biologyCS : MonoBehaviour
     {
         nameText = Instantiate(GameObject.Find("nameText"));
         nameText.name = this.name + "_nameText";
-        nameText.transform.parent = GameObject.Find("4-UI/Canvas").transform;
+        nameText.transform.SetParent(GameObject.Find("4-UI/Canvas").transform);
         nameText.GetComponent<Text>().text = this.name;
         HPBarLine = nameText.gameObject.transform.Find("HPBar/HPBarLine").gameObject;
     }
@@ -659,7 +664,7 @@ public class biologyCS : MonoBehaviour
         {
             if (effectPlay())
             {
-                gameBits.resetActionTime();
+                gamBits.resetActionTime();
                 return true;
             }
         }
@@ -1099,7 +1104,7 @@ public class biologyCS : MonoBehaviour
 
     public void setActionCancel()
     {
-        gameBits.resetActionTime();
+        gamBits.resetActionTime();
 
     }
     void OnCollisionEnter(Collision collision)
