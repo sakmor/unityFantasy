@@ -76,7 +76,6 @@ public class gameCS : MonoBehaviour
         setMouseOrbit();
         setPlayerBioCSList();
         setformation();
-        GameObject.Find("Cubes").SetActive(false);
 
     }
 
@@ -500,6 +499,7 @@ public class gameCS : MonoBehaviour
     }
     void loadGame()
     {
+        UnityEditor.AssetDatabase.Refresh();
         clearMap();
         //讀取json檔案
         TextAsset json = Resources.Load("scene/s998") as TextAsset;
