@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 
 public class editorMenuCS : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class editorMenuCS : MonoBehaviour
     static void LoadJson()
     {
         UnityEditor.AssetDatabase.Refresh();
+
+        //清除場景
+        clearMap();
 
         //讀取json檔案
         TextAsset json = Resources.Load("scene/s998") as TextAsset;
@@ -128,9 +132,8 @@ public class editorMenuCS : MonoBehaviour
     static void Normalized()
     {
 
-        GameObject[] respawns;
-        respawns = Selection.gameObjects;
-        if (respawns.Length == 1)
+        var respawns = Selection.gameObjects.OfType<GameObject>().ToList();
+        if (respawns.Count == 1)
         {
             UnityEditor.EditorUtility.DisplayDialog("oh,Come on ?", " Select GameObject First!", "OK");
         }
@@ -152,16 +155,18 @@ public class editorMenuCS : MonoBehaviour
             }
         }
         int ss = 0;
-        respawns = Selection.gameObjects;
-        foreach (GameObject respawnA in respawns)
+
+        for (var i = 0; i < respawns.Count; i++)
         {
-            foreach (GameObject respawnB in respawns)
+            if (respawns[i] == null) continue;
+            for (var j = 0; j < respawns.Count; j++)
             {
-                if (respawnB != respawnA)
+                if (respawns[j] == null || respawns[i] == null) continue;
+                if (respawns[j] != respawns[i])
                 {
-                    if (respawnB.name == respawnA.name)
+                    if (respawns[j].name == respawns[i].name)
                     {
-                        DestroyImmediate(respawnB);
+                        DestroyImmediate(respawns[i]);
                         ss++;
                     }
                 }
@@ -204,73 +209,6 @@ public class editorMenuCS : MonoBehaviour
                 respawns = Selection.gameObjects;
             }
         }
-    }
-
-    [MenuItem("[Menu]/CombineChildren")]
-    static void CombineChildren()
-    {
-        GameObject Cubes = GameObject.Find("Cubes");//todo:要改成選取的物件
-
-        Matrix4x4 myTransform = Cubes.transform.worldToLocalMatrix;
-        Dictionary<string, List<CombineInstance>> combines = new Dictionary<string, List<CombineInstance>>();
-        Dictionary<string, Material> namedMaterials = new Dictionary<string, Material>();
-        MeshRenderer[] meshRenderers = GameObject.Find("Cubes").GetComponentsInChildren<MeshRenderer>();
-        foreach (var meshRenderer in meshRenderers)
-        {
-            foreach (var material in meshRenderer.sharedMaterials)
-                if (material != null && !combines.ContainsKey(material.name))
-                {
-                    combines.Add(material.name, new List<CombineInstance>());
-                    namedMaterials.Add(material.name, material);
-                }
-        }
-
-        MeshFilter[] meshFilters = Cubes.GetComponentsInChildren<MeshFilter>();
-        foreach (var filter in meshFilters)
-        {
-            if (filter.sharedMesh == null)
-                continue;
-            var filterRenderer = filter.GetComponent<Renderer>();
-            if (filterRenderer.sharedMaterial == null)
-                continue;
-            if (filterRenderer.sharedMaterials.Length > 1)
-                continue;
-            CombineInstance ci = new CombineInstance
-            {
-                mesh = filter.sharedMesh,
-                transform = myTransform * filter.transform.localToWorldMatrix
-            };
-            combines[filterRenderer.sharedMaterial.name].Add(ci);
-
-            //沒有要刪除
-            //DestroyImmediate(filterRenderer);
-        }
-
-        if (GameObject.Find("CubesLighted") != null)
-        {
-            DestroyImmediate(GameObject.Find("CubesLighted"));
-        }
-        GameObject go = new GameObject("CubesLighted");
-        go.isStatic = true;
-
-
-
-        foreach (Material m in namedMaterials.Values)
-        {
-            go.transform.parent = Cubes.transform;
-            go.transform.localPosition = Vector3.zero;
-            go.transform.localRotation = Quaternion.identity;
-            go.transform.localScale = Vector3.one;
-
-            var filter = go.AddComponent<MeshFilter>();
-            filter.mesh.CombineMeshes(combines[m.name].ToArray(), true, true);
-
-            var arenderer = go.AddComponent<MeshRenderer>();
-            arenderer.material = m;
-        }
-        go.transform.parent = GameObject.Find("5-場景").transform;
-        // Object prefab = PrefabUtility.CreateEmptyPrefab("Assets/Resources/scene/s998.prefab");
-        // PrefabUtility.ReplacePrefab(go, prefab, ReplacePrefabOptions.ConnectToPrefab);
     }
 
 }
