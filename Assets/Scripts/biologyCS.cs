@@ -66,7 +66,7 @@ public class biologyCS : MonoBehaviour
     float goalPosDist, lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players, oder;
 
-    Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere, Sphere2, goalPos;
+    Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere, goalPos;
     bool isPlayer = false, runBack;
     internal GameObject[] collisionCubes = new GameObject[28];
     internal List<GameObject> allBiologys;
@@ -93,7 +93,7 @@ public class biologyCS : MonoBehaviour
         effectList = new List<string>();
         _playingAnims = new List<string>();
         justOverAnimList = new List<string>();
-        bioStop();
+        setBioStop();
         GetComponent<Animation>().playAutomatically = false;
         maingameCS = GameObject.Find("mainGame").GetComponent<gameCS>();
         //如果該生物在玩家清單，改變陣營為玩家。
@@ -190,35 +190,12 @@ public class biologyCS : MonoBehaviour
             else if (leaderDist < 2.0f)
             {
 
-                // bioStop();
+                // setsetBioStop();
             }
         }
     }
 
-    void keepDistWithFrontBio(float n)
-    {
-        //以生物的的正前方射出一條線
-        Ray ray = new Ray();
-        ray.origin = this.transform.position + new Vector3(0, 1, 0);
-        ray.direction = Sphere2 - this.transform.position;
 
-        //取得射線擊中的物件
-        RaycastHit rayHit;
-        if (Physics.Raycast(ray, out rayHit, n) &&
-            rayHit.transform.tag == "Player")
-        {
-
-            biologyCS rayHitBioCS = rayHit.transform.gameObject.GetComponent<biologyCS>();
-
-            if (Vector3.Distance(rayHitBioCS.transform.position, this.transform.position) < 1.5f)
-            {
-                Debug.Log("stopShake");
-                bioStop();
-
-            }
-
-        }
-    }
 
     void setEffect()
     {
@@ -383,7 +360,7 @@ public class biologyCS : MonoBehaviour
         this.transform.position = beforeShakePos;
         this.transform.position += new Vector3(
             UnityEngine.Random.Range(-0.1f, 0.1f), 0, UnityEngine.Random.Range(-0.1f, 0.1f));
-        bioStop();
+        setBioStop();
 
         return true;
     }
@@ -508,10 +485,10 @@ public class biologyCS : MonoBehaviour
         goalPos = v;
 
     }
-    public void bioStop()
+    public void setBioStop()
     {
+        setBioAnimation("mWait");
         goalPos = this.transform.position;
-        Sphere2 = this.transform.position;
     }
     public void takeHeal(float n)
     {
@@ -686,8 +663,8 @@ public class biologyCS : MonoBehaviour
         }
         else
         {
-            bioStop();
-            faceTarget(target.transform.position, 100);
+            setBioStop();
+            setBioFaceTarget();
             setBioAnimation("mAttack");
             return true;
         }
@@ -706,8 +683,8 @@ public class biologyCS : MonoBehaviour
         }
         else
         {
-            bioStop();
-            faceTarget(target.transform.position, 100);
+            setBioStop();
+            setBioFaceTarget();
             setBioAnimation("mAttack");
             return true;
         }
@@ -817,113 +794,114 @@ public class biologyCS : MonoBehaviour
         goalPosDist = Vector3.Distance(this.transform.position, goalPos);
     }
 
-
-    void _movment()
+    bool isUseJoysitck()
     {
+        return (maingameCS.clickStart && isPlayer && maingameCS.hitUIObjectName == "moveStick");
+    }
 
-        if (goalPosDist > 0.5f) setBioAnimation("mWalk");
+    void useJoyStickMovment()
+    {
+        if (isUseJoysitck() == false) return;
 
-        //如果使用者操作搖桿
-        if (maingameCS.clickStart &&
-            isPlayer &&
-            maingameCS.hitUIObjectName == "moveStick")
-        {
+        this.bioAnimation = "mWalk";
 
-            this.bioAnimation = "mWalk";
+        //自搖桿取得的移動向量直
+        Sphere.x = maingameCS.mouseDragVector.x;
+        Sphere.z = maingameCS.mouseDragVector.z;
 
-            //自搖桿取得的移動向量直
-            Sphere.x = maingameCS.mouseDragVector.x;
-            Sphere.z = maingameCS.mouseDragVector.z;
+        //轉換搖桿向量至角色位置
+        float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 270;
+        float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
 
-            //轉換搖桿向量至角色位置
-            float Angle = MathS.AngleBetweenVector3(Sphere, new Vector3(0, Sphere.y, 0)) - 270;
-            float r = Vector3.Distance(Sphere, new Vector3(0, Sphere.y, 0));
+        float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
+        tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
 
-            float tempAngel = Vector3.Angle(maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-            tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
+        Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Angle + tempAngel * Mathf.Rad2Deg, r);
+        goalPos.x = temp.x;
+        goalPos.z = temp.z;
+        goalPos.y = this.transform.position.y;
+    }
 
-            Vector3 temp = MathS.getCirclePath(this.transform.position, this.transform.position, Angle + tempAngel * Mathf.Rad2Deg, r);
-            Sphere2.x = temp.x;
-            Sphere2.z = temp.z;
-            Sphere2.y = this.transform.position.y;
+    void useTouchScreen()
+    {
+        if (isUseJoysitck() == true) return;
 
-            // //將spere2依據攝影機位置做座標轉換
-            // float tempAngel = Vector3.Angle (maingameCS.mainCamera.transform.forward, (Sphere - this.transform.position));
-            // tempAngel = -maingameCS.mainCamera.transform.eulerAngles.y * Mathf.PI / 180;
-            // Sphere2.x = Sphere.x * Mathf.Cos (tempAngel) - Sphere.z * Mathf.Sin (tempAngel) + this.transform.position.x;
-            // Sphere2.z = Sphere.x * Mathf.Sin (tempAngel) + Sphere.z * Mathf.Cos (tempAngel) + this.transform.position.z;
-            // Sphere2.y = this.transform.position.y;
-
-        }
-        //如果使用者點擊螢幕操作
-        else
-        {
-
-            var Sphere2Distance = Vector3.Distance(this.transform.position, goalPos);
-
-            if (this.bioAnimation == "mWalk")
-            {
-                //如果goalPos距離低於1，或是與goalPos之間沒有阻礙時
-                if (goalPosDist < 1 ||
-                    maingameCS.PathfindingCS.decteBetween(this.transform.position, goalPos))
-                {
-                    Sphere2 = goalPos;
-                }
-                else
-                {
-                    if (Sphere2Distance > 1)
-                    {
-                        // Debug.Log ("PathfindingCS");
-                        Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, goalPos);
-                        if (Sphere2 == new Vector3(-999, -999, -999))
-                        {
-                            maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
-                            Sphere2 = this.transform.position;
-                            goalPos = this.transform.position;
-                        }
-                    }
-
-                }
-
-                //如果有人在我正前方的人是同陣營時
-                //我會停下來
-                // keepDistWithFrontBio(Sphere2Distance);
-            }
-        }
+        var Sphere2Distance = Vector3.Distance(this.transform.position, goalPos);
 
         if (this.bioAnimation == "mWalk")
         {
-            //將生物轉向目標
-            this.transform.position = new Vector3(this.transform.position.x, 0.5f, this.transform.position.z);
-            Sphere2.y = this.transform.position.y;
-            Sphere.y = this.transform.position.y;
+            //如果goalPos距離低於1，或是與goalPos之間沒有阻礙時
+            if (goalPosDist < 1 || maingameCS.PathfindingCS.decteBetween(this.transform.position, goalPos)) return;
 
-            faceTarget(Sphere2, rotateSpeed);
-
-            //依照目標距離調整移動速度
-            moveSpeed = moveSpeedMax;
-            if (goalPosDist < 0.5f)
+            if (Sphere2Distance > 1)
             {
-                moveSpeed = 0.01f + moveSpeed * (goalPosDist / 0.5f);
-                if (goalPosDist < 0.03f)
+                // Debug.Log ("PathfindingCS");
+                goalPos = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, goalPos);
+                if (goalPos == new Vector3(-999, -999, -999))
                 {
-                    this.bioAnimation = "mWait";
-                    Sphere2 = goalPos;
-
+                    maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
+                    setBioStop();
                 }
             }
 
-            //更新動態碰撞物
-            dynamicCollision();
 
-            //移動生物到目標點
-            this.transform.position = Vector3.MoveTowards(this.transform.position, Sphere2, moveSpeed * Time.deltaTime * 50);
 
-            //調整步伐
-            anim["Walk"].speed = 1f + WalkSteptweek * moveSpeed;
+            //如果有人在我正前方的人是同陣營時
+            //我會停下來
+            // keepDistWithFrontBio(Sphere2Distance);
         }
     }
-    void faceTarget(Vector3 etarget, float espeed)
+
+
+    void setBioMoveSpeedViaGoalDist()
+    {
+        moveSpeed = moveSpeedMax;
+        if (goalPosDist < 0.5f)
+        {
+            moveSpeed = 0.01f + moveSpeed * (goalPosDist / 0.5f);
+            if (goalPosDist < 0.03f)
+            {
+                this.bioAnimation = "mWait";
+
+            }
+        }
+
+        anim["Walk"].speed = 1f + WalkSteptweek * moveSpeed;
+    }
+
+    void moveBioToGoalPos()
+    {
+        this.transform.position = Vector3.MoveTowards(this.transform.position, goalPos, moveSpeed * Time.deltaTime * 50);
+    }
+
+    void stopBioViaGoalDist()
+    {
+        if (goalPosDist > 0.5f) return;
+        setBioStop();
+    }
+    void _movment()
+    {
+        setBioAnimation("mWalk");
+
+        stopBioViaGoalDist();
+        useJoyStickMovment();
+        useTouchScreen();
+        setBioFaceGoal();
+        setBioMoveSpeedViaGoalDist();
+        dynamicCollision();
+        moveBioToGoalPos();
+    }
+    void setBioFaceGoal()
+    {
+        setbiofacePos(goalPos, 100);
+    }
+
+    void setBioFaceTarget()
+    {
+        setbiofacePos(target.transform.position, 100);
+    }
+
+    void setbiofacePos(Vector3 etarget, float espeed)
     {
         Vector3 targetDir = etarget - this.transform.position;
         float step = espeed * Time.deltaTime;

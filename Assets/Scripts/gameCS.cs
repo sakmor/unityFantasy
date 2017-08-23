@@ -312,7 +312,7 @@ public class gameCS : MonoBehaviour
 
                 if (hitUIObjectName == "moveStick")
                 {
-                    playerBioCSList[playerNumber].bioStop();
+                    playerBioCSList[playerNumber].setBioStop();
                 }
                 hitUIObjectName = "";
             }
@@ -429,7 +429,6 @@ public class gameCS : MonoBehaviour
         var tempAll = GameObject.FindGameObjectsWithTag("biology");
         foreach (GameObject thisBiology in tempAll)
         {
-            biologyCS temp = new biologyCS();
             thisBiology.AddComponent<biologyCS>();
             allBiologys.Add(thisBiology);
         }
@@ -437,7 +436,6 @@ public class gameCS : MonoBehaviour
         tempAll = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject thisBiology in tempAll)
         {
-            biologyCS temp = new biologyCS();
             thisBiology.AddComponent<biologyCS>();
             addPlayerBioList(thisBiology.GetComponent<biologyCS>());
             allBiologys.Add(thisBiology);
