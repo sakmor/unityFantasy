@@ -15,7 +15,7 @@ Shader "Custom/WrapLambert" {
         half NdotL = dot (s.Normal, lightDir);
         half diff = NdotL * 0.5 + 0.5;
         half4 c;
-        c.rgb = s.Albedo * _LightColor0.rgb * (diff * atten * 2);
+        c.rgb = s.Albedo * _LightColor0.rgb * ( atten );
         c.a = s.Alpha;
         return c;
     }

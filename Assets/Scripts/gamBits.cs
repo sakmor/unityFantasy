@@ -46,30 +46,33 @@ public class gamBits
 
     void actionTimeRun()
     {
-
+        if (parent.getHP() <= 0) return;
         if (nowActionTime < 1)
         {
             nowActionTime = ((Time.time - lastActionTime) * parent.getActionSpeed()) / 26; //todo:26應該改為自動換算介面長度
             DrawCircle.setLinePrecent(nowActionTime);
             DrawCircle.setAlpha();
+            return;
         }
-        else
-        {
-            DrawCircle.blink();
 
-            if (parent.getHP() > 0)
-            {
-                decide2Action();
-                if (target != null)
-                {
-                    if (target.GetComponent<biologyCS>().getHP() <= 0)
-                    {
-                        resetActionTime();
-                        changeTarget(null);
-                    }
-                }
-            }
+
+
+
+        decide2Action();
+
+        if (target != null && checkTargetIsAlive() == false)
+        {
+            resetActionTime();
+            changeTarget(null);
         }
+
+
+        DrawCircle.blink();
+    }
+
+    bool checkTargetIsAlive()
+    {
+        return (target.GetComponent<biologyCS>().getHP() >= 0);
 
     }
     internal void resetActionTime()

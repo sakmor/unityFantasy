@@ -151,7 +151,6 @@ public class gameCS : MonoBehaviour
 
     void setformation()
     {
-
         foreach (Transform child in formation)
         {
             child.gameObject.AddComponent<formation>();
@@ -175,41 +174,7 @@ public class gameCS : MonoBehaviour
         }
     }
 
-    Vector3 getuiPosByScreen(GameObject uiobj, float cap, string alignX, string alignY)
-    {
-        var screenHeight = UnityEngine.Screen.height;
-        var screenWidth = UnityEngine.Screen.width;
-        var objHeight = uiobj.GetComponent<RectTransform>().sizeDelta.y * uiobj.GetComponent<RectTransform>().localScale.y;
-        var objWidth = uiobj.GetComponent<RectTransform>().sizeDelta.x * uiobj.GetComponent<RectTransform>().localScale.x;
-        Vector3 pos = new Vector3(0, 0, 0);
-        switch (alignX)
-        {
-            case "left":
-                pos = new Vector3(cap + objWidth * 0.5f, 0, 0);
-                break;
-            case "right":
-                pos = new Vector3(screenWidth - cap - objWidth * 0.5f, 0, 0);
-                break;
-            case "middie":
-                pos = new Vector3(screenWidth * 0.5f, 0, 0);
-                break;
-        }
-        switch (alignY)
-        {
-            case "upper":
-                pos += new Vector3(0, screenHeight - cap - objHeight * 0.5f + cap, 0);
-                break;
-            case "center":
-                pos += new Vector3(0, screenHeight * 0.5f + cap, 0);
-                break;
-            case "lower":
-                pos += new Vector3(0, objHeight * 0.5f + cap, 0);
-                break;
-        }
 
-        return pos;
-
-    }
 
     void buttonDetect()
     {

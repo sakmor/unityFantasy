@@ -13,6 +13,7 @@ using UnityEngine.UI;
 
 public class biologyCS : MonoBehaviour
 {
+    public bool walkable;
     /* [AI相關變數]
     * isEnable         停止運作
     * runBackDist		脫戰距離
@@ -62,10 +63,10 @@ public class biologyCS : MonoBehaviour
     * rotateSpeed		生物旋轉速度(未儲存)
     */
     float LV, ATTACK, HP, DEF, HPMAX;
-    float lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
+    float goalPosDist, lastCheckAnim, effectTime, lastHitTime, hitTime, actionSpeed, WalkSteptweek, attackDistance, moveSpeedMax, startPosDis, DAMAGE, hpPlus, aTimes, MP, MPMAX, EXP, lastActionTime, lastDanceTime, runBackDist, rotateSpeed, moveSpeed, seeMax, catchSpeed, attackCoolDown, bais, dectefrequency;
     public int bioType, bioCamp, players, oder;
 
-    Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere = new Vector3(0, 0, 0), Sphere2, Sphere3;
+    Vector3 nametextScreenPos, beforeShakePos, startPos, Sphere, Sphere2, goalPos;
     bool isPlayer = false, runBack;
     internal GameObject[] collisionCubes = new GameObject[28];
     internal List<GameObject> allBiologys;
@@ -131,7 +132,7 @@ public class biologyCS : MonoBehaviour
 
         bioAnimation = "mWait";
 
-        Sphere3 = this.transform.position;
+        goalPos = this.transform.position;
         gamBits = new gamBits(this);
         setTargeLine();
         loadBiologyList();
@@ -145,7 +146,7 @@ public class biologyCS : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        this.updateGoalDist();
         this._movment();
         this._bioAnimation();
         this._bioAction();
@@ -504,12 +505,12 @@ public class biologyCS : MonoBehaviour
     }
     public void bioGoto(Vector3 v)
     {
-        Sphere3 = v;
+        goalPos = v;
 
     }
     public void bioStop()
     {
-        Sphere3 = this.transform.position;
+        goalPos = this.transform.position;
         Sphere2 = this.transform.position;
     }
     public void takeHeal(float n)
@@ -715,7 +716,7 @@ public class biologyCS : MonoBehaviour
     bool actionRunback()
     {
         runBack = true;
-        Sphere3 = startPos;
+        goalPos = startPos;
         return true;
     }
 
@@ -811,16 +812,16 @@ public class biologyCS : MonoBehaviour
         }
 
     }
+    void updateGoalDist()
+    {
+        goalPosDist = Vector3.Distance(this.transform.position, goalPos);
+    }
+
 
     void _movment()
     {
-        //生物站立處為不可尋路點
-        GameObject.Find("aStart").GetComponent<Grid>().grid[0, 0].walkable = false;
 
-        float SphereDistance = 0;
-        SphereDistance = Vector3.Distance(this.transform.position, Sphere3);
-        if (SphereDistance > 0.5f)
-            this.bioAnimation = "mWalk";
+        if (goalPosDist > 0.5f) setBioAnimation("mWalk");
 
         //如果使用者操作搖桿
         if (maingameCS.clickStart &&
@@ -853,33 +854,32 @@ public class biologyCS : MonoBehaviour
             // Sphere2.z = Sphere.x * Mathf.Sin (tempAngel) + Sphere.z * Mathf.Cos (tempAngel) + this.transform.position.z;
             // Sphere2.y = this.transform.position.y;
 
-            SphereDistance = Vector3.Distance(this.transform.position, Sphere2);
         }
         //如果使用者點擊螢幕操作
         else
         {
 
-            var Sphere2Distance = Vector3.Distance(this.transform.position, Sphere3);
+            var Sphere2Distance = Vector3.Distance(this.transform.position, goalPos);
 
             if (this.bioAnimation == "mWalk")
             {
-                //如果Sphere3距離低於1，或是與Sphere3之間沒有阻礙時
-                if (SphereDistance < 1 ||
-                    maingameCS.PathfindingCS.decteBetween(this.transform.position, Sphere3))
+                //如果goalPos距離低於1，或是與goalPos之間沒有阻礙時
+                if (goalPosDist < 1 ||
+                    maingameCS.PathfindingCS.decteBetween(this.transform.position, goalPos))
                 {
-                    Sphere2 = Sphere3;
+                    Sphere2 = goalPos;
                 }
                 else
                 {
                     if (Sphere2Distance > 1)
                     {
                         // Debug.Log ("PathfindingCS");
-                        Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, Sphere3);
+                        Sphere2 = maingameCS.PathfindingCS.FindPath_Update(this.transform.position, goalPos);
                         if (Sphere2 == new Vector3(-999, -999, -999))
                         {
                             maingameCS.logg("<b>" + this.name + "</b>: 目前無法移動至該處");
                             Sphere2 = this.transform.position;
-                            Sphere3 = this.transform.position;
+                            goalPos = this.transform.position;
                         }
                     }
 
@@ -902,13 +902,13 @@ public class biologyCS : MonoBehaviour
 
             //依照目標距離調整移動速度
             moveSpeed = moveSpeedMax;
-            if (SphereDistance < 0.5f)
+            if (goalPosDist < 0.5f)
             {
-                moveSpeed = 0.01f + moveSpeed * (SphereDistance / 0.5f);
-                if (SphereDistance < 0.03f)
+                moveSpeed = 0.01f + moveSpeed * (goalPosDist / 0.5f);
+                if (goalPosDist < 0.03f)
                 {
                     this.bioAnimation = "mWait";
-                    Sphere2 = Sphere3;
+                    Sphere2 = goalPos;
 
                 }
             }
@@ -1078,19 +1078,15 @@ public class biologyCS : MonoBehaviour
     }
     public Vector3 getDestination()
     {
-        return Sphere3;
+        return goalPos;
     }
     public string getBioAnimation()
     {
         return bioAnimation;
     }
-    internal bool setBioAnimation(string n)
+    internal void setBioAnimation(string n)
     {
-        if (bioAnimation != n)
-        {
-            bioAnimation = n;
-        }
-        return true;
+        bioAnimation = n;
     }
 
     public void setIsPlayer(bool n)
