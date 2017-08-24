@@ -18,7 +18,6 @@ public class mouseOrbit : MonoBehaviour
     public float distanceMin = 3f;
     public float distanceMax = 15f;
     bool orbitCamera = false;
-    private Rigidbody rigidbody;
 
     private gameCS maingameCS;
     float x = 0.0f, startX = 0.0f, finalX = 0.0f, y = 0.0f;

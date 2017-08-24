@@ -50,7 +50,7 @@ public class DrawCircle : MonoBehaviour
     {
         rend = GetComponent<Renderer>();
         _line = gameObject.GetComponent<LineRenderer>();
-        _line.SetVertexCount(_segments + 1);
+        _line.positionCount = _segments + 1;
         _line.useWorldSpace = false;
         _line.startWidth = 0.3f;
         _line.endWidth = 0.3f;
@@ -127,7 +127,7 @@ public class DrawCircle : MonoBehaviour
 
         if (_previousSegmentsValue != _segments)
         {
-            _line.SetVertexCount(_segments + 1);
+            _line.positionCount = _segments + 1;
         }
 
         float x;

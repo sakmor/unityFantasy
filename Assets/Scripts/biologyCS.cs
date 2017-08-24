@@ -74,7 +74,7 @@ public class biologyCS : MonoBehaviour
     gameCS maingameCS;
     BoxCollider bioCollider;
     string bioAnimation, nameShort, bioDataPath, leaderNumber, bioAction;
-    bool isVisible, effectIsOn, isEnable = false;
+    bool effectIsOn, isEnable = false;
     public Transform target;
     float[] biologyListData;
     Animation anim;
@@ -99,7 +99,7 @@ public class biologyCS : MonoBehaviour
         //如果該生物在玩家清單，改變陣營為玩家。
         LV = 50; //todo:應該記錄在生物表
         checkBioCamp();
-        bioAction = "";
+        setBioAnimation("mWait");
 
         if (bioCamp == 1) model = this.transform.Find("Model").gameObject; //todo:因為美術資源用別人的，只好先寫死
         if (bioCamp == 0) model = this.transform.Find("Group Locator/Knight").gameObject; //todo:因為美術資源用別人的，只好先寫死
@@ -130,7 +130,7 @@ public class biologyCS : MonoBehaviour
 
         setNameText();
 
-        bioAnimation = "mWait";
+        setBioAction("");
 
         goalPos = this.transform.position;
         gamBits = new gamBits(this);
@@ -143,16 +143,34 @@ public class biologyCS : MonoBehaviour
         checkOder();
     }
 
+    void updateGoalDist()
+    {
+        goalPosDist = Vector3.Distance(this.transform.position, goalPos);
+    }
+    void movment()
+    {
+        if (bioAnimation != "mWait" && bioAnimation != "mWalk") return;
+        stopBioViaGoalDist();
+        playBio_mWalk_ViaGoalDist();
+        useJoyStickMovment();
+        useTouchScreen();
+        setBioFaceGoal();
+        setBioMoveSpeedViaGoalDist();
+        dynamicCollision();
+        moveBioToGoalPos();
+    }
     // Update is called once per frame
     void Update()
     {
         this.updateGoalDist();
-        this._movment();
+        this.movment();
+        this.updateUI();
         this._bioAnimation();
+
         this._bioAction();
         this.effect();
         this.gamBits.Update();
-        this.updateUI();
+
         this.fellowLeader();
 
     }
@@ -487,7 +505,6 @@ public class biologyCS : MonoBehaviour
     }
     public void setBioStop()
     {
-        setBioAnimation("mWait");
         goalPos = this.transform.position;
     }
     public void takeHeal(float n)
@@ -652,8 +669,8 @@ public class biologyCS : MonoBehaviour
 
     bool actionAttack()
     {
-        if (targetCS.HP < 0)
-            return false;
+        if (targetCS.HP < 0) return false;
+
         float targetDist = Vector3.Distance(target.position, this.transform.position);
 
         if (targetDist > attackDistance)
@@ -703,7 +720,7 @@ public class biologyCS : MonoBehaviour
         setBioAnimation("mDead");
     }
 
-    void checkAnimation()
+    void updateJustOverAnimList()
     {
         if (Time.time - lastCheckAnim > 0.005)
         {
@@ -730,33 +747,37 @@ public class biologyCS : MonoBehaviour
             }
         }
     }
+
+    void justOver_Attack()
+    {
+        if (justOverAnimList.Contains("attack")) setBioAnimation("mWait");
+    }
+    void justOver_Damage()
+    {
+        if (justOverAnimList.Contains("damage") && HP <= 0) setBioAnimation("mDead");
+    }
+
+    void justOver_Dead()
+    {
+        if (justOverAnimList.Contains("dead")) deadEffect();
+    }
+
+
+
+    void deadEffect()
+    {
+        this.addEffect("boomEffect");
+        this.transform.gameObject.SetActive(false);
+        setBioAnimation("mHide");
+        if (isPlayer) maingameCS.changePlayerRight(); //如果死亡的是隊長
+    }
     void _bioAnimation()
     {
-        checkAnimation();
-        //如果攻擊動作剛播完，回到wait狀態
-        if (justOverAnimList.Contains("Attack") &&
-            HP > 0)
-        {
-            this.bioAnimation = "mWait";
-        }
-        //如果受傷動作剛播完，並血量等於下於0
-        if (justOverAnimList.Contains("Damage") &&
-            HP <= 0)
-        {
-            this.bioAnimation = "mDead";
+        updateJustOverAnimList();
+        justOver_Attack();  //如果攻擊動作剛播完，回到wait狀態
+        justOver_Damage();  //如果受傷動作剛播完，並血量等於下於0
+        justOver_Dead(); //如果死亡動作剛播完，撥放爆炸
 
-            //如果死亡的是隊長
-            if (isPlayer)
-                maingameCS.changePlayerRight();
-
-        }
-        //如果死亡動作剛播完，撥放爆炸
-        if (justOverAnimList.Contains("Dead"))
-        {
-            this.addEffect("boomEffect");
-            this.transform.gameObject.SetActive(false);
-            this.bioAnimation = "mHide";
-        }
 
         //對應生物所處狀態，播放對應動作
         switch (this.bioAnimation)
@@ -785,13 +806,9 @@ public class biologyCS : MonoBehaviour
 
         if (anim.IsPlaying("Wait") && HP > 0)
         {
-            this.bioAnimation = "mWait";
+            setBioAnimation("mWait");
         }
 
-    }
-    void updateGoalDist()
-    {
-        goalPosDist = Vector3.Distance(this.transform.position, goalPos);
     }
 
     bool isUseJoysitck()
@@ -803,7 +820,7 @@ public class biologyCS : MonoBehaviour
     {
         if (isUseJoysitck() == false) return;
 
-        this.bioAnimation = "mWalk";
+        setBioAnimation("mWalk");
 
         //自搖桿取得的移動向量直
         Sphere.x = maingameCS.mouseDragVector.x;
@@ -861,7 +878,7 @@ public class biologyCS : MonoBehaviour
             moveSpeed = 0.01f + moveSpeed * (goalPosDist / 0.5f);
             if (goalPosDist < 0.03f)
             {
-                this.bioAnimation = "mWait";
+                setBioStop();
 
             }
         }
@@ -876,21 +893,14 @@ public class biologyCS : MonoBehaviour
 
     void stopBioViaGoalDist()
     {
-        if (goalPosDist > 0.5f) return;
-        setBioStop();
+        if (goalPosDist <= 0.5f) setBioStop();
     }
-    void _movment()
-    {
-        setBioAnimation("mWalk");
 
-        stopBioViaGoalDist();
-        useJoyStickMovment();
-        useTouchScreen();
-        setBioFaceGoal();
-        setBioMoveSpeedViaGoalDist();
-        dynamicCollision();
-        moveBioToGoalPos();
+    void playBio_mWalk_ViaGoalDist()
+    {
+        if (goalPosDist > 0.5f) setBioAnimation("mWalk");
     }
+
     void setBioFaceGoal()
     {
         setbiofacePos(goalPos, 100);
@@ -911,24 +921,21 @@ public class biologyCS : MonoBehaviour
 
     public void updateUI()
     {
-        isVisible = GetComponent<Renderer>().isVisible;
-        if (isVisible && getHP() > 0)
-        {
-            nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
-                this.transform.position.x,
-                this.transform.position.y + 2.5f,
-                this.transform.position.z));
-            nameText.transform.position = nametextScreenPos;
-        }
+        bool isVisible = GetComponent<Renderer>().isVisible;
+        if (isVisible == false || getHP() < 0) return;
+
+        nametextScreenPos = Camera.main.WorldToScreenPoint(new Vector3(
+            this.transform.position.x,
+            this.transform.position.y + 2.5f,
+            this.transform.position.z));
+        nameText.transform.position = nametextScreenPos;
 
         var n = HP > 0 ? HP / HPMAX * 12 : 0;
         HPBarLine.transform.localScale = new Vector3(n, 1, 1);
 
-        if (getHP() <= 0)
-        {
-            nameText.SetActive(false);
+        if (getHP() <= 0) nameText.SetActive(false);
 
-        }
+
 
     }
 
