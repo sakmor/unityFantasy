@@ -1,16 +1,21 @@
 fileFormatVersion: 2
-guid: cac80cb378b342b459113edec3536d51
-timeCreated: 1475077977
+guid: b23d59cdc95b6de489459a05cdb84ce2
+timeCreated: 1505376615
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: 00003
-    4300002: 10003
+    100000: 10098
+    100002: _Capsule_Blend_File_Data_
+    100004: //RootNode
+    400000: 10098
+    400002: _Capsule_Blend_File_Data_
+    400004: //RootNode
+    2300000: 10098
+    3300000: 10098
+    4300000: 10098
+    7400000: Default Take
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -51,7 +56,7 @@ ModelImporter:
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 0
+    useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -73,9 +78,9 @@ ModelImporter:
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
-    skeletonHasParents: 0
+    skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
